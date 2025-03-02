@@ -107,7 +107,7 @@ const App = () => {
         <Routes>
           <Route path='/' element={<StartPage />} />
           <Route path='/login' element={<LoginForm />} />
-          <Route path='/signup' element={<SignUpForm />} />
+          <Route path='/signup' element={<SignUpForm username={signUpUsername} name={signUpName} password={signUpPassword} handleUsernameChange={({target}) => setSignUpUsername(target.value)} handleNameChange={({target}) => setSignUpName(target.value)} handlePasswordChange={({target}) => setSignUpPassword(target.value)} handleSubmit={handleSignUp}/>} />
         </Routes>
       </div>
     ) : (
