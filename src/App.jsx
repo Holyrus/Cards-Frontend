@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useReducer } from 'react'
 import {
-  Routes, Route, useMatch
+  Routes, Route, useMatch, useNavigate
 } from 'react-router-dom'
 
 import loginService from './services/login'
@@ -9,7 +9,11 @@ import signUpService from './services/signup'
 import StartPage from './components/StartPage'
 import LoginForm from './components/LoginForm'
 import SignUpForm from './components/SignUpForm'
+import ErrorNotification from './components/ErrorNotification'
 
+import { useNotificationDispatch } from './components/NoificationContext'
+import { useErrorNotificationDispatch } from './components/ErrorNotificationContext'
+import Notification from './components/Notification'
 
 const userReducer = (state, action) => {
   switch (action.type) {
@@ -24,11 +28,19 @@ const userReducer = (state, action) => {
 
 const App = () => {
 
+  const navigate = useNavigate()
+
   const [user, userDispatch] = useReducer(userReducer, null)
+
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
 
   const [signUpUsername, setSignUpUsername] = useState('')
   const [signUpName, setSignUpName] = useState('')
   const [signUpPassword, setSignUpPassword] = useState('')
+
+  const errorNotificationDispatch = useErrorNotificationDispatch()
+  const notificationDispatch = useNotificationDispatch()
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedCardsAppUser')
@@ -42,6 +54,10 @@ const App = () => {
   const handleLogout = () => {
     window.localStorage.removeItem('loggedCardsAppUser')
     userDispatch({ type: "REMOVE_USER" })
+    notificationDispatch({ type: "SET", payload: 'Logged out' })
+      setTimeout(() => {
+        notificationDispatch({ type: "CLEAR" })
+      }, 6000)
   }
 
   const handleLogin = async (event) => {
@@ -58,10 +74,21 @@ const App = () => {
 
       // cardService.setToken(user.token)
       userDispatch({ type: "SET_USER", payload: user })
-      // setUsername('')
-      // setPassword('')
+      setUsername('')
+      setPassword('')
+      navigate('/')
+      notificationDispatch({ type: "SET", payload: 'Logged in successfully' })
+      setTimeout(() => {
+        notificationDispatch({ type: "CLEAR" })
+      }, 6000)
+
+      // queryClient.invalidateQueries({ queryKey: ['cards'] })
+
     } catch (exception) {
-      // ------
+      errorNotificationDispatch({ type: "SET", payload: 'Wrong credentials' })
+      setTimeout(() => {
+        errorNotificationDispatch({ type: "CLEAR" })
+      }, 6000)
     }
   }
 
@@ -81,8 +108,16 @@ const App = () => {
       setSignUpUsername('')
       setSignUpName('')
       setSignUpPassword('')
+      navigate('/')
+      notificationDispatch({ type: "SET", payload: 'Created new account' })
+      setTimeout(() => {
+        notificationDispatch({ type: "CLEAR" })
+      }, 6000)
     } catch (exception) {
-      // -------
+      errorNotificationDispatch({ type: "SET", payload: 'Wrong credentials' })
+      setTimeout(() => {
+        errorNotificationDispatch({ type: "CLEAR" })
+      }, 6000)
     }
   }
 
@@ -101,17 +136,24 @@ const App = () => {
   
   return (
     <main className="antialiased overflow-x-hidden">
-
-    {user === null || (result.error?.message === "Request failed with status code 401" && result.error?.config.method === "get") ? (
+ {/* || (result.error?.message === "Request failed with status code 401" && result.error?.config.method === "get") */}
+    {user === null ? (
       <div>
+        <Notification />
+        <ErrorNotification />
         <Routes>
           <Route path='/' element={<StartPage />} />
-          <Route path='/login' element={<LoginForm />} />
+          <Route path='/login' element={<LoginForm username={username} password={password} handleUsernameChange={({target}) => setUsername(target.value)} handlePasswordChange={({target}) => setPassword(target.value)} handleSubmit={handleLogin} />} />
           <Route path='/signup' element={<SignUpForm username={signUpUsername} name={signUpName} password={signUpPassword} handleUsernameChange={({target}) => setSignUpUsername(target.value)} handleNameChange={({target}) => setSignUpName(target.value)} handlePasswordChange={({target}) => setSignUpPassword(target.value)} handleSubmit={handleSignUp}/>} />
         </Routes>
       </div>
     ) : (
-      <p>Logged</p>
+      <div>
+        <Notification />
+        <ErrorNotification />
+        <p>Logged</p>
+        <button className="font-medium border-2 rounded-full bg-red-500 px-3 py-1 hover:bg-red-800 hover:text-white hover:border-black" onClick={handleLogout}>Logout</button>
+      </div>
     )}
 
     </main>

@@ -1,19 +1,7 @@
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import Panda from '../assets/panda3.jpg'
 
 const SignUpForm = ({handleSubmit, handleUsernameChange, handleNameChange, handlePasswordChange, username, name, password}) => {
-  
-  const navigate = useNavigate()
-
-  const onSubmit = async (e) => {
-    e.preventDefault()
-
-    const success = await handleSubmit(e)
-
-    if (success) {
-      navigate('/')
-    }
-  }
   
   return (
     <div className='min-h-screen flex flex-col items-center justify-between'>
@@ -29,7 +17,7 @@ const SignUpForm = ({handleSubmit, handleUsernameChange, handleNameChange, handl
             <h1 className='text-[35px] font-bold bg-gradient-to-r from-green-700 to-yellow-300 text-transparent bg-clip-text'>UmCards</h1>
             <p className='mt-1 text-[11px] sm:text-[14px] text-[#ababab]'>Add words with Umka, learn everyday and never forget them</p>
           </div>
-          <form onSubmit={onSubmit} className='flex flex-col mb-10 sm:mb-50'>
+          <form onSubmit={handleSubmit} className='flex flex-col mb-10 sm:mb-50'>
             <div className='relative flex mt-4'>
               <input value={username} onChange={handleUsernameChange} id="signUpUsername" type="text" placeholder='' className='z-10 peer w-full border-0 border-b-2 border-gray-400 focus:border-green-500 focus:outline-none focus:ring-0 bg-transparent p-2 pt-4 text-gray-900' />
               <label htmlFor="signUpUsername" className= 'z-5 absolute left-2 text-gray-500 peer-placeholder-shown:bottom-5 peer-placeholder-shown:text-[16px] peer-placeholder-shown:text-gray-400 peer-focus:top-0 peer-focus:text-green-500 peer-focus:text-[12px] transition-all'>Username</label>
