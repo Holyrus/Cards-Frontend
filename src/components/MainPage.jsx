@@ -14,7 +14,7 @@ const MainPage = () => {
       </div>
 
       <div to className="w-full flex-none flex flex-row items-center justify-center border-t-1 border-[#e1edf5] h-[55px]">
-        <Link to="/main" className="flex flex-col items-center justify-start px-[60px] hover:cursor-pointer active:bg-gray-300 transition-all duration-75">
+        <Link to="/main" className="flex flex-col items-center justify-start px-[60px] hover:cursor-pointer active:bg-gray-300 transition-all duration-75" draggable="false">
           <svg width="35" height="35" viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
             <g transform="rotate(10, 115, 130)">
               <rect x="80" y="80" width="90" height="140" rx="10" ry="10" fill="black"/>
@@ -26,7 +26,7 @@ const MainPage = () => {
           <p className="text-[10px] font-semibold select-none">LEARNING</p>
         </Link>
 
-        <Link to="/profile" className="flex flex-col items-center justify-start px-[60px] hover:cursor-pointer active:bg-gray-300 transition-all duration-75">
+        <Link to="/profile" className="flex flex-col items-center justify-start px-[60px] hover:cursor-pointer active:bg-gray-300 transition-all duration-75" draggable="false">
           <svg width="35" height="35" aria-hidden="true" focusable="false" data-prefix="far" data-icon="user-vneck" class="svg-inline--fa fa-user-vneck" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 -100 448 650">
             <circle className="text-gray-500" cx="120" cy="30" r="80" fill="currentColor"/>
             <circle className="text-gray-500" cx="328" cy="30" r="80" fill="currentColor"/>
