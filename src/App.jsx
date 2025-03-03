@@ -14,6 +14,8 @@ import ErrorNotification from './components/ErrorNotification'
 import { useNotificationDispatch } from './components/NoificationContext'
 import { useErrorNotificationDispatch } from './components/ErrorNotificationContext'
 import Notification from './components/Notification'
+import MainPage from './components/MainPage'
+import Profile from './components/Profile'
 
 const userReducer = (state, action) => {
   switch (action.type) {
@@ -55,6 +57,7 @@ const App = () => {
     window.localStorage.removeItem('loggedCardsAppUser')
     userDispatch({ type: "REMOVE_USER" })
     notificationDispatch({ type: "SET", payload: 'Logged out' })
+    navigate('/')
       setTimeout(() => {
         notificationDispatch({ type: "CLEAR" })
       }, 6000)
@@ -76,7 +79,7 @@ const App = () => {
       userDispatch({ type: "SET_USER", payload: user })
       setUsername('')
       setPassword('')
-      navigate('/')
+      navigate('/main')
       notificationDispatch({ type: "SET", payload: 'Logged in successfully' })
       setTimeout(() => {
         notificationDispatch({ type: "CLEAR" })
@@ -151,8 +154,10 @@ const App = () => {
       <div>
         <Notification />
         <ErrorNotification />
-        <p>Logged</p>
-        <button className="font-medium border-2 rounded-full bg-red-500 px-3 py-1 hover:bg-red-800 hover:text-white hover:border-black" onClick={handleLogout}>Logout</button>
+        <Routes>
+          <Route path='/main' element={<MainPage />} />
+          <Route path='/profile' element={<Profile handleLogout={handleLogout} />} />
+        </Routes>
       </div>
     )}
 
