@@ -131,8 +131,16 @@ const App = () => {
         await signUpService.remove(user.id)
         window.localStorage.removeItem('loggedCardsAppUser')
         userDispatch({ type: "REMOVE_USER" })
+        navigate('/')
+        notificationDispatch({ type: "SET", payload: 'Account was deleted' })
+        setTimeout(() => {
+          notificationDispatch({ type: "CLEAR" })
+        }, 6000)
       } catch (exception) {
-        // -------
+        errorNotificationDispatch({ type: "SET", payload: 'Something went wrong' })
+        setTimeout(() => {
+          errorNotificationDispatch({ type: "CLEAR" })
+        }, 6000)
       }
     }
   }
@@ -156,7 +164,7 @@ const App = () => {
         <ErrorNotification />
         <Routes>
           <Route path='/main' element={<MainPage />} />
-          <Route path='/profile' element={<Profile handleLogout={handleLogout} />} />
+          <Route path='/profile' element={<Profile handleLogout={handleLogout} handleAccountDeleting={handleAccountDeleting} user={user}/>} />
         </Routes>
       </div>
     )}
