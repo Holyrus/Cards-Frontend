@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-
+import ThreeDModel from "./Model.jsx"
 
 const MainPage = () => {
   return (
@@ -9,8 +9,9 @@ const MainPage = () => {
         
       </div>
 
-      <div className="flex-1 w-full bg-[#f3fff2]">
-
+      <div className="flex-1 flex flex-col items-center w-full bg-[#f3fff2]">
+        <ThreeDModel />
+        <button className='rounded-full text-white border-1 border-green-700 font-semibold py-2 px-5 w-[290px] sm:w-[400px] md:w-[450px] md:py-3 shadow-md hover:shadow-lg bg-green-700 hover:bg-green-100 hover:text-green-700 transition-all duration-300'>START</button>
       </div>
 
       <div className="fixed bottom-0 w-full flex-none flex flex-row items-center justify-center border-t-1 border-[#e1edf5] bg-white h-[55px]">

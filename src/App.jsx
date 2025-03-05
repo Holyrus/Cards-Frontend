@@ -34,6 +34,8 @@ const App = () => {
 
   const [user, userDispatch] = useReducer(userReducer, null)
 
+  console.log(user)
+
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
