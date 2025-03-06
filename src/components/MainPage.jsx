@@ -1,15 +1,70 @@
 import { Link } from "react-router-dom"
+import { useState } from "react";
 import ThreeDModel from "./Model.jsx"
 
-const MainPage = () => {
+const MainPage = ({decks}) => {
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleMouseEnter = () => {
+    displayDialog();
+  }
+
+  const handleMouseLeave = () => {
+    removeDialog();
+  }
+
+  const displayDialog = () => {
+    setIsOpen(true);
+  }
+
+  const removeDialog = () => {
+    setIsOpen(false);
+  }
+
   return (
     <div className="min-h-screen flex flex-col items-center">
       
-      <div className="w-full flex-none flex flex-row border-b-1 border-[#e1edf5] h-[55px]">
-        
-      </div>
+      <div className="w-full flex-none flex flex-row items-center justify-center border-b-1 border-[#e1edf5] h-[55px]">
 
-      <div className="flex-1 flex flex-col items-center w-full bg-[#f3fff2]">
+        <div className='hover-trigger hover:text-[#707073ff] flex items-center justify-center w-[135px] cursor-pointer h-full' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+          <p className="mr-0.5">English</p> 
+          <svg className="text-[#707073ff]" width="16" height="12" viewBox="0 0 24 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="6,8 18,8 12,16" />
+          </svg>
+        </div>
+
+        <div className={`bg-white text-black py-[8px] z-20 border-1 border-[#e3e2e1] w-[175px] top-0 rounded-lg mt-[54px] opacity-0 ${isOpen ? 'absolute opacity-100 translate-y-0 ' : 'absolute opacity-0 pointer-events-none translate-y-[-10px]'} transform duration-300`} onMouseEnter={displayDialog} onMouseLeave={removeDialog}>
+
+            {decks.length !== 0 &&
+              [...decks]
+                .map((deck, index) => 
+                  <div key={index} className="h-[50px] w-full bg-[#ebf7fc] hover:bg-[#e3f4fc] flex flex-row justify-center gap-3 items-center cursor-pointer px-1">
+                    
+                    <div className="relative w-[40px] h-[30px]">
+                      <img className="absolute bottom-1 left-2 ml-2 w-[20px]" src={`https://flagcdn.com/80x60/${deck.secondFlag}.webp` || null} alt="Second flag" />
+                      <img className="absolute bottom-3 right-4 ml-2 w-[20px]" src={`https://flagcdn.com/80x60/${deck.firstFlag}.webp` || null} alt="First flag" />
+                    </div>
+
+                    <div className="flex flex-col">
+                      <p className="text-[15px]">{deck.learnLang}</p>
+                      <p className="text-[13px] text-[#009900]">{deck.cards.length} To learn</p>
+                    </div>
+
+                      <svg className="text-[#abb4b8] w-[35px] cursor-pointer p-2 rounded-full hover:bg-[#d5effb]" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="EditIcon"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75z"></path></svg>
+                  
+                  </div>
+                )
+              }
+          
+            <Link to="/newdeck" className="text-[#009900] flex flex-row items-center justify-center w-full gap-1 h-[36px] hover:bg-[#f5f5f5] cursor-pointer">
+              <svg className="text-[#009900] w-[24px]" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="AddIcon"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"></path></svg>
+              <p>Create new deck</p>
+            </Link>
+        </div>
+    </div>
+
+      <div className="flex-1 mb-[55px] flex flex-col items-center w-full bg-[#f3fff2]">
         <ThreeDModel />
         <button className='rounded-full text-white border-1 border-green-700 font-semibold py-2 px-5 w-[290px] sm:w-[400px] md:w-[450px] md:py-3 shadow-md hover:shadow-lg bg-green-700 hover:bg-green-100 hover:text-green-700 transition-all duration-300'>START</button>
       </div>

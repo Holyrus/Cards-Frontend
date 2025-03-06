@@ -5,6 +5,7 @@ import {
 
 import loginService from './services/login'
 import signUpService from './services/signup'
+import decksService from './services/decks.js'
 
 import StartPage from './components/StartPage'
 import LoginForm from './components/LoginForm'
@@ -16,6 +17,8 @@ import { useErrorNotificationDispatch } from './components/ErrorNotificationCont
 import Notification from './components/Notification'
 import MainPage from './components/MainPage'
 import Profile from './components/Profile'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import CreateNewDeck from './components/CreateNewDeck.jsx'
 
 const userReducer = (state, action) => {
   switch (action.type) {
@@ -32,9 +35,11 @@ const App = () => {
 
   const navigate = useNavigate()
 
+  const queryClient = useQueryClient()
+
   const [user, userDispatch] = useReducer(userReducer, null)
 
-  console.log(user)
+  // console.log(user)
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -51,9 +56,23 @@ const App = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       userDispatch({ type: "SET_USER", payload: user })
-      // cardService.setToken(user.token)
+      decksService.setToken(user.token)
     }
   }, [])
+
+  const decksResult = useQuery({
+    queryKey: ['decks'],
+    queryFn: decksService.getAll,
+    refetchOnWindowFocus: false,
+    retry: false,
+    enabled: !!user
+  })
+
+  const decks = decksResult.data || []
+
+  // console.log(decks)
+  // console.log(decks[0].learnLang)
+  // console.log(decks[0].cards.length)
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedCardsAppUser')
@@ -77,7 +96,7 @@ const App = () => {
         'loggedCardsAppUser', JSON.stringify(user)
       )
 
-      // cardService.setToken(user.token)
+      decksService.setToken(user.token)
       userDispatch({ type: "SET_USER", payload: user })
       setUsername('')
       setPassword('')
@@ -165,8 +184,9 @@ const App = () => {
         <Notification />
         <ErrorNotification />
         <Routes>
-          <Route path='/main' element={<MainPage />} />
+          <Route path='/main' element={<MainPage decks={decks} />} />
           <Route path='/profile' element={<Profile handleLogout={handleLogout} handleAccountDeleting={handleAccountDeleting} user={user}/>} />
+          <Route path='/newdeck' element={<CreateNewDeck />} />
         </Routes>
       </div>
     )}
