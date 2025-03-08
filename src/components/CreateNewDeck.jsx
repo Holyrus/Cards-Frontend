@@ -1,6 +1,79 @@
 import { Link } from "react-router-dom"
+import { useState, useEffect, useRef } from 'react'
 
 const CreateNewDeck = () => {
+
+  const [isLearnSearchOpen, setIsLearnSearchOpen] = useState(false)
+  const [isNatSearchOpen, setIsNatSearchOpen] = useState(false)
+
+  const searchLearnClickHandler = () => {
+    setIsLearnSearchOpen(true)
+  }
+
+  const searchLearnCancelHandler = () => {
+    setIsLearnSearchOpen(false)
+  }
+
+  const searchNatClickHandler = () => {
+    setIsNatSearchOpen(true)
+  }
+
+  const searchNatCancelHandler = () => {
+    setIsNatSearchOpen(false)
+  }
+
+  const dimOverlayHandler = () => {
+    searchLearnCancelHandler()
+    searchNatCancelHandler()
+  }
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape" && isLearnSearchOpen) {
+        searchLearnCancelHandler()
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [isLearnSearchOpen])
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape" && isNatSearchOpen) {
+        searchNatCancelHandler()
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [isNatSearchOpen])
+
+  const learnInputRef = useRef(null)
+  const natInputRef = useRef(null)
+
+  useEffect(() => {
+    if (isLearnSearchOpen && learnInputRef.current) {
+      learnInputRef.current.focus()
+    } else if (!isLearnSearchOpen && learnInputRef.current) {
+      learnInputRef.current.blur()
+    }
+  }, [isLearnSearchOpen])
+
+  useEffect(() => {
+    if (isNatSearchOpen && natInputRef.current) {
+      natInputRef.current.focus()
+    } else if (!isNatSearchOpen && natInputRef.current) {
+      natInputRef.current.blur()
+    }
+  }, [isNatSearchOpen])
+
   return (
     <div className="min-h-screen flex flex-col items-center">
       
@@ -11,13 +84,30 @@ const CreateNewDeck = () => {
       </div>
 
       <div className="flex-1 flex mb-[55px] py-[45px] flex-col items-center justify-start w-full bg-[#f3fff2]">
-        <div className="flex flex-col items-start justify-start w-[400px]">
-          <h1 className="font-bold text-[17px]">Language you want to learn</h1>
+        
+        <div className="flex flex-col items-center sm:items-start justify-start w-[320px] sm:w-[450px]">
+          <h1 className="font-semibold text-[17px]">Language you want to learn</h1>
+          <button onClick={searchLearnClickHandler} className="mt-3 w-[290px] sm:w-full rounded-full border-1 border-green-700 bg-white py-4 pl-7 pr-5 flex flex-row items-center justify-between cursor-default">
+
+            <p>Finnish</p>
+
+            <svg className="w-[24px]" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ExpandMoreIcon"><path d="M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z"></path></svg>
+
+          </button>
         </div>
 
-        <div className="flex flex-col items-start justify-start w-[400px]">
-          <h1 className="font-bold text-[17px]">Your native Language</h1>
+        <div className="flex flex-col items-center sm:items-start justify-start w-[320px] sm:w-[450px] mt-10">
+          <h1 className="font-semibold text-[17px]">Your native Language</h1>
+          <button onClick={searchNatClickHandler} className="mt-3 w-[290px] sm:w-full rounded-full border-1 border-green-700 bg-white py-4 pl-7 pr-5 flex flex-row items-center justify-between cursor-default">
+
+            <p>Finnish</p>
+
+            <svg className="w-[24px]" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ExpandMoreIcon"><path d="M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z"></path></svg>
+
+          </button>
         </div>
+
+        <button className='mt-9 rounded-full text-white border-1 border-green-700 font-semibold py-2 px-5 w-[290px] sm:w-[450px] sm:py-3 shadow-md hover:shadow-lg bg-green-700 hover:bg-green-100 hover:text-green-700 transition-all duration-300'>SAVE</button>
         
       </div>
 
@@ -43,6 +133,35 @@ const CreateNewDeck = () => {
           </svg>
           <p className="text-[10px] font-semibold select-none">ACCOUNT</p>
         </Link>
+      </div>
+
+      {/* Dim overlay */}
+
+      <div 
+        onClick={dimOverlayHandler}
+        className={`fixed h-[100vh] inset-0 bg-black opacity-0 z-[15] transition-opacity ease-in-out duration-1000 ${isLearnSearchOpen || isNatSearchOpen ? "opacity-35 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+      ></div>
+
+      {/* Learn modal menu */}
+
+      <div className={`z-[20] absolute flex flex-col justify-start items-start bg-white w-[600px] h-[500px] my-4 opacity-0 ${isLearnSearchOpen ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}`}>
+
+        <div className="flex flex-row row-span-4 px-3 items-center justify-between h-[50px] w-full border-b-1 border-[#e2edf5]">
+          <svg className="text-[#757575] w-[24px]" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="SearchIcon"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg>
+        </div>
+
+        <div className="flex flex-col">
+
+          <div className="flex flex-col border-b-1 border-[#e2edf5]">
+            
+          </div>
+
+          <div className="flex flex-col">
+
+          </div>
+
+        </div>
+
       </div>
 
     </div>
