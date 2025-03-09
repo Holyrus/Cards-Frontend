@@ -51,15 +51,6 @@ const App = () => {
   const errorNotificationDispatch = useErrorNotificationDispatch()
   const notificationDispatch = useNotificationDispatch()
 
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedCardsAppUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      userDispatch({ type: "SET_USER", payload: user })
-      decksService.setToken(user.token)
-    }
-  }, [])
-
   const decksResult = useQuery({
     queryKey: ['decks'],
     queryFn: decksService.getAll,
@@ -68,8 +59,40 @@ const App = () => {
     enabled: !!user
   })
 
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedCardsAppUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      userDispatch({ type: "SET_USER", payload: user })
+      decksService.setToken(user.token)
+    }
+
+    if (decksResult?.error?.response?.status === 401) {
+      console.log('Unauthorized error detected, logging out...')
+      window.localStorage.removeItem('loggedCardsAppUser')
+      userDispatch({ type: "REMOVE_USER" })
+      navigate('/')
+      notificationDispatch({ 
+        type: "SET", 
+        payload: 'Session expired. Please login again.'
+      })
+      setTimeout(() => {
+        notificationDispatch({ type: "CLEAR" })
+      }, 6000)
+    }
+  }, [decksResult?.error])
+
   const decks = decksResult.data || []
 
+  if (decksResult.isLoading) {
+    return (
+      <div className='flex flex-col justify-center items-center w-full h-[100vh]'>
+        <h1 className='text-[40px] font-bold bg-gradient-to-r from-green-700 to-yellow-300 text-transparent bg-clip-text'>UmCards</h1>
+      </div>
+    )
+  }
+
+  // console.log(decksResult)
   // console.log(decks)
   // console.log(decks[0].learnLang)
   // console.log(decks[0].cards.length)
@@ -168,7 +191,9 @@ const App = () => {
   
   return (
     <main className="antialiased overflow-x-hidden">
- {/* || (result.error?.message === "Request failed with status code 401" && result.error?.config.method === "get") */}
+ 
+ {/* || (decks.error?.message === "Request failed with status code 401" && decks.error?.config.method === "get") */}
+
     {user === null ? (
       <div>
         <Notification />
