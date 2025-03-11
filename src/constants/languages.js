@@ -28,10 +28,8 @@ export const MAIN_LANGUAGES = [
 export const OTHER_LANGUAGES = [
     { language: "Dari", flag: "af" },
     { language: "Albanian", flag: "al" },
-    { language: "Arabic", flag: "dz" },
     { language: "Armenian", flag: "am" },
     { language: "Azerbaijani", flag: "az" },
-    { language: "Arabic", flag: "bh" },
     { language: "Bengali", flag: "bd" },
     { language: "Belarusian", flag: "by" },
     { language: "Dutch", flag: "be" },
@@ -72,7 +70,6 @@ export const OTHER_LANGUAGES = [
     { language: "Thai", flag: "th" },
     { language: "Turkish", flag: "tr" },
     { language: "Ukrainian", flag: "ua" },
-    { language: "Arabic", flag: "ae" },
     { language: "Vietnamese", flag: "vn" },
     { language: "Zulu", flag: "za" }
 ]

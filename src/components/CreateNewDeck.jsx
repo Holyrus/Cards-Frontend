@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import { MAIN_LANGUAGES, OTHER_LANGUAGES } from "../constants/languages"
 import { useErrorNotificationDispatch } from './ErrorNotificationContext'
 
-const CreateNewDeck = () => {
+const CreateNewDeck = ({ createDeck }) => {
 
   const [isLearnSearchOpen, setIsLearnSearchOpen] = useState(false)
   const [isNatSearchOpen, setIsNatSearchOpen] = useState(false)
@@ -13,7 +13,32 @@ const CreateNewDeck = () => {
   const [learnFlag, setLearnFlag] = useState('')
   const [natFlag, setNatFlag] = useState('')
 
+  const [learnSearch, setLearnSearch] = useState('')
+  const [natSearch, setNatSearch] = useState('')
+
   const errorNotificationDispatch = useErrorNotificationDispatch()
+
+  const createDeckHandler = (event) => {
+    event.preventDefault()
+    if (learnLanguage !== ' 🏳️ Select a language ' && natLanguage !== ' 🏳️ Select a language') {
+      createDeck({
+        learnLang: learnLanguage,
+        natLang: natLanguage,
+        firstFlag: learnFlag,
+        secondFlag: natFlag
+      })
+      dimOverlayHandler()
+      setLearnLanguage(' 🏳️ Select a language ')
+      setNatLanguage(' 🏳️ Select a language')
+      setLearnFlag('')
+      setNatFlag('')
+    } else {
+      errorNotificationDispatch({ type: "SET", payload: 'Select two languages' })
+      setTimeout(() => {
+        errorNotificationDispatch({ type: "CLEAR" })
+      }, 6000)
+    }
+  }
 
   const searchLearnClickHandler = () => {
     setIsLearnSearchOpen(true)
@@ -108,8 +133,24 @@ const CreateNewDeck = () => {
     }
   }, [learnLanguage, natLanguage])
 
+  const handleLearnSearch = (event) => {
+    setLearnSearch(event.target.value)
+  }
+
+  const clearLearnSearch = () => {
+    setLearnSearch('')
+  }
+
+  const handleNatSearch = (event) => {
+    setNatSearch(event.target.value)
+  }
+
+  const clearNatSearch = () => {
+    setNatSearch('')
+  }
+
   return (
-    <div className="min-h-screen flex flex-col items-center">
+    <div className="min-h-screen flex flex-col items-center w-full">
       
       <div className="w-full flex-none flex flex-row items-center justify-center border-b-1 border-[#e1edf5] h-[55px]">
         <Link to="/main"><svg className="w-[40px] rounded-full hover:bg-[#edeeee] text-black p-2" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="KeyboardArrowLeftRoundedIcon"><path d="M14.71 15.88 10.83 12l3.88-3.88c.39-.39.39-1.02 0-1.41a.9959.9959 0 0 0-1.41 0L8.71 11.3c-.39.39-.39 1.02 0 1.41l4.59 4.59c.39.39 1.02.39 1.41 0 .38-.39.39-1.03 0-1.42"></path></svg></Link>
@@ -155,7 +196,7 @@ const CreateNewDeck = () => {
           </button>
         </div>
 
-        <button className='mt-9 rounded-full text-white border-1 border-green-700 font-semibold py-2 px-5 w-[290px] sm:w-[450px] sm:py-3 shadow-md hover:shadow-lg bg-green-700 hover:bg-green-100 hover:text-green-700 transition-all duration-300'>SAVE</button>
+        <button onClick={createDeckHandler} className='mt-9 rounded-full text-white border-1 border-green-700 font-semibold py-2 px-5 w-[290px] sm:w-[450px] sm:py-3 shadow-md hover:shadow-lg bg-green-700 hover:bg-green-100 hover:text-green-700 transition-all duration-300'>SAVE</button>
         
       </div>
 
@@ -192,14 +233,21 @@ const CreateNewDeck = () => {
 
       {/* Learn modal menu */}
 
-      <div className={`z-[20] absolute flex flex-col justify-start items-start bg-white w-[600px] h-[500px] my-4 opacity-0 ${isLearnSearchOpen ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}`}>
+      <div className={`z-[20] absolute flex flex-col justify-start items-start bg-white w-[290px] sm:w-[600px] h-[500px] my-4 opacity-0 ${isLearnSearchOpen ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}`}>
 
-        <div className="flex flex-row row-span-4 px-1 items-center justify-between h-[50px] w-full border-b-1 border-[#e2edf5]">
+        <div className="flex flex-row row-span-4 px-1 items-center justify-between h-[40px] w-full border-b-1 border-[#e2edf5]">
           <svg className="text-[#757575] w-[45px] p-2 rounded-full hover:bg-gray-100" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="SearchIcon"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg>
-          <input className="bg-transparent focus:outline-none text-black w-full placeholder-[#707073ff] text-[17px] ml-[5px] cursor-text pb-0.5" type="text" placeholder="Search" />
+          <input 
+            className="bg-transparent focus:outline-none text-black w-full placeholder-[#707073ff] text-[17px] ml-[5px] cursor-text pb-0.5" 
+            type="text" 
+            placeholder="Search"
+            value={learnSearch}
+            onChange={handleLearnSearch}
+            ref={learnInputRef}
+          />
           <button
             type="button"
-            // onClick={clearSearch}
+            onClick={clearLearnSearch}
             aria-label="Clear Search"
             className="p-2 text-black hover:bg-gray-100 rounded-full"             
           >
@@ -221,7 +269,9 @@ const CreateNewDeck = () => {
         <div className="flex flex-col overflow-y-auto w-full p-3">
 
           <div className="flex flex-col border-b-1 border-[#e2edf5] pb-4">
-            {MAIN_LANGUAGES.map((item, index) => (
+            {MAIN_LANGUAGES
+              .filter(item => item.language.toLowerCase().includes(learnSearch.toLowerCase()))
+              .map((item, index) => (
               <button onClick={() => clickLearnHandler(item.language, item.flag)} key={index} className="flex flex-row justify-start items-center hover:bg-gray-100 p-[6px] pl-4 gap-2 cursor-pointer">
                 <img className="w-[20px]" src={`https://flagcdn.com/80x60/${item.flag}.webp`} alt={`${item.language} flag`} />
                 <p>{item.language}</p>
@@ -230,7 +280,9 @@ const CreateNewDeck = () => {
           </div>
 
           <div className="flex flex-col pt-4">
-            {OTHER_LANGUAGES.map((item, index) => (
+            {OTHER_LANGUAGES
+              .filter(item => item.language.toLowerCase().includes(learnSearch.toLowerCase()))
+              .map((item, index) => (
               <button onClick={() => clickLearnHandler(item.language, item.flag)} key={index} className="flex flex-row justify-start items-center hover:bg-gray-100 p-[6px] pl-4 gap-2 cursor-pointer">
                 <img className="w-[20px]" src={`https://flagcdn.com/80x60/${item.flag}.webp`} alt={`${item.language} flag`} />
                 <p>{item.language}</p>
@@ -244,14 +296,21 @@ const CreateNewDeck = () => {
 
       {/* Native modal menu */}
 
-      <div className={`z-[20] absolute flex flex-col justify-start items-start bg-white w-[600px] h-[500px] my-4 opacity-0 ${isNatSearchOpen ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}`}>
+      <div className={`z-[20] absolute flex flex-col justify-start items-start bg-white w-[290px] sm:w-[600px] h-[500px] my-4 opacity-0 ${isNatSearchOpen ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}`}>
 
-        <div className="flex flex-row row-span-4 px-1 items-center justify-between h-[50px] w-full border-b-1 border-[#e2edf5]">
+        <div className="flex flex-row row-span-4 px-1 items-center justify-between h-[40px] w-full border-b-1 border-[#e2edf5]">
           <svg className="text-[#757575] w-[45px] p-2 rounded-full hover:bg-gray-100" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="SearchIcon"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg>
-          <input className="bg-transparent focus:outline-none text-black w-full placeholder-[#707073ff] text-[17px] ml-[5px] cursor-text pb-0.5" type="text" placeholder="Search" />
+          <input 
+            className="bg-transparent focus:outline-none text-black w-full placeholder-[#707073ff] text-[17px] ml-[5px] cursor-text pb-0.5" 
+            type="text" 
+            placeholder="Search"
+            value={natSearch}
+            onChange={handleNatSearch}
+            ref={natInputRef}
+          />
           <button
             type="button"
-            // onClick={clearSearch}
+            onClick={clearNatSearch}
             aria-label="Clear Search"
             className="p-2 text-black hover:bg-gray-100 rounded-full"             
           >
@@ -273,7 +332,9 @@ const CreateNewDeck = () => {
         <div className="flex flex-col overflow-y-auto w-full p-3">
 
           <div className="flex flex-col border-b-1 border-[#e2edf5] pb-4">
-            {MAIN_LANGUAGES.map((item, index) => (
+            {MAIN_LANGUAGES
+              .filter(item => item.language.toLowerCase().includes(natSearch.toLowerCase()))
+              .map((item, index) => (
               <button onClick={() => clickNatHandler(item.language, item.flag)} key={index} className="flex flex-row justify-start items-center hover:bg-gray-100 p-[6px] pl-4 gap-2 cursor-pointer">
                 <img className="w-[20px]" src={`https://flagcdn.com/80x60/${item.flag}.webp`} alt={`${item.language} flag`} />
                 <p>{item.language}</p>
@@ -282,7 +343,9 @@ const CreateNewDeck = () => {
           </div>
 
           <div className="flex flex-col pt-4">
-            {OTHER_LANGUAGES.map((item, index) => (
+            {OTHER_LANGUAGES
+              .filter(item => item.language.toLowerCase().includes(natSearch.toLowerCase()))
+              .map((item, index) => (
               <button onClick={() => clickNatHandler(item.language, item.flag)} key={index} className="flex flex-row justify-start items-center hover:bg-gray-100 p-[6px] pl-4 gap-2 cursor-pointer">
                 <img className="w-[20px]" src={`https://flagcdn.com/80x60/${item.flag}.webp`} alt={`${item.language} flag`} />
                 <p>{item.language}</p>

@@ -51,6 +51,13 @@ const App = () => {
   const errorNotificationDispatch = useErrorNotificationDispatch()
   const notificationDispatch = useNotificationDispatch()
 
+  const newDeckMutation = useMutation({
+    mutationFn: decksService.create,
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['decks'] })
+    }
+  })
+
   const decksResult = useQuery({
     queryKey: ['decks'],
     queryFn: decksService.getAll,
@@ -188,6 +195,25 @@ const App = () => {
       }
     }
   }
+
+  const createDeck = async (deckObject) => {
+    newDeckMutation.mutate(deckObject, {
+      onError: (error) => {
+        navigate('/main')
+        errorNotificationDispatch({ type: "SET", payload: `${error.response.data.error}` })
+        setTimeout(() => {
+          errorNotificationDispatch({ type: "CLEAR" })
+        }, 6000)
+      },
+      onSuccess: () => {
+        navigate('/main')
+        notificationDispatch({ type: "SET", payload: 'New deck was created!' })
+        setTimeout(() => {
+          notificationDispatch({ type: "CLEAR" })
+        }, 6000)
+      }
+    })
+  }
   
   return (
     <main className="antialiased overflow-x-hidden">
@@ -211,7 +237,7 @@ const App = () => {
         <Routes>
           <Route path='/main' element={<MainPage decks={decks} />} />
           <Route path='/profile' element={<Profile handleLogout={handleLogout} handleAccountDeleting={handleAccountDeleting} user={user}/>} />
-          <Route path='/newdeck' element={<CreateNewDeck />} />
+          <Route path='/newdeck' element={<CreateNewDeck createDeck={createDeck} />} />
         </Routes>
       </div>
     )}
