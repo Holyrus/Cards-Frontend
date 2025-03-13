@@ -20,6 +20,7 @@ import Profile from './components/Profile'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import CreateNewDeck from './components/CreateNewDeck.jsx'
 import DeckSettings from './components/DeckSettings.jsx'
+import CreateFirstDeck from './components/CreateFirstDeck.jsx'
 
 const userReducer = (state, action) => {
   switch (action.type) {
@@ -105,6 +106,19 @@ const App = () => {
   }, [decksResult?.error])
 
   const decks = decksResult.data || []
+
+  useEffect(() => {
+    if (user && !decksResult.isLoading) {
+      const currentPath = window.location.pathname
+      const emptyDecks = Array.isArray(decks) && decks.length === 0
+  
+      if (emptyDecks && currentPath !== '/firstdeck') {
+        navigate('/firstdeck')
+      } else if (!emptyDecks && currentPath === '/firstdeck') {
+        navigate('/main')
+      }
+    }
+  }, [decks, user, decksResult.isLoading, navigate])
 
   const decksMatch = useMatch('/deck/:id')
   const selectedDeck = decksMatch ? decks.find(deck => deck.id === decksMatch.params.id) : null
@@ -299,6 +313,7 @@ const App = () => {
           <Route path='/profile' element={<Profile handleLogout={handleLogout} handleAccountDeleting={handleAccountDeleting} user={user}/>} />
           <Route path='/newdeck' element={<CreateNewDeck createDeck={createDeck} />} />
           <Route path='/deck/:id' element={<DeckSettings selectedDeck={selectedDeck} updateDeck={updateDeck} deleteDeck={deleteDeck}/>} />
+          <Route path='/firstdeck' element={<CreateFirstDeck />} />
         </Routes>
       </div>
     )}
