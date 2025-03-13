@@ -19,6 +19,7 @@ import MainPage from './components/MainPage'
 import Profile from './components/Profile'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import CreateNewDeck from './components/CreateNewDeck.jsx'
+import DeckSettings from './components/DeckSettings.jsx'
 
 const userReducer = (state, action) => {
   switch (action.type) {
@@ -58,6 +59,20 @@ const App = () => {
     }
   })
 
+  const updateDeckMutation = useMutation({
+    mutationFn: (updatedDeck) => decksService.update(updatedDeck.id, updatedDeck),
+    onSuccess: (updatedDeck) => {
+      queryClient.invalidateQueries({ queryKey: ['decks'] })
+    }
+  })
+
+  const deleteDeckMutation = useMutation({
+    mutationFn: (deletedDeck) => decksService.remove(deletedDeck.id),
+    onSuccess: (deletedDeck) => {
+      queryClient.invalidateQueries({ queryKey: ['decks'] })
+    }
+  })
+
   const decksResult = useQuery({
     queryKey: ['decks'],
     queryFn: decksService.getAll,
@@ -90,6 +105,9 @@ const App = () => {
   }, [decksResult?.error])
 
   const decks = decksResult.data || []
+
+  const decksMatch = useMatch('/deck/:id')
+  const selectedDeck = decksMatch ? decks.find(deck => deck.id === decksMatch.params.id) : null
 
   if (decksResult.isLoading) {
     return (
@@ -214,6 +232,48 @@ const App = () => {
       }
     })
   }
+
+  const updateDeck = (id, newObject) => {
+
+    updateDeckMutation.mutate({...newObject, id: id}, {
+      onError: (error) => {
+        navigate('/main')
+        errorNotificationDispatch({ type: "SET", payload: `${error.response.data.error}` })
+        setTimeout(() => {
+          errorNotificationDispatch({ type: "CLEAR" })
+        }, 6000)
+      },
+      onSuccess: () => {
+        navigate('/main')
+        notificationDispatch({ type: "SET", payload: 'Deck was edited!' })
+        setTimeout(() => {
+          notificationDispatch({ type: "CLEAR" })
+        }, 6000)
+      }
+    })
+  }
+
+  const deleteDeck = id => {
+    const deckToDelete = decks.find(deck => deck.id === id)
+
+    if (window.confirm(`Remove deck? All cards will be deleted.`)) {
+      deleteDeckMutation.mutate(deckToDelete, {
+        onError: (error) => {
+          errorNotificationDispatch({ type: "SET", payload: `${error.response.data.error}` })
+          setTimeout(() => {
+            errorNotificationDispatch({ type: "CLEAR" })
+          }, 6000)
+        },
+        onSuccess: () => {
+          navigate('/main')
+          notificationDispatch({ type: "SET", payload: 'Deck was deleted!' })
+          setTimeout(() => {
+            notificationDispatch({ type: "CLEAR" })
+          }, 6000)
+        }
+      })
+    }
+  }
   
   return (
     <main className="antialiased overflow-x-hidden">
@@ -238,6 +298,7 @@ const App = () => {
           <Route path='/main' element={<MainPage decks={decks} />} />
           <Route path='/profile' element={<Profile handleLogout={handleLogout} handleAccountDeleting={handleAccountDeleting} user={user}/>} />
           <Route path='/newdeck' element={<CreateNewDeck createDeck={createDeck} />} />
+          <Route path='/deck/:id' element={<DeckSettings selectedDeck={selectedDeck} updateDeck={updateDeck} deleteDeck={deleteDeck}/>} />
         </Routes>
       </div>
     )}
