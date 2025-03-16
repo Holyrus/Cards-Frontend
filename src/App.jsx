@@ -107,6 +107,8 @@ const App = () => {
 
   const decks = decksResult.data || []
 
+  console.log(decks)
+
   useEffect(() => {
     if (user && !decksResult.isLoading) {
       const currentPath = window.location.pathname
@@ -313,7 +315,7 @@ const App = () => {
           <Route path='/profile' element={<Profile handleLogout={handleLogout} handleAccountDeleting={handleAccountDeleting} user={user}/>} />
           <Route path='/newdeck' element={<CreateNewDeck createDeck={createDeck} />} />
           <Route path='/deck/:id' element={<DeckSettings selectedDeck={selectedDeck} updateDeck={updateDeck} deleteDeck={deleteDeck}/>} />
-          <Route path='/firstdeck' element={<CreateFirstDeck />} />
+          <Route path='/firstdeck' element={<CreateFirstDeck createDeck={createDeck} />} />
         </Routes>
       </div>
     )}
