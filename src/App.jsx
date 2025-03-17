@@ -21,6 +21,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import CreateNewDeck from './components/CreateNewDeck.jsx'
 import DeckSettings from './components/DeckSettings.jsx'
 import CreateFirstDeck from './components/CreateFirstDeck.jsx'
+import CreateNewCard from './components/CreateNewCard.jsx'
 
 const userReducer = (state, action) => {
   switch (action.type) {
@@ -90,7 +91,7 @@ const App = () => {
       decksService.setToken(user.token)
     }
 
-    if (decksResult?.error?.response?.status === 401) {
+    if (decksResult?.error?.response?.status === 401 || decksResult?.error?.response?.status === 500) {
       console.log('Unauthorized error detected, logging out...')
       window.localStorage.removeItem('loggedCardsAppUser')
       userDispatch({ type: "REMOVE_USER" })
@@ -106,8 +107,6 @@ const App = () => {
   }, [decksResult?.error])
 
   const decks = decksResult.data || []
-
-  console.log(decks)
 
   useEffect(() => {
     if (user && !decksResult.isLoading) {
@@ -173,10 +172,17 @@ const App = () => {
       // queryClient.invalidateQueries({ queryKey: ['cards'] })
 
     } catch (exception) {
-      errorNotificationDispatch({ type: "SET", payload: 'Wrong credentials' })
-      setTimeout(() => {
-        errorNotificationDispatch({ type: "CLEAR" })
-      }, 6000)
+      if (exception.status === 500) {
+        errorNotificationDispatch({ type: "SET", payload: 'Service unavailable' })
+        setTimeout(() => {
+          errorNotificationDispatch({ type: "CLEAR" })
+        }, 6000)
+      } else {
+        errorNotificationDispatch({ type: "SET", payload: 'Wrong credentials' })
+        setTimeout(() => {
+          errorNotificationDispatch({ type: "CLEAR" })
+        }, 6000)
+      }
     }
   }
 
@@ -316,6 +322,7 @@ const App = () => {
           <Route path='/newdeck' element={<CreateNewDeck createDeck={createDeck} />} />
           <Route path='/deck/:id' element={<DeckSettings selectedDeck={selectedDeck} updateDeck={updateDeck} deleteDeck={deleteDeck}/>} />
           <Route path='/firstdeck' element={<CreateFirstDeck createDeck={createDeck} />} />
+          <Route path='/main/newcard' element={<CreateNewCard />} />
         </Routes>
       </div>
     )}

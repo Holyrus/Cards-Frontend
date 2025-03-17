@@ -25,7 +25,8 @@ const CreateNewDeck = ({ createDeck }) => {
         learnLang: learnLanguage,
         natLang: natLanguage,
         firstFlag: learnFlag,
-        secondFlag: natFlag
+        secondFlag: natFlag,
+        mainDeck: false,
       })
       dimOverlayHandler()
       setLearnLanguage(' 🏳️ Select a language ')

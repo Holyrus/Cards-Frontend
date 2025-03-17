@@ -1,8 +1,74 @@
 import { Link } from "react-router-dom"
 import { useState, useEffect } from "react";
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import decksService from '../services/decks'
 import ThreeDModel from "./Model.jsx"
 
 const MainPage = ({ decks }) => {
+
+  const queryClient = useQueryClient()
+  const [currentDeck, setCurrentDeck] = useState('')
+
+  const updateDeckMutation = useMutation({
+    mutationFn: (updatedDeck) => decksService.update(updatedDeck.id, updatedDeck),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['decks'] })
+    }
+  })
+
+  useEffect(() => {
+    const mainDeck = decks.find(deck => deck.mainDeck === true)
+    if (mainDeck) {
+      setCurrentDeck(mainDeck)
+    } else if (decks.length > 0) {
+      setNextMainDeck()
+    }
+  }, [decks])
+
+  const mainDeckSetter = async (selectedDeck) => {
+    try {
+      const updatePromises = decks.map(deck => {
+        if (deck.id !== selectedDeck.id) {
+          return updateDeckMutation.mutateAsync({
+            ...deck,
+            mainDeck: false
+          })
+        }
+      })
+
+      await Promise.all(updatePromises)
+
+      await updateDeckMutation.mutateAsync({
+        ...selectedDeck,
+        mainDeck: true
+      })
+
+      setCurrentDeck(selectedDeck)
+    } catch (error) {
+      console.error('Error updating main deck:', error)
+    }
+
+  }
+
+  const setNextMainDeck = async () => {
+    if (decks.length > 0) {
+      const nextDeck = decks[0]
+      try {
+        await updateDeckMutation.mutateAsync({
+          ...nextDeck,
+          mainDeck: true
+        })
+        setCurrentDeck(nextDeck)
+      } catch (error) {
+        console.error('Error setting next main deck:', error)
+      }
+    }
+  }
+
+  console.log(currentDeck)
+  // console.log(decks)
+
+  //---------------------------
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -97,7 +163,11 @@ const MainPage = ({ decks }) => {
         </button>
 
         <div className='hover-trigger hover:text-[#707073ff] flex items-center justify-center w-[135px] cursor-pointer h-full' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-          <p className="mr-0.5">English</p> 
+          <div className="relative w-[40px] h-[30px]">
+            <img className="absolute bottom-1 left-2 ml-2 w-[18px]" src={`https://flagcdn.com/80x60/${currentDeck.secondFlag}.webp` || null} alt="Second flag" />
+            <img className="absolute bottom-3 right-4 ml-2 w-[18px]" src={`https://flagcdn.com/80x60/${currentDeck.firstFlag}.webp` || null} alt="First flag" />
+          </div>  
+          <p className="mx-0.5">{currentDeck.learnLang}</p>
           <svg className="text-[#707073ff]" width="16" height="12" viewBox="0 0 24 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <polygon points="6,8 18,8 12,16" />
           </svg>
@@ -112,7 +182,7 @@ const MainPage = ({ decks }) => {
             {decks.length !== 0 &&
               [...decks]
                 .map((deck, index) => 
-                  <div key={index} className="h-[50px] w-full bg-[#ebf7fc] hover:bg-[#e3f4fc] flex flex-row justify-center gap-3 items-center cursor-pointer px-1">
+                  <div onClick={() => mainDeckSetter(deck)} key={index} className={`h-[50px] w-full hover:bg-[#e5eaec] flex flex-row justify-center gap-3 items-center cursor-pointer px-1 ${currentDeck.learnLang === deck.learnLang ? 'bg-[#ebf7fc]' : 'bg-white'}`}>
                     
                     <div className="relative w-[40px] h-[30px]">
                       <img className="absolute bottom-1 left-2 ml-2 w-[20px]" src={`https://flagcdn.com/80x60/${deck.secondFlag}.webp` || null} alt="Second flag" />
@@ -151,8 +221,40 @@ const MainPage = ({ decks }) => {
       </div>
 
       <div className="flex-1 z-20 mb-[55px] flex flex-col items-center w-full bg-[#f3fff2]">
+        <div className="mt-[15px] mb-[5px] w-full h-[80px] flex flex-row justify-center items-center gap-1 sm:gap-6 px-5">
+            
+            <div className="cursor-pointer rounded-sm w-[235px] h-[60px] border-1 border-[#e3e2e0] bg-white flex flex-col justify-center items-center">
+              <p className="text-[22px] font-semibold text-[#009900]">{currentDeck?.cards?.length || 0}</p>
+              <div className="flex flex-row items-center justify-center gap-1">
+                <p className="text-[#009900] pb-[4px]">To learn</p>
+                <svg className="text-[#009900] w-[16px]" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="HelpOutlineIcon"><path d="M11 18h2v-2h-2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4"></path></svg>
+              </div>
+            </div>
+
+            <div className="cursor-pointer rounded-sm w-[235px] h-[60px] border-1 border-[#e3e2e0] bg-white flex flex-col justify-center items-center">
+              <p className="text-[22px] font-semibold text-[#0099dd]">{currentDeck?.cards?.length || 0}</p>
+              <div className="flex flex-row items-center justify-center gap-1">
+                <p className="text-[#0099dd] pb-[4px]">Known</p>
+                <svg className="text-[#0099dd] w-[16px]" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="HelpOutlineIcon"><path d="M11 18h2v-2h-2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4"></path></svg>
+              </div>
+            </div>
+
+            <div className="cursor-pointer rounded-sm w-[235px] h-[60px] border-1 border-[#e3e2e0] bg-white flex flex-col justify-center items-center">
+              <p className="text-[22px] font-semibold text-[#d3b000]">{currentDeck?.cards?.length || 0}</p>
+              <div className="flex flex-row items-center justify-center gap-1">
+                <p className="text-[#d3b000] pb-[4px]">Learned</p>
+                <svg className="text-[#d3b000] w-[16px]" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="HelpOutlineIcon"><path d="M11 18h2v-2h-2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4"></path></svg>
+              </div>
+            </div>
+
+        </div>
         <ThreeDModel />
         <button className='rounded-full text-white border-1 border-green-700 font-semibold py-2 px-5 w-[290px] sm:w-[400px] md:w-[450px] md:py-3 shadow-md hover:shadow-lg bg-green-700 hover:bg-green-100 hover:text-green-700 transition-all duration-300'>START</button>
+        <div className="mt-5 flex flex-row justify-center items-center">
+          <Link to="/main/newcard" className="p-2.5 bg-green-700 text-white hover:text-green-700 rounded-full border-1 border-green-700 shadow-md hover:bg-green-100 transition-all duration-300">
+            <svg className="w-[34px]" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="AddIcon"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"></path></svg>
+          </Link>
+        </div>
       </div>
 
       <div className="fixed bottom-0 w-full flex-none flex flex-row items-center justify-center border-t-1 border-[#e1edf5] bg-white h-[55px]">
