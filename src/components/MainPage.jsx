@@ -20,20 +20,21 @@ const MainPage = ({ decks }) => {
     const mainDeck = decks.find(deck => deck.mainDeck === true)
     if (mainDeck) {
       setCurrentDeck(mainDeck)
-    } else if (decks.length > 0) {
-      setNextMainDeck()
-    }
+    } 
+    // else if (decks.length > 0) {
+    //   setNextMainDeck()
+    // }
   }, [decks])
 
   const mainDeckSetter = async (selectedDeck) => {
     try {
-      const updatePromises = decks.map(deck => {
-        if (deck.id !== selectedDeck.id) {
+      const updatePromises = decks
+      .filter(deck => deck.id !== selectedDeck.id)  
+      .map(deck => {
           return updateDeckMutation.mutateAsync({
             ...deck,
             mainDeck: false
           })
-        }
       })
 
       await Promise.all(updatePromises)
@@ -50,22 +51,23 @@ const MainPage = ({ decks }) => {
 
   }
 
-  const setNextMainDeck = async () => {
-    if (decks.length > 0) {
-      const nextDeck = decks[0]
-      try {
-        await updateDeckMutation.mutateAsync({
-          ...nextDeck,
-          mainDeck: true
-        })
-        setCurrentDeck(nextDeck)
-      } catch (error) {
-        console.error('Error setting next main deck:', error)
-      }
-    }
-  }
+  // const setNextMainDeck = async () => {
+  //   const mainDeck = decks.find(deck => deck.mainDeck === true)
+  //   if (decks.length > 0 && !mainDeck) {
+  //     const nextDeck = decks[0]
+  //     try {
+  //       await updateDeckMutation.mutateAsync({
+  //         ...nextDeck,
+  //         mainDeck: true
+  //       })
+  //       setCurrentDeck(nextDeck)
+  //     } catch (error) {
+  //       console.error('Error setting next main deck:', error)
+  //     }
+  //   }
+  // }
 
-  console.log(currentDeck)
+  console.log(currentDeck.learnLang, currentDeck.mainDeck)
   // console.log(decks)
 
   //---------------------------
@@ -249,9 +251,11 @@ const MainPage = ({ decks }) => {
 
         </div>
         <ThreeDModel />
-        <button className='rounded-full text-white border-1 border-green-700 font-semibold py-2 px-5 w-[290px] sm:w-[400px] md:w-[450px] md:py-3 shadow-md hover:shadow-lg bg-green-700 hover:bg-green-100 hover:text-green-700 transition-all duration-300'>START</button>
+        { currentDeck?.cards?.length !== 0 && <button className='rounded-full text-white border-1 border-green-700 font-semibold py-2 px-5 w-[290px] sm:w-[400px] md:w-[450px] md:py-3 shadow-md hover:shadow-lg bg-green-700 hover:bg-green-100 hover:text-green-700 transition-all duration-300'>START</button> }
         <div className="mt-5 flex flex-row justify-center items-center">
-          <Link to="/main/newcard" className="p-2.5 bg-green-700 text-white hover:text-green-700 rounded-full border-1 border-green-700 shadow-md hover:bg-green-100 transition-all duration-300">
+          <Link to="/main/newcard"
+                state={{ currentDeck }}
+                className="p-2.5 bg-green-700 text-white hover:text-green-700 rounded-full border-1 border-green-700 shadow-md hover:bg-green-100 transition-all duration-300">
             <svg className="w-[34px]" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="AddIcon"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"></path></svg>
           </Link>
         </div>

@@ -6,6 +6,7 @@ import {
 import loginService from './services/login'
 import signUpService from './services/signup'
 import decksService from './services/decks.js'
+import cardsService from './services/cards.js'
 
 import StartPage from './components/StartPage'
 import LoginForm from './components/LoginForm'
@@ -42,8 +43,6 @@ const App = () => {
 
   const [user, userDispatch] = useReducer(userReducer, null)
 
-  // console.log(user)
-
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
@@ -53,6 +52,8 @@ const App = () => {
 
   const errorNotificationDispatch = useErrorNotificationDispatch()
   const notificationDispatch = useNotificationDispatch()
+
+  // Decks results
 
   const newDeckMutation = useMutation({
     mutationFn: decksService.create,
@@ -89,6 +90,7 @@ const App = () => {
       const user = JSON.parse(loggedUserJSON)
       userDispatch({ type: "SET_USER", payload: user })
       decksService.setToken(user.token)
+      cardsService.setToken(user.token)
     }
 
     if (decksResult?.error?.response?.status === 401 || decksResult?.error?.response?.status === 500) {
@@ -118,6 +120,13 @@ const App = () => {
       } else if (!emptyDecks && currentPath === '/firstdeck') {
         navigate('/main')
       }
+    } else {
+      const currentPath = window.location.pathname
+      const emptyDecks = Array.isArray(decks) && decks.length === 0
+
+      if (emptyDecks && currentPath === '/firstdeck') {
+        navigate('/')
+      }
     }
   }, [decks, user, decksResult.isLoading, navigate])
 
@@ -136,6 +145,28 @@ const App = () => {
   // console.log(decks)
   // console.log(decks[0].learnLang)
   // console.log(decks[0].cards.length)
+
+  // -----------------------------------------------------------------
+
+  // Cards results
+
+  // const newCardMutation = useMutation({
+  //   mutationFn: cardsService.create(),
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({queryKey: ['cards'] })
+  //     queryClient.invalidateQueries({queryKey: ['decks'] })
+  //   }
+  // })
+
+  // const cardsResult = useQuery({
+  //   queryKey: ['cards'],
+  //   queryFn: cardsService.getAll(),
+  //   refetchOnWindowFocus: false,
+  //   retry: false,
+  //   enabled: !!user
+  // })
+
+  // -----------------------------------------------------------------
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedCardsAppUser')
@@ -158,7 +189,7 @@ const App = () => {
       window.localStorage.setItem(
         'loggedCardsAppUser', JSON.stringify(user)
       )
-
+      cardsService.setToken(user.token)
       decksService.setToken(user.token)
       userDispatch({ type: "SET_USER", payload: user })
       setUsername('')
@@ -234,6 +265,10 @@ const App = () => {
         }, 6000)
       }
     }
+  }
+
+  const createCard = async (cardObject) => {
+
   }
 
   const createDeck = async (deckObject) => {
@@ -322,7 +357,7 @@ const App = () => {
           <Route path='/newdeck' element={<CreateNewDeck createDeck={createDeck} />} />
           <Route path='/deck/:id' element={<DeckSettings selectedDeck={selectedDeck} updateDeck={updateDeck} deleteDeck={deleteDeck}/>} />
           <Route path='/firstdeck' element={<CreateFirstDeck createDeck={createDeck} />} />
-          <Route path='/main/newcard' element={<CreateNewCard />} />
+          <Route path='/main/newcard' element={<CreateNewCard createCard={createCard} />} />
         </Routes>
       </div>
     )}
