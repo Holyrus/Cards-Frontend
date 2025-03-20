@@ -32,7 +32,7 @@ const DeckSettings = ({ selectedDeck, updateDeck, deleteDeck }) => {
           secondFlag: natFlag
         }
         updateDeck(selectedDeck.id, updatedDeck)
-      } 
+      }
     }
 
     const deleteDeckHandler = (event) => {

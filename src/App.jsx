@@ -53,7 +53,7 @@ const App = () => {
   const errorNotificationDispatch = useErrorNotificationDispatch()
   const notificationDispatch = useNotificationDispatch()
 
-  // Decks results
+  // Decks mutations
 
   const newDeckMutation = useMutation({
     mutationFn: decksService.create,
@@ -75,6 +75,8 @@ const App = () => {
       queryClient.invalidateQueries({ queryKey: ['decks'] })
     }
   })
+
+  // ---------------------------------
 
   const decksResult = useQuery({
     queryKey: ['decks'],
@@ -148,26 +150,6 @@ const App = () => {
 
   // -----------------------------------------------------------------
 
-  // Cards results
-
-  // const newCardMutation = useMutation({
-  //   mutationFn: cardsService.create(),
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({queryKey: ['cards'] })
-  //     queryClient.invalidateQueries({queryKey: ['decks'] })
-  //   }
-  // })
-
-  // const cardsResult = useQuery({
-  //   queryKey: ['cards'],
-  //   queryFn: cardsService.getAll(),
-  //   refetchOnWindowFocus: false,
-  //   retry: false,
-  //   enabled: !!user
-  // })
-
-  // -----------------------------------------------------------------
-
   const handleLogout = () => {
     window.localStorage.removeItem('loggedCardsAppUser')
     userDispatch({ type: "REMOVE_USER" })
@@ -200,7 +182,7 @@ const App = () => {
         notificationDispatch({ type: "CLEAR" })
       }, 6000)
 
-      // queryClient.invalidateQueries({ queryKey: ['cards'] })
+      queryClient.invalidateQueries({ queryKey: ['cards'] })
 
     } catch (exception) {
       if (exception.status === 500) {
@@ -265,10 +247,6 @@ const App = () => {
         }, 6000)
       }
     }
-  }
-
-  const createCard = async (cardObject) => {
-
   }
 
   const createDeck = async (deckObject) => {
@@ -357,7 +335,7 @@ const App = () => {
           <Route path='/newdeck' element={<CreateNewDeck createDeck={createDeck} />} />
           <Route path='/deck/:id' element={<DeckSettings selectedDeck={selectedDeck} updateDeck={updateDeck} deleteDeck={deleteDeck}/>} />
           <Route path='/firstdeck' element={<CreateFirstDeck createDeck={createDeck} />} />
-          <Route path='/main/newcard' element={<CreateNewCard createCard={createCard} />} />
+          <Route path='/main/newcard' element={<CreateNewCard />} />
         </Routes>
       </div>
     )}

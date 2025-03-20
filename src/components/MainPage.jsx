@@ -3,11 +3,14 @@ import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import decksService from '../services/decks'
 import ThreeDModel from "./Model.jsx"
+import catImage from '../assets/cat.jpg'
 
 const MainPage = ({ decks }) => {
 
   const queryClient = useQueryClient()
   const [currentDeck, setCurrentDeck] = useState('')
+
+  const [isCardsOpen, setIsCardsOpen] = useState(false)
 
   const updateDeckMutation = useMutation({
     mutationFn: (updatedDeck) => decksService.update(updatedDeck.id, updatedDeck),
@@ -18,12 +21,12 @@ const MainPage = ({ decks }) => {
 
   useEffect(() => {
     const mainDeck = decks.find(deck => deck.mainDeck === true)
+    console.log(mainDeck)
     if (mainDeck) {
       setCurrentDeck(mainDeck)
-    } 
-    // else if (decks.length > 0) {
-    //   setNextMainDeck()
-    // }
+    } else if (!mainDeck && decks.length > 0) {
+      setCurrentDeck('')
+    }
   }, [decks])
 
   const mainDeckSetter = async (selectedDeck) => {
@@ -45,29 +48,29 @@ const MainPage = ({ decks }) => {
       })
 
       setCurrentDeck(selectedDeck)
+      setIsCardsOpen(false)
     } catch (error) {
       console.error('Error updating main deck:', error)
     }
 
   }
 
-  // const setNextMainDeck = async () => {
-  //   const mainDeck = decks.find(deck => deck.mainDeck === true)
-  //   if (decks.length > 0 && !mainDeck) {
-  //     const nextDeck = decks[0]
-  //     try {
-  //       await updateDeckMutation.mutateAsync({
-  //         ...nextDeck,
-  //         mainDeck: true
-  //       })
-  //       setCurrentDeck(nextDeck)
-  //     } catch (error) {
-  //       console.error('Error setting next main deck:', error)
-  //     }
-  //   }
-  // }
+    // Cards results
+  
+    // const cardsResult = useQuery({
+    //   queryKey: ['cards'],
+    //   queryFn: cardsService.getAll(),
+    //   refetchOnWindowFocus: false,
+    //   retry: false,
+    //   enabled: !!user
+    // })
 
-  console.log(currentDeck.learnLang, currentDeck.mainDeck)
+  // const cards = cardsResult.data || []
+
+
+
+  // console.log(currentDeck.learnLang, currentDeck.mainDeck)
+  // console.log(currentDeck)
   // console.log(decks)
 
   //---------------------------
@@ -155,6 +158,14 @@ const MainPage = ({ decks }) => {
     setIsOpen(false);
   }
 
+  const cardsButtonHandler = () => {
+    setIsCardsOpen(!isCardsOpen)
+  }
+
+  const cardsSearchHandler = () => {
+    console.log('Kawabanga')
+  }
+
   return (
     <div className="min-h-screen flex flex-col items-center relative">
       
@@ -165,11 +176,17 @@ const MainPage = ({ decks }) => {
         </button>
 
         <div className='hover-trigger hover:text-[#707073ff] flex items-center justify-center w-[135px] cursor-pointer h-full' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-          <div className="relative w-[40px] h-[30px]">
-            <img className="absolute bottom-1 left-2 ml-2 w-[18px]" src={`https://flagcdn.com/80x60/${currentDeck.secondFlag}.webp` || null} alt="Second flag" />
-            <img className="absolute bottom-3 right-4 ml-2 w-[18px]" src={`https://flagcdn.com/80x60/${currentDeck.firstFlag}.webp` || null} alt="First flag" />
-          </div>  
-          <p className="mx-0.5">{currentDeck.learnLang}</p>
+          {currentDeck ? (
+            <div className="relative w-[40px] h-[30px]">
+              <img className="absolute bottom-1 left-2 ml-2 w-[18px]" src={`https://flagcdn.com/80x60/${currentDeck.secondFlag}.webp` || null} alt="Second flag" />
+              <img className="absolute bottom-3 right-4 ml-2 w-[18px]" src={`https://flagcdn.com/80x60/${currentDeck.firstFlag}.webp` || null} alt="First flag" />
+            </div>
+          ) : (
+            <p>Choose the deck</p>
+          )
+          }
+            
+          {currentDeck && <p className="mx-0.5">{currentDeck.learnLang}</p>}
           <svg className="text-[#707073ff]" width="16" height="12" viewBox="0 0 24 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <polygon points="6,8 18,8 12,16" />
           </svg>
@@ -251,17 +268,69 @@ const MainPage = ({ decks }) => {
 
         </div>
         <ThreeDModel />
-        { currentDeck?.cards?.length !== 0 && <button className='rounded-full text-white border-1 border-green-700 font-semibold py-2 px-5 w-[290px] sm:w-[400px] md:w-[450px] md:py-3 shadow-md hover:shadow-lg bg-green-700 hover:bg-green-100 hover:text-green-700 transition-all duration-300'>START</button> }
-        <div className="mt-5 flex flex-row justify-center items-center">
-          <Link to="/main/newcard"
-                state={{ currentDeck }}
-                className="p-2.5 bg-green-700 text-white hover:text-green-700 rounded-full border-1 border-green-700 shadow-md hover:bg-green-100 transition-all duration-300">
-            <svg className="w-[34px]" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="AddIcon"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"></path></svg>
-          </Link>
-        </div>
+        { currentDeck?.cards?.length !== 0 && currentDeck && <button className='rounded-full text-white border-1 border-green-700 font-semibold py-2 px-5 w-[290px] sm:w-[400px] md:w-[450px] md:py-3 shadow-md hover:shadow-lg bg-green-700 hover:bg-green-100 hover:text-green-700 transition-all duration-300 select-none'>START</button> }
+          <div className="mt-5 flex flex-row justify-center items-center gap-3">
+
+        { currentDeck?.cards?.length !== 0 && currentDeck && 
+            <div onClick={cardsButtonHandler} className="flex flex-row justify-between items-center pl-3 pr-2 h-[56px] w-[220px] sm:w-[350px] md:w-[618px] bg-white border-1 border-[#e3e2e0]">
+              
+              <div className="flex flex-row gap-1">
+
+              { !isCardsOpen ? (
+                <svg className="w-[25px]" focusable="false" aria-hidden="true" viewBox="0 0 24 24"><path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z"></path></svg>
+              ) : (
+                <svg className="w-[25px]" focusable="false" aria-hidden="true" viewBox="0 0 24 24"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg>
+              )}
+
+                <p className="cursor-default select-none">Cards</p>
+
+              </div>
+
+              <div 
+                onClick={(e) => {
+                    e.stopPropagation();
+                    cardsSearchHandler();
+                }} className="p-1.5 hover:bg-gray-100 border-l-1 border-l-[#eeeeee]">
+                <svg className="w-[25px] text-[#bababa]" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg>
+              </div>
+            
+            </div>
+        }
+
+          { currentDeck &&
+            <Link to="/main/newcard"
+                  state={{ currentDeck }}
+                  className="p-2.5 bg-green-700 text-white hover:text-green-700 rounded-full border-1 border-green-700 shadow-md hover:bg-green-100 transition-all duration-300">
+              <svg className="w-[34px]" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="AddIcon"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"></path></svg>
+            </Link>
+          }
+          </div>
+
+          { currentDeck?.cards?.length !== 0 && currentDeck && isCardsOpen && 
+            <div className="bg-white mt-5 w-[270px] sm:w-[500px] md:w-[700px] lg:[800px] flex flex-col">
+              { currentDeck.cards.map((card, index) => (
+                  <div className="min-h-[75px] w-full border-b-1 border-[#e2edf5] flex flex-row items-center justify-between px-4" key={card.id}>
+
+                    <div className="flex flex-row items-center">
+                      <img className="w-[50px] h-[50px]" src={catImage} alt="Card Image" />
+                      <div className="flex flex-col ml-6 items-start">
+                        <p className="font-semibold text-[14px]">{card.word}</p>
+                        <p className="text-[13.5px]">{card.translation}</p>
+                        <p className="text-[13.5px] text-[#afafaf]">{card.usage}</p>
+                      </div>
+                    </div>
+
+                    <button className="py-2 hover:bg-gray-100 rounded-full">
+                      <svg className="w-[25px] text-[#757575]" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="MoreVertIcon"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2m0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2m0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2"></path></svg>
+                    </button>
+                  </div>
+                ))}
+            </div>
+          }
+
       </div>
 
-      <div className="fixed bottom-0 w-full flex-none flex flex-row items-center justify-center border-t-1 border-[#e1edf5] bg-white h-[55px]">
+      <div className="fixed bottom-0 z-20 w-full flex-none flex flex-row items-center justify-center border-t-1 border-[#e1edf5] bg-white h-[55px]">
         <Link to="/main" className="flex flex-col items-center justify-start px-[60px] hover:cursor-pointer active:bg-gray-300 transition-all duration-75" draggable="false">
           <svg width="35" height="35" viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
             <g transform="rotate(10, 115, 130)">

@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom"
 import { useState, useEffect, useRef } from 'react'
 import { useErrorNotificationDispatch } from './ErrorNotificationContext'
+import { useNotificationDispatch } from "./NoificationContext"
 import { useLocation } from 'react-router-dom'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import cardsService from '../services/cards'
 
-const CreateNewCard = ({ createCard }) => {
+const CreateNewCard = () => {
 
   const [learnWord, setLearnWord] = useState('')
   const [natWord, setNatWord] = useState('')
@@ -13,32 +16,57 @@ const CreateNewCard = ({ createCard }) => {
   const currentDeck = location.state?.currentDeck
 
   const errorNotificationDispatch = useErrorNotificationDispatch()
+  const notificationDispatch = useNotificationDispatch()
 
-  const createCardHandler = () => {
-    
+  const queryClient = useQueryClient()
+
+  // Cards mutations
+
+  const newCardMutation = useMutation({
+    mutationFn: ([cardObject, deckId]) => cardsService.create(cardObject, deckId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['cards'] })
+      queryClient.invalidateQueries({queryKey: ['decks'] })
+    }
+  })
+
+  const createCard = async (cardObject, deckId) => {
+    newCardMutation.mutate([cardObject, deckId], {
+      onError: (error) => {
+        errorNotificationDispatch({ type: "SET", payload: `${error.response.data.error}` })
+        setTimeout(() => {
+          errorNotificationDispatch({ type: "CLEAR" })
+        }, 6000)
+      },
+      onSuccess: () => {
+        notificationDispatch({ type: "SET", payload: 'New card was created!' })
+        setTimeout(() => {
+          notificationDispatch({ type: "CLEAR" })
+        }, 6000)
+      }
+    })
   }
 
-  // const createDeckHandler = (event) => {
-  //   event.preventDefault()
-  //   if (learnLanguage !== ' 🏳️ Select a language ' && natLanguage !== ' 🏳️ Select a language') {
-  //     createDeck({
-  //       learnLang: learnLanguage,
-  //       natLang: natLanguage,
-  //       firstFlag: learnFlag,
-  //       secondFlag: natFlag,
-  //       mainDeck: false,
-  //     })
-  //     dimOverlayHandler()
-  //     setLearnLanguage(' 🏳️ Select a language ')
-  //     setNatLanguage(' 🏳️ Select a language')
-  //     setLearnFlag('')
-  //     setNatFlag('')
-  //   } else {
-  //     errorNotificationDispatch({ type: "SET", payload: 'Select two languages' })
-  //     setTimeout(() => {
-  //       errorNotificationDispatch({ type: "CLEAR" })
-  //     }, 6000)
-  //   }
+  const createCardHandler = (event) => {
+    event.preventDefault()
+    if (learnWord && natWord && usage) {
+      createCard({
+        word: learnWord,
+        translation: natWord,
+        usage: usage
+      },
+      currentDeck.id
+      )
+      setLearnWord('')
+      setNatWord('')
+      setUsage('')
+    } else {
+      errorNotificationDispatch({ type: "SET", payload: 'All fields must be filled' })
+      setTimeout(() => {
+        errorNotificationDispatch({ type: "CLEAR" })
+      }, 6000)
+    }
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center w-full">
@@ -54,7 +82,7 @@ const CreateNewCard = ({ createCard }) => {
         </div>
       </div>
 
-      <div className="flex-1 flex py-[45px] flex-col items-center justify-start w-full bg-[#f3fff2]">
+      <form onSubmit={createCardHandler} className="flex-1 flex py-[45px] flex-col items-center justify-start w-full bg-[#f3fff2]">
         
         <div className='relative flex mt-4 w-[280px] sm:w-[500px] bg-white rounded-t-sm'>
           <input value={learnWord} onChange={({target}) => setLearnWord(target.value)} id="learnLang" type="text" placeholder='' autoComplete="off" className='z-10 peer w-full border-0 border-b-1 border-gray-400 focus:border-green-500 focus:outline-none focus:ring-0 bg-transparent p-2 pt-4 text-gray-900' />
@@ -86,9 +114,9 @@ const CreateNewCard = ({ createCard }) => {
           <label htmlFor="usage" className='z-5 absolute left-2 text-gray-500 peer-placeholder-shown:bottom-3 peer-placeholder-shown:text-[16px] peer-placeholder-shown:text-gray-400 peer-focus:top-0 peer-focus:text-green-500 peer-focus:text-[12px] transition-all'>Example of usage ({currentDeck.learnLang})</label>
         </div>
 
-        <button onClick={createCardHandler} className='mt-9 rounded-full text-white border-1 border-green-700 font-semibold py-2 px-5 w-[290px] sm:w-[450px] sm:py-3 shadow-md hover:shadow-lg bg-green-700 hover:bg-green-100 hover:text-green-700 transition-all duration-300'>SAVE</button>
+        <button type="submit" className='mt-9 rounded-full text-white border-1 border-green-700 font-semibold py-2 px-5 w-[290px] sm:w-[450px] sm:py-3 shadow-md hover:shadow-lg bg-green-700 hover:bg-green-100 hover:text-green-700 transition-all duration-300'>SAVE</button>
         
-      </div>
+      </form>
 
     </div>
   )
