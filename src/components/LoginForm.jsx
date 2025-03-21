@@ -20,11 +20,11 @@ const LoginForm = ({ handleSubmit, handleUsernameChange, handlePasswordChange, u
       <form onSubmit={handleSubmit} className='flex flex-col mb-10 sm:mb-50'>
         <div className='relative flex mt-4'>
           <input value={username} onChange={handleUsernameChange} id="loginUsername" type="text" placeholder='' className='z-10 peer w-full border-0 border-b-2 border-gray-400 focus:border-green-500 focus:outline-none focus:ring-0 bg-transparent p-2 pt-4 text-gray-900' />
-          <label htmlFor="loginUsername" className= 'z-5 absolute left-2 text-gray-500 peer-placeholder-shown:bottom-5 peer-placeholder-shown:text-[16px] peer-placeholder-shown:text-gray-400 peer-focus:top-0 peer-focus:text-green-500 peer-focus:text-[12px] transition-all'>Username</label>
+          <label htmlFor="loginUsername" className= 'z-5 absolute left-2 text-gray-500 text-[12px] peer-placeholder-shown:bottom-5 peer-placeholder-shown:text-[16px] peer-placeholder-shown:text-gray-400 peer-focus:top-0 peer-focus:text-green-500 peer-focus:text-[12px] transition-all'>Username</label>
         </div>
         <div className='relative flex mt-4'>
           <input value={password} onChange={handlePasswordChange} id="loginPassword" type="password" placeholder='' className='z-10 peer w-full border-0 border-b-2 border-gray-400 focus:border-green-500 focus:outline-none focus:ring-0 bg-transparent p-2 pt-4 text-gray-900' />
-          <label htmlFor="loginPassword" className= 'z-5 absolute left-2 text-gray-500 peer-placeholder-shown:bottom-5 peer-placeholder-shown:text-[16px] peer-placeholder-shown:text-gray-400 peer-focus:top-0 peer-focus:text-green-500 peer-focus:text-[12px] transition-all'>Password</label>
+          <label htmlFor="loginPassword" className= 'z-5 absolute left-2 text-gray-500 text-[12px] peer-placeholder-shown:bottom-5 peer-placeholder-shown:text-[16px] peer-placeholder-shown:text-gray-400 peer-focus:top-0 peer-focus:text-green-500 peer-focus:text-[12px] transition-all'>Password</label>
         </div>
         <div className='flex flex-row justify-between w-[300px] my-4'>
           <Link className='rounded-full text-green-700 font-semibold py-2 px-5 hover:bg-green-100 transition-all duration-300' to="/">PREVIOUS</Link>

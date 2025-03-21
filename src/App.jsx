@@ -23,6 +23,7 @@ import CreateNewDeck from './components/CreateNewDeck.jsx'
 import DeckSettings from './components/DeckSettings.jsx'
 import CreateFirstDeck from './components/CreateFirstDeck.jsx'
 import CreateNewCard from './components/CreateNewCard.jsx'
+import CardSettings from './components/CardSettings.jsx'
 
 const userReducer = (state, action) => {
   switch (action.type) {
@@ -52,6 +53,12 @@ const App = () => {
 
   const errorNotificationDispatch = useErrorNotificationDispatch()
   const notificationDispatch = useNotificationDispatch()
+
+  const [globalCurrentDeck, setGlobalCurrentDeck] = useState('')
+
+  const handleCurrentDeckChange = (deck) => {
+    setGlobalCurrentDeck(deck)
+  }
 
   // Decks mutations
 
@@ -134,6 +141,10 @@ const App = () => {
 
   const decksMatch = useMatch('/deck/:id')
   const selectedDeck = decksMatch ? decks.find(deck => deck.id === decksMatch.params.id) : null
+
+  const cardsMatch = useMatch('/card/:id')
+  const selectedCard = cardsMatch ? globalCurrentDeck.cards.find(card => card.id === cardsMatch.params.id) : null
+
 
   if (decksResult.isLoading) {
     return (
@@ -330,12 +341,13 @@ const App = () => {
         <Notification />
         <ErrorNotification />
         <Routes>
-          <Route path='/main' element={<MainPage decks={decks} />} />
+          <Route path='/main' element={<MainPage decks={decks} onDeckChange={handleCurrentDeckChange} />} />
           <Route path='/profile' element={<Profile handleLogout={handleLogout} handleAccountDeleting={handleAccountDeleting} user={user}/>} />
           <Route path='/newdeck' element={<CreateNewDeck createDeck={createDeck} />} />
           <Route path='/deck/:id' element={<DeckSettings selectedDeck={selectedDeck} updateDeck={updateDeck} deleteDeck={deleteDeck}/>} />
           <Route path='/firstdeck' element={<CreateFirstDeck createDeck={createDeck} />} />
           <Route path='/main/newcard' element={<CreateNewCard />} />
+          <Route path='/card/:id' element={<CardSettings selectedCard={selectedCard} currentDeck={globalCurrentDeck}/>} />
         </Routes>
       </div>
     )}
