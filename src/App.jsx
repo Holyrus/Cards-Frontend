@@ -25,6 +25,8 @@ import CreateFirstDeck from './components/CreateFirstDeck.jsx'
 import CreateNewCard from './components/CreateNewCard.jsx'
 import CardSettings from './components/CardSettings.jsx'
 
+import sadPanda from './assets/sadPanda.jpg'
+
 const userReducer = (state, action) => {
   switch (action.type) {
     case "SET_USER":
@@ -143,8 +145,10 @@ const App = () => {
   const selectedDeck = decksMatch ? decks.find(deck => deck.id === decksMatch.params.id) : null
 
   const cardsMatch = useMatch('/card/:id')
-  const selectedCard = cardsMatch ? globalCurrentDeck.cards.find(card => card.id === cardsMatch.params.id) : null
-
+  // const selectedCard = cardsMatch ? globalCurrentDeck.cards.find(card => card.id === cardsMatch.params.id) : null
+  const selectedCard = cardsMatch && globalCurrentDeck?.cards 
+    ? globalCurrentDeck.cards.find(card => card.id === cardsMatch.params.id)
+    : null
 
   if (decksResult.isLoading) {
     return (
@@ -226,7 +230,7 @@ const App = () => {
       setSignUpUsername('')
       setSignUpName('')
       setSignUpPassword('')
-      navigate('/')
+      navigate('/login')
       notificationDispatch({ type: "SET", payload: 'Created new account' })
       setTimeout(() => {
         notificationDispatch({ type: "CLEAR" })
@@ -347,7 +351,15 @@ const App = () => {
           <Route path='/deck/:id' element={<DeckSettings selectedDeck={selectedDeck} updateDeck={updateDeck} deleteDeck={deleteDeck}/>} />
           <Route path='/firstdeck' element={<CreateFirstDeck createDeck={createDeck} />} />
           <Route path='/main/newcard' element={<CreateNewCard />} />
-          <Route path='/card/:id' element={<CardSettings selectedCard={selectedCard} currentDeck={globalCurrentDeck}/>} />
+          <Route path='/card/:id' element={
+            globalCurrentDeck && selectedCard
+              ? <CardSettings selectedCard={selectedCard} currentDeck={globalCurrentDeck}/>
+              : <div className='flex flex-col gap-2 justify-center items-center w-full h-[100vh]'>
+                  <img className='w-[250px]' src={sadPanda} alt="sad panda" />
+                  <h1 className='text-[40px] font-bold bg-gradient-to-r from-green-700 to-yellow-300 text-transparent bg-clip-text'>UmCards</h1>
+                  <p className='text-[20px]'>Return to the previous page</p>
+                </div>
+          } />
         </Routes>
       </div>
     )}
