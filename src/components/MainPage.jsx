@@ -15,6 +15,15 @@ const MainPage = ({ decks, onDeckChange }) => {
 
   const [activeSettingsId, setActiveSettingsId] = useState(null)
 
+  const [selectedValue, setSelectedValue] = useState('')
+
+  const dropdownOptions = [
+    { value: 'All', label: 'All' },
+    { value: 'To learn', label: 'To learn' },
+    { value: 'Known', label: 'Known' },
+    { value: 'Learned', label: 'Learned' },
+  ]
+
   const deleteCardMutation = useMutation({
     mutationFn: (deletedCard) => cardsService.remove(deletedCard.id),
     onSuccess: (deletedCard) => {
@@ -92,6 +101,8 @@ const MainPage = ({ decks, onDeckChange }) => {
 
   const [paletteOpen, setPaletteOpen] = useState(false)
   const [statOpen, setStatOpen] = useState(false)
+
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
 
   const paletteClickHandler = () => {
     if (paletteOpen) {
@@ -176,7 +187,7 @@ const MainPage = ({ decks, onDeckChange }) => {
   }
 
   const cardsSearchHandler = () => {
-    console.log('Kawabanga')
+    setIsSearchOpen(!isSearchOpen)
   }
 
   const handleSettingsEnter = (cardId) => {
@@ -339,6 +350,39 @@ const MainPage = ({ decks, onDeckChange }) => {
             </Link>
           }
           </div>
+
+          { isSearchOpen && 
+              <div className="flex flex-row gap-3">
+                <div className="relative flex w-[247px] h-[49px] mt-4 bg-white rounded-t-sm">
+                  <select
+                    id="dropdown"
+                    value={selectedValue}
+                    onChange={(e) => setSelectedValue(e.target.value)}
+                    className="z-10 peer w-full border-0 border-b-1 border-gray-400 focus:border-green-500 focus:outline-none focus:ring-0 bg-transparent p-2 pt-4 text-gray-900 appearance-none"
+                  >
+                    <option value="" disabled hidden></option>
+                    {dropdownOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                  <label htmlFor="dropdown" className='z-5 absolute left-2 text-gray-500 text-[12px] peer-placeholder-shown:bottom-3 peer-placeholder-shown:text-[16px] peer-placeholder-shown:text-gray-400 peer-focus:top-0 peer-focus:text-green-500 peer-focus:text-[12px] transition-all'>
+                    Card state
+                 </label>
+                  <div className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+
+                <div className='relative flex mt-4 w-[247px] bg-white rounded-t-sm'>
+                  <input type="text" placeholder='' autoComplete="off" className='z-10 peer w-full border-0 border-b-1 border-gray-400 focus:border-green-500 focus:outline-none focus:ring-0 bg-transparent p-2 pt-4 text-gray-900' />
+                  <label className='z-5 absolute left-2 text-gray-500 text-[12px] peer-placeholder-shown:bottom-3 peer-placeholder-shown:text-[16px] peer-placeholder-shown:text-gray-400 peer-focus:top-0 peer-focus:text-green-500 peer-focus:text-[12px] transition-all'>Search</label>
+                </div>
+              </div> 
+              }
 
           { currentDeck?.cards?.length !== 0 && currentDeck && isCardsOpen && 
             <div className="bg-white mt-5 w-[270px] sm:w-[500px] md:w-[700px] lg:[800px] flex flex-col">

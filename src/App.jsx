@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useReducer } from 'react'
 import {
-  Routes, Route, useMatch, useNavigate
+  Routes, Route, useMatch, useNavigate, Link
 } from 'react-router-dom'
 
 import loginService from './services/login'
@@ -358,6 +358,7 @@ const App = () => {
                   <img className='w-[250px]' src={sadPanda} alt="sad panda" />
                   <h1 className='text-[40px] font-bold bg-gradient-to-r from-green-700 to-yellow-300 text-transparent bg-clip-text'>UmCards</h1>
                   <p className='text-[20px]'>Return to the previous page</p>
+                  <Link to='/main' className='rounded-full text-white border-1 border-green-700 font-semibold py-2 px-5 bg-green-700 hover:bg-green-100 hover:text-green-700 transition-all duration-300 mt-2'>To main page</Link>
                 </div>
           } />
         </Routes>
