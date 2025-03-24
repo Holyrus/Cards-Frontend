@@ -1,0 +1,10 @@
+Make learning system on START button
+Adjust backend for dividing to learn, known and learned words.
+Make timing system depending when word was created or learned.
+Implement voice narration for words on button and translation on button
+Write validation options for inputs, for clarify to user
+Make change password, username and name functionality
+Add language changing. Add one more line to backend to user { language: "gb" }
+Add krutilku to loading page
+Implement themes and statistics
+Make functionality for save different icons and pictures for cards

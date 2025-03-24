@@ -15,7 +15,9 @@ const MainPage = ({ decks, onDeckChange }) => {
 
   const [activeSettingsId, setActiveSettingsId] = useState(null)
 
-  const [selectedValue, setSelectedValue] = useState('')
+  const [selectedValue, setSelectedValue] = useState('All')
+
+  const [searchValue, setSearchValue] = useState('')
 
   const dropdownOptions = [
     { value: 'All', label: 'All' },
@@ -317,7 +319,7 @@ const MainPage = ({ decks, onDeckChange }) => {
           <div className="mt-5 flex flex-row justify-center items-center gap-3">
 
         { currentDeck?.cards?.length !== 0 && currentDeck && 
-            <div onClick={cardsButtonHandler} className="flex flex-row justify-between items-center pl-3 pr-2 h-[56px] w-[220px] sm:w-[350px] md:w-[618px] bg-white border-1 border-[#e3e2e0]">
+            <div onClick={cardsButtonHandler} className="flex flex-row justify-between items-center pl-3 pr-2 mb-4 h-[56px] w-[220px] sm:w-[350px] md:w-[618px] bg-white border-1 border-[#e3e2e0]">
               
               <div className="flex flex-row gap-1">
 
@@ -345,15 +347,15 @@ const MainPage = ({ decks, onDeckChange }) => {
           { currentDeck &&
             <Link to="/main/newcard"
                   state={{ currentDeck }}
-                  className="p-2.5 bg-green-700 text-white hover:text-green-700 rounded-full border-1 border-green-700 shadow-md hover:bg-green-100 transition-all duration-300">
+                  className="p-2.5 mb-4 bg-green-700 text-white hover:text-green-700 rounded-full border-1 border-green-700 shadow-md hover:bg-green-100 transition-all duration-300">
               <svg className="w-[34px]" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="AddIcon"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"></path></svg>
             </Link>
           }
           </div>
 
           { isSearchOpen && 
-              <div className="flex flex-row gap-3">
-                <div className="relative flex w-[247px] h-[49px] mt-4 bg-white rounded-t-sm">
+              <div className="flex flex-row gap-3 mb-5">
+                <div className="relative flex w-[130px] sm:w-[200px] md:w-[300px] h-[49px] bg-white rounded-t-sm">
                   <select
                     id="dropdown"
                     value={selectedValue}
@@ -369,24 +371,30 @@ const MainPage = ({ decks, onDeckChange }) => {
                   </select>
                   <label htmlFor="dropdown" className='z-5 absolute left-2 text-gray-500 text-[12px] peer-placeholder-shown:bottom-3 peer-placeholder-shown:text-[16px] peer-placeholder-shown:text-gray-400 peer-focus:top-0 peer-focus:text-green-500 peer-focus:text-[12px] transition-all'>
                     Card state
-                 </label>
+                  </label>
                   <div className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
                     <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                     </svg>
                   </div>
                 </div>
 
-                <div className='relative flex mt-4 w-[247px] bg-white rounded-t-sm'>
-                  <input type="text" placeholder='' autoComplete="off" className='z-10 peer w-full border-0 border-b-1 border-gray-400 focus:border-green-500 focus:outline-none focus:ring-0 bg-transparent p-2 pt-4 text-gray-900' />
+                <div className='relative flex w-[130px] sm:w-[200px] md:w-[300px] bg-white rounded-t-sm'>
+                  <input value={searchValue} onChange={(event) => setSearchValue(event.target.value)} type="text" placeholder='' autoComplete="off" className='z-10 peer w-full border-0 border-b-1 border-gray-400 focus:border-green-500 focus:outline-none focus:ring-0 bg-transparent p-2 pt-4 text-gray-900' />
                   <label className='z-5 absolute left-2 text-gray-500 text-[12px] peer-placeholder-shown:bottom-3 peer-placeholder-shown:text-[16px] peer-placeholder-shown:text-gray-400 peer-focus:top-0 peer-focus:text-green-500 peer-focus:text-[12px] transition-all'>Search</label>
                 </div>
               </div> 
               }
 
           { currentDeck?.cards?.length !== 0 && currentDeck && isCardsOpen && 
-            <div className="bg-white mt-5 w-[270px] sm:w-[500px] md:w-[700px] lg:[800px] flex flex-col">
-              { currentDeck.cards.map((card, index) => (
+            <div className="bg-white w-[270px] sm:w-[500px] md:w-[700px] lg:[800px] flex flex-col">
+              { currentDeck.cards
+                .filter(card => 
+                  card.word.toLowerCase().includes(searchValue.toLowerCase()) ||
+                  card.translation.toLowerCase().includes(searchValue.toLowerCase()) ||
+                  card.usage.toLowerCase().includes(searchValue.toLowerCase())
+                )
+                .map((card, index) => (
                   <div className="min-h-[75px] w-full border-b-1 border-[#e2edf5] flex flex-row items-center justify-between px-4" key={card.id}>
 
                     <div className="flex flex-row items-center">
