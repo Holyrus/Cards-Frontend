@@ -5,12 +5,15 @@ import { useNotificationDispatch } from "./NoificationContext"
 import { useLocation } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import cardsService from '../services/cards'
+import addImage from '../assets/addImage.png'
 
 const CreateNewCard = () => {
 
   const [learnWord, setLearnWord] = useState('')
   const [natWord, setNatWord] = useState('')
   const [usage, setUsage] = useState('')
+
+  const [image, setImage] = useState(addImage)
 
   const location = useLocation()
   const currentDeck = location.state?.currentDeck
@@ -82,8 +85,10 @@ const CreateNewCard = () => {
         </div>
       </div>
 
-      <form onSubmit={createCardHandler} className="flex-1 flex py-[45px] flex-col items-center justify-start w-full bg-[#f3fff2]">
+      <form onSubmit={createCardHandler} className="flex-1 flex pb-[45px] flex-col items-center justify-start w-full bg-[#f3fff2]">
         
+        <img className="w-[90px] mb-4 grayscale cursor-pointer" src={image} alt="Add image" />
+
         <div className='relative flex mt-4 w-[280px] sm:w-[500px] bg-white rounded-t-sm'>
           <input value={learnWord} onChange={({target}) => setLearnWord(target.value)} id="learnLang" type="text" placeholder='' autoComplete="off" className='z-10 peer w-full border-0 border-b-1 border-gray-400 focus:border-green-500 focus:outline-none focus:ring-0 bg-transparent p-2 pt-4 text-gray-900' />
           
