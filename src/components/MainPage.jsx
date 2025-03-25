@@ -213,6 +213,8 @@ const MainPage = ({ decks, onDeckChange }) => {
     })
   }
 
+  console.log(currentDeck.cards)
+
   return (
     <div className="min-h-screen flex flex-col items-center relative">
       
@@ -398,7 +400,7 @@ const MainPage = ({ decks, onDeckChange }) => {
                   <div className="min-h-[75px] w-full border-b-1 border-[#e2edf5] flex flex-row items-center justify-between px-4" key={card.id}>
 
                     <div className="flex flex-row items-center">
-                      <img className="w-[50px] h-[50px]" src={catImage} alt="Card Image" />
+                      <img className="w-[50px] h-[50px]" src={`http://localhost:3003/api/images/files/${card.img}`} alt="Card Images"/>
                       <div className="flex flex-col ml-6 items-start">
                         <p className="font-semibold text-[14px]">{card.word}</p>
                         <p className="text-[13.5px]">{card.translation}</p>

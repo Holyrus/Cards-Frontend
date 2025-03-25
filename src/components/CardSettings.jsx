@@ -12,6 +12,12 @@ const CardSettings = ({ selectedCard, currentDeck }) => {
   const [natWord, setNatWord] = useState(selectedCard.translation)
   const [usage, setUsage] = useState(selectedCard.usage)
 
+  const [searchModal, setSearhModal] = useState(false)
+  const [searchTerm, setSearhTerm] = useState(learnWord)
+
+  const [images, setImages] = useState([])
+  const [mainImage, setMainImage] = useState(selectedCard.img)
+
   const errorNotificationDispatch = useErrorNotificationDispatch()
   const notificationDispatch = useNotificationDispatch()
 
@@ -25,12 +31,48 @@ const CardSettings = ({ selectedCard, currentDeck }) => {
 
   const queryClient = useQueryClient()
 
+  const openImagesModal = () => {
+    if (learnWord) {
+      setSearhModal(true)
+      setSearhTerm(learnWord)
+    } else {
+      errorNotificationDispatch({ type: "SET", payload: `${'Fill the form first'}` })
+      setTimeout(() => {
+        errorNotificationDispatch({ type: "CLEAR" })
+      }, 6000)
+    }
+  }
+
+  const handleImageSearch = (event) => {
+    setSearhTerm(event.target.value)
+  }
+
+  const clearImageSearch = () => {
+    setSearhTerm('')
+  }
+
+  useEffect(() => {
+    fetch('http://localhost:3003/api/images')
+      .then((res) => res.json())
+      .then((data) => setImages(data))
+  }, [])
+
+  const filteredImages = searchTerm ?
+    images.filter(image => image.toLowerCase().includes(searchTerm.toLowerCase()))
+    : []
+
+  const imageChoiceHandler = (icon) => {
+    setMainImage(icon)
+    setSearhModal(false)
+  }
+
   const changeCardHandler = (event) => {
     event.preventDefault()
     const updatedCard = {
       word: learnWord,
       translation: natWord,
-      usage: usage
+      usage: usage,
+      img: mainImage
     }
     updateCard(selectedCard.id, updatedCard)
   }
@@ -77,6 +119,8 @@ const CardSettings = ({ selectedCard, currentDeck }) => {
 
     <form onSubmit={changeCardHandler} className="flex-1 flex py-[45px] flex-col items-center justify-start w-full bg-[#f3fff2]">
       
+    <img onClick={openImagesModal} className={`w-[80px] mb-4 cursor-pointer ${!learnWord ? 'grayscale' : ''}`} src={`http://localhost:3003/api/images/files/${mainImage}`} alt="Add image" />
+
       <div className='relative flex mt-4 w-[280px] sm:w-[500px] bg-white rounded-t-sm'>
         <input value={learnWord} onChange={({target}) => setLearnWord(target.value)} id="learnLang" type="text" placeholder='' autoComplete="off" className='z-10 peer w-full border-0 border-b-1 border-gray-400 focus:border-green-500 focus:outline-none focus:ring-0 bg-transparent p-2 pt-4 text-gray-900' />
         
@@ -110,6 +154,56 @@ const CardSettings = ({ selectedCard, currentDeck }) => {
       <button type="submit" className='mt-9 rounded-full text-white border-1 border-green-700 font-semibold py-2 px-5 w-[290px] sm:w-[450px] sm:py-3 shadow-md hover:shadow-lg bg-green-700 hover:bg-green-100 hover:text-green-700 transition-all duration-300'>SAVE</button>
       
     </form>
+
+    {searchModal && 
+        <section className='fixed inset-0 items-center justify-start bg-white flex flex-col z-50'>
+          <div className="flex flex-row mt-3 gap-1">
+            <div className="flex flex-row row-span-4 mt-0.5 px-1 items-center justify-between h-[40px] w-[250px] sm:w-[400px] border-b-1 border-[#e2edf5]">
+              <svg className="text-[#757575] w-[45px] p-2 rounded-full hover:bg-gray-100" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="SearchIcon"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg>
+              <input 
+                className="bg-transparent focus:outline-none text-black w-full placeholder-[#707073ff] text-[17px] ml-[5px] cursor-text pb-0.5" 
+                type="text" 
+                placeholder="Search"
+                value={searchTerm}
+                onChange={handleImageSearch}
+              />
+              <button
+                type="button"
+                onClick={clearImageSearch}
+                aria-label="Clear Search"
+                className="p-2 text-black hover:bg-gray-100 rounded-full"             
+              >
+                <svg className="text-[#acacac] w-[24px]" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="BackspaceOutlinedIcon"><path d="M22 3H7c-.69 0-1.23.35-1.59.88L0 12l5.41 8.11c.36.53.9.89 1.59.89h15c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 16H7.07L2.4 12l4.66-7H22zm-11.59-2L14 13.41 17.59 17 19 15.59 15.41 12 19 8.41 17.59 7 14 10.59 10.41 7 9 8.41 12.59 12 9 15.59z"></path></svg>
+              </button>
+            </div>
+
+
+            <button className="p-2 hover:bg-gray-100 rounded-full" onClick={() => setSearhModal(false)}>
+              <svg className="w-[25px] text-[#757575]" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-3 px-8 sm:grid-cols-6 gap-6 sm:pl-0 overflow-auto mt-8">
+            {filteredImages.length > 0 ? (
+              filteredImages
+                .slice(0, 30)
+                .map((icon, index) => (
+                <img
+                  key={index}
+                  src={`http://localhost:3003/api/images/files/${icon}`}
+                  alt={icon}
+                  className="w-16 h-16 cursor-pointer"
+                  onClick={() => imageChoiceHandler(icon)}
+                />
+              ))
+            ) : (
+              <div className="flex items-center justify-center col-span-6 h-30">
+                 <p className="text-[30px]">🤷</p>
+              </div>
+            )}
+          </div>
+        </section>
+      }
 
   </div>
   )

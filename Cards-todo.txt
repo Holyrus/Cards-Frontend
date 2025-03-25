@@ -6,4 +6,4 @@ Make change password, username and name functionality
 Add language of app changing. Add one more line to backend to user { language: "gb" }
 Add krutilku to loading page
 Implement themes and statistics
-Make functionality for save different icons and pictures for cards
+Adjust backend for change the token expiration time.(Or make another aproach)
