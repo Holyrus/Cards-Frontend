@@ -1,8 +1,19 @@
 import { Link } from "react-router-dom"
 import Panda from '../assets/panda3.jpg'
+import { useState } from "react"
 
 const SignUpForm = ({handleSubmit, handleUsernameChange, handleNameChange, handlePasswordChange, username, name, password}) => {
   
+  const [passwordWindow, setPasswordWindow] = useState(false)
+
+  const handlePasswordEnter = () => {
+    setPasswordWindow(true)
+  }
+
+  const handlePasswordLeave = () => {
+    setPasswordWindow(false)
+  }
+
   return (
     <div className='min-h-screen flex flex-col items-center justify-between'>
           <div className='w-[300px] sm:w-[500px] flex flex-row items-start'>
@@ -26,13 +37,16 @@ const SignUpForm = ({handleSubmit, handleUsernameChange, handleNameChange, handl
               <input value={name} onChange={handleNameChange} id="signUpName" type="text" placeholder='' className='z-10 peer w-full border-0 border-b-2 border-gray-400 focus:border-green-500 focus:outline-none focus:ring-0 bg-transparent p-2 pt-4 text-gray-900' />
               <label htmlFor="signUpName" className='z-5 absolute left-2 text-gray-500 text-[12px] peer-placeholder-shown:bottom-5 peer-placeholder-shown:text-[16px] peer-placeholder-shown:text-gray-400 peer-focus:top-0 peer-focus:text-green-500 peer-focus:text-[12px] transition-all'>Name</label>
             </div>
-            <div className='relative flex mt-4'>
+            <div onMouseEnter={handlePasswordEnter} onMouseLeave={handlePasswordLeave} className='relative flex mt-4'>
               <input value={password} onChange={handlePasswordChange} id="signUpPassword" type="password" placeholder='' className='z-10 peer w-full border-0 border-b-2 border-gray-400 focus:border-green-500 focus:outline-none focus:ring-0 bg-transparent p-2 pt-4 text-gray-900' />
               <label htmlFor="signUpPassword" className='z-5 absolute left-2 text-gray-500 text-[12px] peer-placeholder-shown:bottom-5 peer-placeholder-shown:text-[16px] peer-placeholder-shown:text-gray-400 peer-focus:top-0 peer-focus:text-green-500 peer-focus:text-[12px] transition-all'>Password</label>
             </div>
-            <div className='flex flex-row justify-between w-[300px] my-4'>
+            <div className='relative flex flex-row justify-between w-[300px] my-4'>
               <Link className='rounded-full text-green-700 font-semibold py-2 px-5 hover:bg-green-100 transition-all duration-300' to="/">PREVIOUS</Link>
               <button type="submit" className='rounded-full text-white border-1 border-green-700 font-semibold py-2 px-5 bg-green-700 hover:bg-green-100 hover:text-green-700 transition-all duration-300'>NEXT</button>
+              <div className={`bg-white text-green-700 text-[13px] justify-center items-center z-40 w-[160px] py-2 px-4 h-[120px] flex flex-col rounded-lg shadow-[0px_-4px_4px_rgba(0,0,0,0.02),0px_4px_4px_rgba(0,0,0,0.02),-4px_0px_4px_rgba(0,0,0,0.02),4px_0px_4px_rgba(0,0,0,0.02)] bottom-32 right-0 transition-all duration-200 ${passwordWindow ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}`} onMouseEnter={handlePasswordEnter} onMouseLeave={handlePasswordLeave}>
+                <p>Password must be at least <b>8</b> characters, contain <b>lower</b> and <b>uppercase</b> letters and <b>numbers</b>.</p>
+              </div>
             </div>
           </form>
         </div>

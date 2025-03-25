@@ -130,6 +130,8 @@ const App = () => {
         navigate('/firstdeck')
       } else if (!emptyDecks && currentPath === '/firstdeck') {
         navigate('/main')
+      } else if (!emptyDecks && currentPath === '/') {
+        navigate('/main')
       }
     } else {
       const currentPath = window.location.pathname

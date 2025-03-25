@@ -87,7 +87,7 @@ const CreateNewCard = () => {
 
       <form onSubmit={createCardHandler} className="flex-1 flex pb-[45px] flex-col items-center justify-start w-full bg-[#f3fff2]">
         
-        <img className="w-[90px] mb-4 grayscale cursor-pointer" src={image} alt="Add image" />
+        <img className="w-[80px] mb-4 grayscale cursor-pointer" src={image} alt="Add image" />
 
         <div className='relative flex mt-4 w-[280px] sm:w-[500px] bg-white rounded-t-sm'>
           <input value={learnWord} onChange={({target}) => setLearnWord(target.value)} id="learnLang" type="text" placeholder='' autoComplete="off" className='z-10 peer w-full border-0 border-b-1 border-gray-400 focus:border-green-500 focus:outline-none focus:ring-0 bg-transparent p-2 pt-4 text-gray-900' />
