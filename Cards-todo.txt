@@ -1,3 +1,7 @@
+Do not use language detection, implement adding language abbr like 'en'
+for current deck when creating new one. After that use given abbr 
+for detection and choosing different voices.
+
 Make learning system on START button
 Adjust backend for dividing to learn, known and learned words.
 Make timing system depending when word was created or learned.
