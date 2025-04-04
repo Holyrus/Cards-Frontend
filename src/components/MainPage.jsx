@@ -399,7 +399,7 @@ const MainPage = ({ decks, onDeckChange }) => {
 
         </div>
         <ThreeDModel />
-        { currentDeck?.cards?.length !== 0 && currentDeck && <button className='rounded-full text-white border-1 border-green-700 font-semibold py-2 px-5 w-[290px] sm:w-[400px] md:w-[450px] md:py-3 shadow-md hover:shadow-lg bg-green-700 hover:bg-green-100 hover:text-green-700 transition-all duration-300 select-none'>START</button> }
+        { currentDeck?.cards?.length !== 0 && currentDeck && <Link to='/main/learn' state={{ currentDeck }} ><button className='rounded-full text-white border-1 border-green-700 font-semibold py-2 px-5 w-[290px] sm:w-[400px] md:w-[450px] md:py-3 shadow-md hover:shadow-lg bg-green-700 hover:bg-green-100 hover:text-green-700 transition-all duration-300 select-none'>START</button></Link> }
           <div className="mt-5 flex flex-row justify-center items-center gap-3">
 
         { currentDeck?.cards?.length !== 0 && currentDeck && 
