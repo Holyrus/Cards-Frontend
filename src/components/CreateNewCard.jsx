@@ -6,6 +6,8 @@ import { useLocation } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import cardsService from '../services/cards'
 import axios from "axios"
+import { sobel } from "three/examples/jsm/tsl/display/SobelOperatorNode.js"
+import { use } from "react"
 
 const CreateNewCard = () => {
 
@@ -114,7 +116,64 @@ const CreateNewCard = () => {
 
   // ------ Translation ------
 
+  const [natLoading, setNatLoading] = useState(false)
+  const [learnLoading, setLearnLoading] = useState(false)
 
+  const [learnCode, setLearnCode] = useState('')
+  const [natCode, setNatCode] = useState('')
+
+  const [languagePack, setLanguagePack] = useState([])
+
+  useEffect(() => {
+    axios.get('https://libretranslate.com/languages')
+      .then(res => setLanguagePack(res.data))
+      .catch(err => console.error('Error fetching languages:', err))
+  }, [])
+
+  useEffect(() => {
+    if (!languagePack.length || !currentDeck) return
+
+    const learnLanguage = languagePack.find(lang => lang.name.toLowerCase() === currentDeck.learnLang.toLowerCase())
+    const natLanguage = languagePack.find(lang => lang.name.toLowerCase() === currentDeck.natLang.toLowerCase())
+
+    if (learnLanguage) setLearnCode(learnLanguage)
+    if (natLanguage) setNatCode(natLanguage)
+  }, [languagePack ,currentDeck])
+
+  const handleNatWordTranslation = async () => {
+    if (learnWord && learnCode?.code && natCode?.code) {
+      setNatLoading(true)
+      try {
+        const response = await axios.post('http://localhost:3003/api/translate', {
+          q: learnWord,
+          source: learnCode.code,
+          target: natCode.code,
+        })
+        setNatWord(response.data.translatedText)
+      } catch (error) {
+        console.error('Error translating word:', error)
+      } finally {
+        setNatLoading(false)
+      }
+    }
+  }
+
+  const handleLearnWordTranslation = async () => {
+    if (!natWord) return
+    setLearnLoading(true)
+    try {
+      const response = await axios.post('http://localhost:3003/api/translate', {
+        q: natWord,
+        source: natCode.code,
+        target: learnCode.code,
+      })
+      setLearnWord(response.data.translatedText)
+    } catch (error) {
+      console.error('Error translating word:', error)
+    } finally {
+      setLearnLoading(false)
+    }
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center w-full">
@@ -137,8 +196,12 @@ const CreateNewCard = () => {
         <div className='relative flex mt-4 w-[280px] sm:w-[500px] bg-white rounded-t-sm'>
           <input value={learnWord} onChange={({target}) => setLearnWord(target.value)} id="learnLang" type="text" placeholder='' autoComplete="off" className='z-10 peer w-full border-0 border-b-1 border-gray-400 focus:border-green-500 focus:outline-none focus:ring-0 bg-transparent p-2 pt-4 text-gray-900' />
           
-          <div className="absolute z-10 right-1.5 top-1.5 p-1.5 bg-transparent hover:bg-[#f7f7f7] rounded-full">
-            <svg className="text-[#d8e3eb] w-[25px]" fill="currentColor" aria-hidden="true" focusable="false" data-prefix="fak" data-icon="translate" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M191.2 51.2c11.3 0 20.5 9.2 20.5 20.5l0 19.3 53.8 0c.2 0 .5 0 .7 0l44.4 0c11.3 0 20.5 9.2 20.5 20.5s-9.2 20.5-20.5 20.5l-27.9 0c-11.5 53.2-34.1 102.2-65.3 144.5c3 3.4 6.1 6.7 9.3 10c7.9 8.1 7.6 21.1-.5 29s-21.1 7.6-29-.5c-2.1-2.1-4.1-4.3-6.1-6.5c-31.3 33.9-68.6 62.1-110.4 82.9c-10.1 5-22.4 .9-27.5-9.2s-.9-22.4 9.2-27.5c38.9-19.4 73.6-46 102.2-78.1c-17.6-23.8-32.4-49.7-44.1-77.3c-4.4-10.4 .5-22.4 10.9-26.8s22.4 .5 26.8 10.9c8.9 21.1 19.9 41 32.7 59.7c22.8-33.2 39.8-70.6 49.6-110.9L71.7 132c-11.3 0-20.5-9.2-20.5-20.5s9.2-20.5 20.5-20.5l99 0 0-19.3c0-11.3 9.2-20.5 20.5-20.5zM330.5 210.5c7.8 0 14.8 4.4 18.3 11.3l69.5 139c.1 .3 .3 .5 .4 .8l29.7 59.3c5.1 10.1 1 22.4-9.2 27.5s-22.4 1-27.5-9.2l-24.2-48.4-114.1 0-24.2 48.4c-5.1 10.1-17.4 14.2-27.5 9.2s-14.2-17.4-9.2-27.5l29.7-59.3c.1-.3 .3-.5 .4-.8l69.5-139c3.5-6.9 10.6-11.3 18.3-11.3zM294 349.9l73.1 0-36.6-73.1L294 349.9z"></path></svg>
+          <div onClick={handleNatWordTranslation} className="absolute z-10 right-1.5 top-1.5 p-1.5 bg-transparent hover:bg-[#f7f7f7] rounded-full">
+            {!natLoading ? (
+              <svg className="text-[#d8e3eb] w-[25px]" fill="currentColor" aria-hidden="true" focusable="false" data-prefix="fak" data-icon="translate" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M191.2 51.2c11.3 0 20.5 9.2 20.5 20.5l0 19.3 53.8 0c.2 0 .5 0 .7 0l44.4 0c11.3 0 20.5 9.2 20.5 20.5s-9.2 20.5-20.5 20.5l-27.9 0c-11.5 53.2-34.1 102.2-65.3 144.5c3 3.4 6.1 6.7 9.3 10c7.9 8.1 7.6 21.1-.5 29s-21.1 7.6-29-.5c-2.1-2.1-4.1-4.3-6.1-6.5c-31.3 33.9-68.6 62.1-110.4 82.9c-10.1 5-22.4 .9-27.5-9.2s-.9-22.4 9.2-27.5c38.9-19.4 73.6-46 102.2-78.1c-17.6-23.8-32.4-49.7-44.1-77.3c-4.4-10.4 .5-22.4 10.9-26.8s22.4 .5 26.8 10.9c8.9 21.1 19.9 41 32.7 59.7c22.8-33.2 39.8-70.6 49.6-110.9L71.7 132c-11.3 0-20.5-9.2-20.5-20.5s9.2-20.5 20.5-20.5l99 0 0-19.3c0-11.3 9.2-20.5 20.5-20.5zM330.5 210.5c7.8 0 14.8 4.4 18.3 11.3l69.5 139c.1 .3 .3 .5 .4 .8l29.7 59.3c5.1 10.1 1 22.4-9.2 27.5s-22.4 1-27.5-9.2l-24.2-48.4-114.1 0-24.2 48.4c-5.1 10.1-17.4 14.2-27.5 9.2s-14.2-17.4-9.2-27.5l29.7-59.3c.1-.3 .3-.5 .4-.8l69.5-139c3.5-6.9 10.6-11.3 18.3-11.3zM294 349.9l73.1 0-36.6-73.1L294 349.9z"></path></svg>
+            ) : (
+              <svg className="text-[#d8e3eb] w-[25px]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#000000"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 3V6M3 12H6M5.63607 5.63604L7.75739 7.75736M5.63604 18.3639L7.75736 16.2426M21 12.0005H18M18.364 5.63639L16.2427 7.75771M11.9998 21.0002V18.0002M18.3639 18.3642L16.2426 16.2429" stroke="#d8e3eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path> </g></svg>
+            )}
           </div>
 
           <label htmlFor="learnLang" className='z-5 absolute left-2 text-gray-500 text-[12px] peer-placeholder-shown:bottom-3 peer-placeholder-shown:text-[16px] peer-placeholder-shown:text-gray-400 peer-focus:top-0 peer-focus:text-green-500 peer-focus:text-[12px] transition-all'>{currentDeck.learnLang}</label>
@@ -147,8 +210,12 @@ const CreateNewCard = () => {
         <div className='relative flex mt-4 w-[280px] sm:w-[500px] bg-white rounded-t-sm'>
           <input value={natWord} onChange={({target}) => setNatWord(target.value)} id="natLang" type="text" placeholder='' autoComplete="off" className='z-10 peer w-full border-0 border-b-1 border-gray-400 focus:border-green-500 focus:outline-none focus:ring-0 bg-transparent p-2 pt-4 text-gray-900' />
           
-          <div className="absolute z-10 right-1.5 top-1.5 p-1.5 bg-transparent hover:bg-[#f7f7f7] rounded-full">
-            <svg className="text-[#d8e3eb] w-[25px]" fill="currentColor" aria-hidden="true" focusable="false" data-prefix="fak" data-icon="translate" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M191.2 51.2c11.3 0 20.5 9.2 20.5 20.5l0 19.3 53.8 0c.2 0 .5 0 .7 0l44.4 0c11.3 0 20.5 9.2 20.5 20.5s-9.2 20.5-20.5 20.5l-27.9 0c-11.5 53.2-34.1 102.2-65.3 144.5c3 3.4 6.1 6.7 9.3 10c7.9 8.1 7.6 21.1-.5 29s-21.1 7.6-29-.5c-2.1-2.1-4.1-4.3-6.1-6.5c-31.3 33.9-68.6 62.1-110.4 82.9c-10.1 5-22.4 .9-27.5-9.2s-.9-22.4 9.2-27.5c38.9-19.4 73.6-46 102.2-78.1c-17.6-23.8-32.4-49.7-44.1-77.3c-4.4-10.4 .5-22.4 10.9-26.8s22.4 .5 26.8 10.9c8.9 21.1 19.9 41 32.7 59.7c22.8-33.2 39.8-70.6 49.6-110.9L71.7 132c-11.3 0-20.5-9.2-20.5-20.5s9.2-20.5 20.5-20.5l99 0 0-19.3c0-11.3 9.2-20.5 20.5-20.5zM330.5 210.5c7.8 0 14.8 4.4 18.3 11.3l69.5 139c.1 .3 .3 .5 .4 .8l29.7 59.3c5.1 10.1 1 22.4-9.2 27.5s-22.4 1-27.5-9.2l-24.2-48.4-114.1 0-24.2 48.4c-5.1 10.1-17.4 14.2-27.5 9.2s-14.2-17.4-9.2-27.5l29.7-59.3c.1-.3 .3-.5 .4-.8l69.5-139c3.5-6.9 10.6-11.3 18.3-11.3zM294 349.9l73.1 0-36.6-73.1L294 349.9z"></path></svg>
+          <div onClick={handleLearnWordTranslation} className="absolute z-10 right-1.5 top-1.5 p-1.5 bg-transparent hover:bg-[#f7f7f7] rounded-full">
+            {!learnLoading ? (
+              <svg className="text-[#d8e3eb] w-[25px]" fill="currentColor" aria-hidden="true" focusable="false" data-prefix="fak" data-icon="translate" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M191.2 51.2c11.3 0 20.5 9.2 20.5 20.5l0 19.3 53.8 0c.2 0 .5 0 .7 0l44.4 0c11.3 0 20.5 9.2 20.5 20.5s-9.2 20.5-20.5 20.5l-27.9 0c-11.5 53.2-34.1 102.2-65.3 144.5c3 3.4 6.1 6.7 9.3 10c7.9 8.1 7.6 21.1-.5 29s-21.1 7.6-29-.5c-2.1-2.1-4.1-4.3-6.1-6.5c-31.3 33.9-68.6 62.1-110.4 82.9c-10.1 5-22.4 .9-27.5-9.2s-.9-22.4 9.2-27.5c38.9-19.4 73.6-46 102.2-78.1c-17.6-23.8-32.4-49.7-44.1-77.3c-4.4-10.4 .5-22.4 10.9-26.8s22.4 .5 26.8 10.9c8.9 21.1 19.9 41 32.7 59.7c22.8-33.2 39.8-70.6 49.6-110.9L71.7 132c-11.3 0-20.5-9.2-20.5-20.5s9.2-20.5 20.5-20.5l99 0 0-19.3c0-11.3 9.2-20.5 20.5-20.5zM330.5 210.5c7.8 0 14.8 4.4 18.3 11.3l69.5 139c.1 .3 .3 .5 .4 .8l29.7 59.3c5.1 10.1 1 22.4-9.2 27.5s-22.4 1-27.5-9.2l-24.2-48.4-114.1 0-24.2 48.4c-5.1 10.1-17.4 14.2-27.5 9.2s-14.2-17.4-9.2-27.5l29.7-59.3c.1-.3 .3-.5 .4-.8l69.5-139c3.5-6.9 10.6-11.3 18.3-11.3zM294 349.9l73.1 0-36.6-73.1L294 349.9z"></path></svg>
+            ) : (
+              <svg className="text-[#d8e3eb] w-[25px]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#000000"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 3V6M3 12H6M5.63607 5.63604L7.75739 7.75736M5.63604 18.3639L7.75736 16.2426M21 12.0005H18M18.364 5.63639L16.2427 7.75771M11.9998 21.0002V18.0002M18.3639 18.3642L16.2426 16.2429" stroke="#d8e3eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path> </g></svg>
+            )}
           </div>
 
           <label htmlFor="natLang" className='z-5 absolute left-2 text-gray-500 text-[12px] peer-placeholder-shown:bottom-3 peer-placeholder-shown:text-[16px] peer-placeholder-shown:text-gray-400 peer-focus:top-0 peer-focus:text-green-500 peer-focus:text-[12px] transition-all'>{currentDeck.natLang}</label>
