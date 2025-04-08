@@ -27,6 +27,10 @@ const MainPage = ({ decks, onDeckChange }) => {
   const [searchValue, setSearchValue] = useState('')
 
   useEffect(() => {
+    setSelectedValue('All')
+  }, [currentDeck])
+
+  useEffect(() => {
     const loadVoices = () => {
       const availableVoices = speechSynthesis.getVoices()
       setVoices(availableVoices)
@@ -324,7 +328,7 @@ const MainPage = ({ decks, onDeckChange }) => {
         </div>
 
         <button onClick={statClickHandler} className="cursor-pointer w-[40px] rounded-full hover:bg-gray-200 p-2.5">
-        <svg className="text-[#aaaaaa]" aria-hidden="true" focusable="false" data-prefix="far" data-icon="chart-simple" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M240 80V432H208V80h32zM208 32c-26.5 0-48 21.5-48 48V432c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48H208zM80 272V432H48V272H80zM48 224c-26.5 0-48 21.5-48 48V432c0 26.5 21.5 48 48 48H80c26.5 0 48-21.5 48-48V272c0-26.5-21.5-48-48-48H48zm320-80h32V432H368V144zm-48 0V432c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V144c0-26.5-21.5-48-48-48H368c-26.5 0-48 21.5-48 48z"></path></svg>
+          <svg className="text-[#aaaaaa]" aria-hidden="true" focusable="false" data-prefix="far" data-icon="chart-simple" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M240 80V432H208V80h32zM208 32c-26.5 0-48 21.5-48 48V432c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48H208zM80 272V432H48V272H80zM48 224c-26.5 0-48 21.5-48 48V432c0 26.5 21.5 48 48 48H80c26.5 0 48-21.5 48-48V272c0-26.5-21.5-48-48-48H48zm320-80h32V432H368V144zm-48 0V432c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V144c0-26.5-21.5-48-48-48H368c-26.5 0-48 21.5-48 48z"></path></svg>
         </button>
 
         <div className={`bg-white text-black py-[8px] z-20 border-1 border-[#e3e2e1] w-[175px] top-0 rounded-lg mt-[54px] opacity-0 ${isOpen ? 'absolute opacity-100 translate-y-0 ' : 'absolute opacity-0 pointer-events-none translate-y-[-10px]'} transform duration-300`} onMouseEnter={displayDialog} onMouseLeave={removeDialog}>
@@ -341,7 +345,7 @@ const MainPage = ({ decks, onDeckChange }) => {
 
                     <div className="flex flex-col">
                       <p className="text-[15px]">{deck.learnLang}</p>
-                      <p className="text-[13px] text-[#009900]">{deck.cards.length} To learn</p>
+                      <p className="text-[13px] text-[#009900]">{deck.cards.filter(card => card.toLearn === true)?.length || 0} To learn</p>
                     </div>
 
                     <Link to={`/deck/${deck.id}`}>
@@ -374,7 +378,7 @@ const MainPage = ({ decks, onDeckChange }) => {
         <div className="mt-[15px] mb-[5px] w-full h-[80px] flex flex-row justify-center items-center gap-1 sm:gap-6 px-5">
             
             <div className="cursor-pointer rounded-sm w-[235px] h-[60px] border-1 border-[#e3e2e0] bg-white flex flex-col justify-center items-center">
-              <p className="text-[22px] font-semibold text-[#009900]">{currentDeck?.cards?.length || 0}</p>
+              <p className="text-[22px] font-semibold text-[#009900]">{currentDeck?.cards?.filter(card => card.toLearn === true)?.length || 0}</p>
               <div className="flex flex-row items-center justify-center gap-1">
                 <p className="text-[#009900] pb-[4px]">To learn</p>
                 <svg className="text-[#009900] w-[16px]" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="HelpOutlineIcon"><path d="M11 18h2v-2h-2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4"></path></svg>
@@ -382,7 +386,7 @@ const MainPage = ({ decks, onDeckChange }) => {
             </div>
 
             <div className="cursor-pointer rounded-sm w-[235px] h-[60px] border-1 border-[#e3e2e0] bg-white flex flex-col justify-center items-center">
-              <p className="text-[22px] font-semibold text-[#0099dd]">{currentDeck?.cards?.length || 0}</p>
+              <p className="text-[22px] font-semibold text-[#0099dd]">{currentDeck?.cards?.filter(card => card.known === true)?.length || 0}</p>
               <div className="flex flex-row items-center justify-center gap-1">
                 <p className="text-[#0099dd] pb-[4px]">Known</p>
                 <svg className="text-[#0099dd] w-[16px]" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="HelpOutlineIcon"><path d="M11 18h2v-2h-2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4"></path></svg>
@@ -390,7 +394,7 @@ const MainPage = ({ decks, onDeckChange }) => {
             </div>
 
             <div className="cursor-pointer rounded-sm w-[235px] h-[60px] border-1 border-[#e3e2e0] bg-white flex flex-col justify-center items-center">
-              <p className="text-[22px] font-semibold text-[#d3b000]">{currentDeck?.cards?.length || 0}</p>
+              <p className="text-[22px] font-semibold text-[#d3b000]">{currentDeck?.cards?.filter(card => card.learned === true)?.length || 0}</p>
               <div className="flex flex-row items-center justify-center gap-1">
                 <p className="text-[#d3b000] pb-[4px]">Learned</p>
                 <svg className="text-[#d3b000] w-[16px]" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="HelpOutlineIcon"><path d="M11 18h2v-2h-2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4"></path></svg>
@@ -513,15 +517,57 @@ const MainPage = ({ decks, onDeckChange }) => {
           { currentDeck?.cards?.length !== 0 && currentDeck && isCardsOpen && 
             <div className="bg-white w-[270px] sm:w-[500px] md:w-[700px] lg:[800px] flex flex-col">
               { currentDeck.cards
-                .filter(card => 
+                .filter(card => {
+                  const textMatch =
                   card.word.toLowerCase().includes(searchValue.toLowerCase()) ||
                   card.translation.toLowerCase().includes(searchValue.toLowerCase()) ||
                   card.usage.toLowerCase().includes(searchValue.toLowerCase())
-                )
+                  
+                  let stateMatch = true
+                  switch (selectedValue) {
+                    case 'To learn':
+                      stateMatch = card.toLearn === true
+                      break
+                    case 'Known':
+                      stateMatch = card.known === true
+                      break
+                    case 'Learned':
+                      stateMatch = card.learned === true
+                      break
+                    case 'All':
+                      stateMatch = true
+                    default:
+                      stateMatch = true
+                  }
+
+                  return textMatch && stateMatch
+                })
+                .sort((a, b) => {
+                  if (a.toLearn && !b.toLearn) return -1
+                  if (!a.toLearn && b.toLearn) return 1
+
+                  if (a.known && !b.known && !b.toLearn) return -1
+                  if (!a.known && b.known && !a.toLearn) return 1
+
+                  if (a.learned && !b.learned) return 1
+                  if (!a.learned && b.learned) return -1
+
+                  return 0
+                })
                 .map((card, index) => (
                   <div className="min-h-[75px] w-full border-b-1 border-[#e2edf5] flex flex-row items-center justify-between px-4" key={card.id}>
 
-                    <div className="flex flex-row items-center">
+                    <div className="relative flex flex-row items-center">
+                      { card.toLearn ? (
+                          <svg className="absolute bottom-1 left-0 w-[14px] h-[14px]" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" preserveAspectRatio="xMidYMid meet" fill="#000000"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"><circle cx="63.93" cy="64" r="60" fill="#689f38"></circle><circle cx="60.03" cy="63.1" r="56.1" fill="#7cb342"></circle><path d="M23.93 29.7c4.5-7.1 14.1-13 24.1-14.8c2.5-.4 5-.6 7.1.2c1.6.6 2.9 2.1 2 3.8c-.7 1.4-2.6 2-4.1 2.5a44.64 44.64 0 0 0-23 17.4c-2 3-5 11.3-8.7 9.2c-3.9-2.3-3.1-9.5 2.6-18.3z" fill="#aed581"></path></g></svg>
+                        ) : card.known ? (
+                          <svg className="absolute bottom-1 left-0 w-[14px] h-[14px]" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" preserveAspectRatio="xMidYMid meet" fill="#000000"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"><circle cx="63.93" cy="64" r="60" fill="#1976d2"></circle><circle cx="60.03" cy="63.1" r="56.1" fill="#2196f3"></circle><path d="M23.93 29.7c4.5-7.1 14.1-13 24.1-14.8c2.5-.4 5-.6 7.1.2c1.6.6 2.9 2.1 2 3.8c-.7 1.4-2.6 2-4.1 2.5a44.64 44.64 0 0 0-23 17.4c-2 3-5 11.3-8.7 9.2c-3.9-2.3-3.1-9.5 2.6-18.3z" fill="#90caf9"></path></g></svg>
+                        ) : card.learned ? (
+                          <svg className="absolute bottom-1 left-0 w-[14px] h-[14px]" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" preserveAspectRatio="xMidYMid meet" fill="#000000"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"><circle cx="63.93" cy="64" r="60" fill="#f77e00"></circle><circle cx="60.03" cy="63.1" r="56.1" fill="#ff9800"></circle><path d="M23.93 29.7c4.5-7.1 14.1-13 24.1-14.8c2.5-.4 5-.6 7.1.2c1.6.6 2.9 2.1 2 3.8c-.7 1.4-2.6 2-4.1 2.5a44.64 44.64 0 0 0-23 17.4c-2 3-5 11.3-8.7 9.2c-3.9-2.3-3.1-9.5 2.6-18.3z" fill="#ffbd52"></path></g></svg>
+                        ) : (
+                          null
+                        )
+                      }
                       <img className="w-[50px] h-[50px]" src={`http://localhost:3003/api/images/files/${card.img}`} alt="Card Images"/>
                       <div className="flex flex-col ml-0.5 items-start">
                         <div className="flex flex-row gap-1">

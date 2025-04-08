@@ -1,8 +1,6 @@
 Make learning system on START button
-Adjust backend for dividing to learn, known and learned words.
 Make timing system depending when word was created or learned.
 
-Implement translation on button
 Make change password, username and name functionality
 Add language of app changing. Add one more line to backend to user { language: "gb" }
 Implement themes and statistics
