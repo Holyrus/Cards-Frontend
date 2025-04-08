@@ -3,5 +3,6 @@ Make timing system depending when word was created or learned.
 
 Make change password, username and name functionality
 Add language of app changing. Add one more line to backend to user { language: "gb" }
-Implement themes and statistics
+Implement themes and statistics (statistics must be saved for user and be same for all decks. Must
+save the stats fom all decks in one stat. )
 Adjust backend for change the token expiration time.(Or make another aproach)
