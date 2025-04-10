@@ -4,7 +4,8 @@ import { useErrorNotificationDispatch } from './ErrorNotificationContext'
 import { useNotificationDispatch } from "./NoificationContext"
 import { useLocation } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion"
+import Panda from '../assets/panda2.png'
 
 const Learn = () => {
 
@@ -23,7 +24,11 @@ const Learn = () => {
 
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isFlipped, setIsFlipped] = useState(false)
-  const [wiggle, setWiggle] = useState(false)
+  const [suggestion, setSuggestion] = useState(false)
+  const [suggestionClicked, setSuggestionClicked] = useState(false)
+
+  const [gotItSuggestion, setGotItSuggestion] = useState(false)
+  const [studyAgainSuggestion, setStudyAgainSuggestion] = useState(false)
 
   const handleFlip = () => {
     if (!isFlipped) setIsFlipped(true)
@@ -32,20 +37,42 @@ const Learn = () => {
   const handleSwipe = () => {
     setIsFlipped(false)
     setCurrentIndex((prev) => prev + 1)
+    setSuggestionClicked(false)
   }
 
   const handleBackClick = () => {
-    setWiggle(true)
-    setTimeout(() => setWiggle(false), 500)
+    if (!suggestionClicked) {
+      setSuggestion(true)
+    setSuggestionClicked(true)
+    }
   }
 
+  const [showNextCard, setShowNextCard] = useState(false)
+
   const currentCard = toLearnCards[currentIndex]
+  const nextCard = toLearnCards[currentIndex + 1]
+
+  useEffect(() => {
+    if (currentCard) {
+      const timer = setTimeout(() => {
+        setShowNextCard(true)
+      }, 300)
+      return () => clearTimeout(timer)
+    } else {
+      setShowNextCard(false)
+    }
+  }, [currentCard])
 
   console.log(toLearnCards)
 
+  // Rotation of card on drag
+
+  const x = useMotionValue(0)
+  const rotate = useTransform(x, [-200, 0, 200], [-15, 0, 15])
+
   return (
     <div className="min-h-screen flex flex-col items-center w-full">
-      <div className="w-full flex-none flex flex-row items-center pr-4 justify-center bg-[#f3fff2] h-[55px]">
+      <div className="fixed w-full flex-none flex flex-row items-center pr-4 justify-center h-[55px] z-20">
         <Link to="/main">
           <svg className="w-[47px] rounded-full hover:bg-[#edeeee] text-white p-2 drop-shadow filter shadow-black" stroke="#929599" strokeWidth='0.5px' fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="KeyboardArrowLeftRoundedIcon"><path d="M14.71 15.88 10.83 12l3.88-3.88c.39-.39.39-1.02 0-1.41a.9959.9959 0 0 0-1.41 0L8.71 11.3c-.39.39-.39 1.02 0 1.41l4.59 4.59c.39.39 1.02.39 1.41 0 .38-.39.39-1.03 0-1.42"></path></svg>
         </Link>
@@ -56,31 +83,99 @@ const Learn = () => {
         </div>
       </div>
 
-      <div className="relative overflow-hidden flex-1 flex pb-[55px] flex-col items-center justify-center w-full bg-[#f3fff2]">
+      <div className="relative overflow-hidden flex-1 flex py-[55px] flex-col items-center justify-center w-full bg-[#f3fff2]">
+          {nextCard && currentCard && (
+              <div className="absolute rotate-5 w-[280px] sm:w-[480px] h-[360px] rounded-xl border border-[#e8e8e8] shadow bg-white z-10">
+              </div>
+          )}
+          {nextCard && currentCard && (
+              <div className="absolute rotate-355 w-[280px] sm:w-[480px] h-[360px] rounded-xl border border-[#e8e8e8] shadow bg-white z-10">
+              </div>
+          )}
         <AnimatePresence>
+          {showNextCard && nextCard && (
+            <motion.div
+              key={nextCard.id}
+              className="w-[280px] sm:w-[480px] h-[360px] rounded-xl border border-[#e8e8e8] shadow bg-white z-15"
+              initial={{ opacity: 100, scale: 0.9 }}
+              animate={{ opacity: 100, scale: 0.95 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className={`absolute w-full h-full rounded-xl flex flex-col items-center justify-center transition-transform duration-500`}>
+                  <img className="w-[120px] select-none pointer-events-none user-select-none" src={`http://localhost:3003/api/images/files/${nextCard.img}`} alt={nextCard.word} />
+                  <p className="text-[22px] mt-[12px] select-none">{nextCard.translation}</p>
+              </div>
+            </motion.div>
+          )}
           {currentCard && (
             <motion.div
               key={currentCard.id}
-              className="absolute flex flex-col items-center justify-center w-[280px] sm:w-[480px] h-[360px] rounded-xl shadow-lg border border-[#e8e8e8] bg-white"
+              className="absolute flex flex-col items-center justify-center w-[280px] sm:w-[480px] h-[360px] rounded-xl shadow-lg border border-[#e8e8e8] bg-white z-20"
               onClick={handleFlip}
-              initial={{ opacity: 0 }}
+              initial={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
-              drag={isFlipped ? "x" : false}
-              dragConstraints={{ left: 0, right: 0 }}
+              drag={isFlipped ? true : false}
+              dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+              whileDrag={{ scale: 1.05 }}
+              onDragStart={(event, info) => {
+                setSuggestion(false)
+              }}
+              onDrag={(event, info) => {
+                const offsetX = info.offset.x
+              
+                if (offsetX > 50) {
+                  setGotItSuggestion(true)
+                  setStudyAgainSuggestion(false)
+                } else if (offsetX < -50) {
+                  setGotItSuggestion(false)
+                  setStudyAgainSuggestion(true)
+                } else {
+                  setGotItSuggestion(false)
+                  setStudyAgainSuggestion(false)
+                }
+              }}
               onDragEnd={(event, info) => {
                 if (info.offset.x > 100 || info.offset.x < -100) {
+                  setGotItSuggestion(false)
+                  setStudyAgainSuggestion(false)
                   handleSwipe()
+                  setSuggestion(false)
+                } else {
+                  setGotItSuggestion(false)
+                  setStudyAgainSuggestion(false)
                 }
               }}
             whileTap={{ scale: 0.98 }}
-            animate={wiggle ? { rotate: [0, -10, 10, -8, 8, 0], opacity: 1 } : { opacity: 1, y: 0, x:0, rotate: 0 }}
-            transition={wiggle ? { duration: 0.5 } : {duration: 0.3}}
+            animate={{ opacity: 1, y: 0, x:0, rotate: 0 }}
+            transition={{ duration: 0.3 }}
+            // style={{ x, rotate}}
             >
               <div className={`absolute w-full h-full rounded-xl backface-hidden flex flex-col items-center justify-center transition-transform duration-500 ${isFlipped ? 'rotate-y-180' : ''}`}>
                   <img className="w-[120px] select-none pointer-events-none user-select-none" src={`http://localhost:3003/api/images/files/${currentCard.img}`} alt={currentCard.word} />
                   <p className="text-[22px] mt-[12px] select-none">{currentCard.translation}</p>
               </div>
               <div onClick={handleBackClick} className={`absolute w-full h-full bg-white rounded-xl flex flex-col items-center justify-center text-xl font-semibold transition-transform duration-500 transform ${isFlipped ? '' : 'rotate-y-180'} backface-hidden`}>
+                    <div className={`absolute top-5 left-3 border-3 rotate-340 border-[#009900] rounded-xl px-[10px] py-[5px] transition-all duration-300 ${gotItSuggestion ? 'opacity-100' : 'opacity-0'}`}>
+                      <p className="text-[18px] text-[#009900] font-bold">Got it</p>
+                    </div>
+
+                    <div className={`absolute top-7 right-3 border-3 rotate-20 border-[#DD4444] rounded-xl px-[10px] py-[5px] transition-all duration-300 ${studyAgainSuggestion ? 'opacity-100' : 'opacity-0'}`}>
+                      <p className="text-[18px] text-[#DD4444] font-bold">Study again</p>
+                    </div>
+
+                  {suggestion && (
+                    <div className="absolute top-3 flex flex-row gap-0 sm:gap-40 justify-center items-center">
+                      <div className="flex flex-col items-center justify-center gap-1 w-[120px]">
+                        <svg className="w-[25px] h-[25px]" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" transform="rotate(270)"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 5V19M12 5L6 11M12 5L18 11" stroke="#e77c7c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path> </g></svg>
+                        <p className="text-[#e77c7c] text-[14px] text-center">If you didn't know <b>swipe left</b></p>
+                      </div>
+                      <div className="flex flex-col items-center justify-center gap-1 w-[120px]">
+                        <svg className="w-[25px] h-[25px]" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" transform="rotate(90)"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 5V19M12 5L6 11M12 5L18 11" stroke="#4cb74c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path> </g></svg>
+                        <p className="text-[#4cb74c] text-[14px] text-center">If you were right <b>swipe right</b></p>
+                      </div>
+                    </div>
+                  )}
                   <img className="w-[120px] select-none pointer-events-none user-select-none" src={`http://localhost:3003/api/images/files/${currentCard.img}`} alt={currentCard.word} />
                   <p className="text-[16px] mt-[12px] text-[#707070] select-none">{currentCard.translation}</p>
                   <div className="flex flex-row items-center justify-center gap-1 mt-3 border-b-1 border-[#e2edf5] pb-4">
@@ -108,6 +203,20 @@ const Learn = () => {
             </motion.div>
           )}
         </AnimatePresence>
+        {!currentCard && (
+          <div className="flex flex-col items-center justify-center gap-10 w-full h-full">
+            <div className="flex flex-col items-center justify-center">
+              <div className="pointer-events-none rounded-2xl w-[200px] h-[40px] bg-[#ffffffa4] border-1 border-[#dedede] flex items-center justify-center">
+                <p className="px-1 py-0.5 text-[13px] text-center text-[#2f2f2f]">Time to discover new words</p>
+              </div>
+              <img className="w-[60px] mt-2" src={Panda} alt="Panda image" />
+            </div>
+            <Link className="flex flex-row justify-center items-center rounded-full hover:bg-[#edeeee] p-2 drop-shadow filter shadow-black" to="/main">
+              <svg className="w-[25px] text-black" stroke="#929599" strokeWidth='0.5px' fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="KeyboardArrowLeftRoundedIcon"><path d="M14.71 15.88 10.83 12l3.88-3.88c.39-.39.39-1.02 0-1.41a.9959.9959 0 0 0-1.41 0L8.71 11.3c-.39.39-.39 1.02 0 1.41l4.59 4.59c.39.39 1.02.39 1.41 0 .38-.39.39-1.03 0-1.42"></path></svg>
+              <p className="text-[14px] font-bold pb-0.5">GO TO MAIN MENU</p>
+            </Link>
+          </div>
+        )}
       </div>
 
       <div className="fixed bottom-0 z-20 w-full flex-none flex flex-row items-center justify-center gap-45 sm:gap-100 h-[55px]">
