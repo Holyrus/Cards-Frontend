@@ -6,6 +6,7 @@ import { useLocation } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion"
 import Panda from '../assets/panda2.png'
+import cardsService from '../services/cards'
 
 const Learn = () => {
 
@@ -17,6 +18,8 @@ const Learn = () => {
   // console.log(currentDeck.cards)
 
   const [toLearnCards, setToLearnCards] = useState([])
+
+  const queryClient = useQueryClient()
 
   useEffect(() => {
     setToLearnCards(currentDeck?.cards?.filter(card => card.toLearn === true))
@@ -32,12 +35,9 @@ const Learn = () => {
 
   const handleFlip = () => {
     if (!isFlipped) setIsFlipped(true)
-  }
-
-  const handleSwipe = () => {
-    setIsFlipped(false)
-    setCurrentIndex((prev) => prev + 1)
-    setSuggestionClicked(false)
+    if (isFlipped === false && sound === true) {
+      speak(currentCard.word)
+    }
   }
 
   const handleBackClick = () => {
@@ -63,12 +63,106 @@ const Learn = () => {
     }
   }, [currentCard])
 
-  console.log(toLearnCards)
+  // console.log(toLearnCards)
+  // console.log(currentCard)
 
   // Rotation of card on drag
 
   const x = useMotionValue(0)
   const rotate = useTransform(x, [-200, 0, 200], [-15, 0, 15])
+
+  const handleStudyAgainSwipe = () => {
+    setIsFlipped(false)
+    setSuggestionClicked(false)
+    setToLearnCards(prevCards => {
+      const newCards = [...prevCards]
+      const [currentCard] = newCards.splice(currentIndex, 1)
+      return [...newCards, currentCard]
+    })
+    setCurrentIndex((prev) => prev)
+  }
+
+  // Change the cards state
+  
+  const updateCardMutation = useMutation({
+    mutationFn: (updatedCard) => cardsService.update(updatedCard.id, updatedCard),
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['cards'] })
+      queryClient.invalidateQueries({queryKey: ['decks'] })
+      setIsFlipped(false)
+      setSuggestionClicked(false)
+      setCurrentIndex(prev => prev + 1)
+    },
+    onError: (error) => {
+      console.error('Failed to update card:', error)
+    }
+  })
+
+  const handleGotItSwipe = () => {
+    if (currentCard.gotIt >= 0 && currentCard.gotIt <= 4) {
+      const updatedCard = {
+        ...currentCard,
+        toLearn: false,
+        known: true,
+        learned: false,
+        gotIt: (currentCard.gotIt || 0) + 1,
+      }
+      updateCardMutation.mutate({...updatedCard, id: currentCard.id})
+    } else if (currentCard.gotIt > 4) {
+      const updatedCard = {
+        ...currentCard,
+        toLearn: false,
+        known: false,
+        learned: true,
+        gotIt: (currentCard.gotIt || 0) + 1,
+      }
+      updateCardMutation.mutate({...updatedCard, id: currentCard.id})
+    }
+  }
+
+  // Speaking handlers
+
+  const [voices, setVoices] = useState([])
+  
+  const [currentVoices, setCurrentVoices] = useState([])
+  
+  const [chosenVoice, setChosenVoice] = useState('')
+
+  useEffect(() => {
+      const loadVoices = () => {
+        const availableVoices = speechSynthesis.getVoices()
+        setVoices(availableVoices)
+      }
+  
+      speechSynthesis.onvoiceschanged = loadVoices
+      loadVoices()
+    }, [])
+
+  useEffect(() => {
+      const filteredVoices = voices.filter((v) => v.name.includes(currentDeck.learnLang))
+    
+      setCurrentVoices(filteredVoices)
+    
+      const filteredChosenVoice = filteredVoices.find((v) => v.name.includes(currentDeck.voice))
+      setChosenVoice(filteredChosenVoice)
+    }, [voices, currentDeck.learnLang, currentDeck.voice])
+
+  const speak = (word) => {
+
+    if (!voices.length) return
+
+    speechSynthesis.cancel()
+
+    const selectedVoice = chosenVoice;
+
+    const utterance = new SpeechSynthesisUtterance(word)
+    utterance.voice = selectedVoice
+    utterance.volume = 0.3  // Set volume
+    utterance.rate = 1    // Optional: control speech rate (0.1 to 10)
+    utterance.pitch = 1   // Optional: control pitch (0 to 2)
+
+    speechSynthesis.speak(utterance)
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center w-full">
@@ -136,10 +230,15 @@ const Learn = () => {
                 }
               }}
               onDragEnd={(event, info) => {
-                if (info.offset.x > 100 || info.offset.x < -100) {
+                if (info.offset.x > 100) {
                   setGotItSuggestion(false)
                   setStudyAgainSuggestion(false)
-                  handleSwipe()
+                  handleGotItSwipe()
+                  setSuggestion(false)
+                } else if (info.offset.x < -100) {
+                  setGotItSuggestion(false)
+                  setStudyAgainSuggestion(false)
+                  handleStudyAgainSwipe()
                   setSuggestion(false)
                 } else {
                   setGotItSuggestion(false)
@@ -181,8 +280,8 @@ const Learn = () => {
                   <div className="flex flex-row items-center justify-center gap-1 mt-3 border-b-1 border-[#e2edf5] pb-4">
                     <button 
                       onClick={(e) => {
-                      e.stopPropagation()
-                      // handleVoicesEnter()
+                      e.stopPropagation(),
+                      speak(currentCard.word)
                       }}
                       className="hover:bg-gray-100 p-1 rounded-full cursor-pointer"
                       >
@@ -190,15 +289,14 @@ const Learn = () => {
                     </button>
                     <p className="text-[20px] pb-1 select-none">{currentCard.word}</p>
                   </div>
-                  <button
+                  <Link to={`/card/${currentCard.id}`}
                       onClick={(e) => {
                       e.stopPropagation()
-                      // handleEdit()
                       }}
                       className="hover:bg-gray-100 p-1.5 mt-4 rounded-full cursor-pointer"
                       >
                     <svg className="w-[18px] h-[18px] text-green-600" aria-hidden="true" focusable="false" data-prefix="far" data-icon="pen-to-square" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M441 58.9L453.1 71c9.4 9.4 9.4 24.6 0 33.9L424 134.1 377.9 88 407 58.9c9.4-9.4 24.6-9.4 33.9 0zM209.8 256.2L344 121.9 390.1 168 255.8 302.2c-2.9 2.9-6.5 5-10.4 6.1l-58.5 16.7 16.7-58.5c1.1-3.9 3.2-7.5 6.1-10.4zM373.1 25L175.8 222.2c-8.7 8.7-15 19.4-18.3 31.1l-28.6 100c-2.4 8.4-.1 17.4 6.1 23.6s15.2 8.5 23.6 6.1l100-28.6c11.8-3.4 22.5-9.7 31.1-18.3L487 138.9c28.1-28.1 28.1-73.7 0-101.8L474.9 25C446.8-3.1 401.2-3.1 373.1 25zM88 64C39.4 64 0 103.4 0 152V424c0 48.6 39.4 88 88 88H360c48.6 0 88-39.4 88-88V312c0-13.3-10.7-24-24-24s-24 10.7-24 24V424c0 22.1-17.9 40-40 40H88c-22.1 0-40-17.9-40-40V152c0-22.1 17.9-40 40-40H200c13.3 0 24-10.7 24-24s-10.7-24-24-24H88z"></path></svg>
-                  </button>
+                  </Link>
               </div>
             </motion.div>
           )}
