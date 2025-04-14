@@ -34,6 +34,8 @@ const Learn = () => {
   const [gotItSuggestion, setGotItSuggestion] = useState(false)
   const [studyAgainSuggestion, setStudyAgainSuggestion] = useState(false)
 
+  const [isWordRevealed, setIsWordRevealed] = useState(false)
+
   const handleFlip = () => {
     if (!isFlipped) setIsFlipped(true)
     if (isFlipped === false && sound === true) {
@@ -107,6 +109,7 @@ const Learn = () => {
         known: true,
         learned: false,
         gotIt: (currentCard.gotIt || 0) + 1,
+        flipped: !currentCard.flipped,
       }
       updateCardMutation.mutate({...updatedCard, id: currentCard.id})
     } else if (currentCard.gotIt > 4) {
@@ -116,6 +119,7 @@ const Learn = () => {
         known: false,
         learned: true,
         gotIt: (currentCard.gotIt || 0) + 1,
+        flipped: !currentCard.flipped,
       }
       updateCardMutation.mutate({...updatedCard, id: currentCard.id})
     }
@@ -236,10 +240,31 @@ const Learn = () => {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <div className={`absolute w-full h-full rounded-xl flex flex-col items-center justify-center transition-transform duration-500`}>
-                  <img className="w-[120px] select-none pointer-events-none user-select-none" src={`http://localhost:3003/api/images/files/${nextCard.img}`} alt={nextCard.word} />
-                  <p className="text-[22px] mt-[12px] select-none">{nextCard.translation}</p>
-              </div>
+              {nextCard.flipped === true ? (
+                <>
+                  <div className={`absolute w-full h-full rounded-xl backface-hidden flex flex-col gap-3.5 items-center justify-center transition-transform duration-500`}>
+                    <div className="flex flex-row items-center justify-center gap-1 border-b-1 border-[#e2edf5] pb-3">
+                      <button
+                        className="hover:bg-gray-100 p-1 rounded-full cursor-pointer"
+                      >
+                        <svg className="w-[20px] h-[20px] text-green-600" aria-hidden="true" focusable="false" data-prefix="far" data-icon="volume" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M191.9 201.9L304 102.3V409.7L191.9 310.1c-4.4-3.9-10.1-6.1-15.9-6.1H88c-4.4 0-8-3.6-8-8V216c0-4.4 3.6-8 8-8h88c5.9 0 11.6-2.2 15.9-6.1zM322.2 32c-7.3 0-14.3 2.7-19.8 7.5L166.9 160H88c-30.9 0-56 25.1-56 56v80c0 30.9 25.1 56 56 56h78.9L302.4 472.5c5.5 4.8 12.5 7.5 19.8 7.5c16.5 0 29.8-13.3 29.8-29.8V61.8C352 45.3 338.7 32 322.2 32zm182.9 75c-10.3-8.4-25.4-6.8-33.8 3.5s-6.8 25.4 3.5 33.8C507.3 170.7 528 210.9 528 256s-20.7 85.3-53.2 111.8c-10.3 8.4-11.8 23.5-3.5 33.8s23.5 11.8 33.8 3.5c43.2-35.2 70.9-88.9 70.9-149s-27.7-113.8-70.9-149zm-60.5 74.5c-10.3-8.4-25.4-6.8-33.8 3.5s-6.8 25.4 3.5 33.8C425.1 227.6 432 241 432 256s-6.9 28.4-17.7 37.3c-10.3 8.4-11.8 23.5-3.5 33.8s23.5 11.8 33.8 3.5C466.1 312.9 480 286.1 480 256s-13.9-56.9-35.4-74.5z"></path></svg>
+                      </button>
+                      <div className={`relative w-full h-[33px] transition-all duration-300 ${isWordRevealed ? 'bg-transparent' : 'bg-gradient-to-br from-white to-gray-300 rounded-lg cursor-pointer'}`} >
+                        <svg className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[33px] h-[33px] ${isWordRevealed ? 'opacity-0' : 'opacity-100'}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M15.0007 12C15.0007 13.6569 13.6576 15 12.0007 15C10.3439 15 9.00073 13.6569 9.00073 12C9.00073 10.3431 10.3439 9 12.0007 9C13.6576 9 15.0007 10.3431 15.0007 12Z" stroke="#aeaeae" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path> <path d="M12.0012 5C7.52354 5 3.73326 7.94288 2.45898 12C3.73324 16.0571 7.52354 19 12.0012 19C16.4788 19 20.2691 16.0571 21.5434 12C20.2691 7.94291 16.4788 5 12.0012 5Z" stroke="#aeaeae" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path> </g></svg>
+                        <p className={`text-[22px] select-none ${isWordRevealed ? 'text-black' : 'text-transparent'}`}>{nextCard.word}</p>
+                      </div>
+                    </div>
+                    <p className="text-[13px] text-[#858585] text-center w-[200px] select-none">{nextCard.usage}</p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className={`absolute w-full h-full rounded-xl flex flex-col items-center justify-center transition-transform duration-500`}>
+                    <img className="w-[120px] select-none pointer-events-none user-select-none" src={`http://localhost:3003/api/images/files/${nextCard.img}`} alt={nextCard.word} />
+                    <p className="text-[22px] mt-[12px] select-none">{nextCard.translation}</p>
+                  </div>
+                </>
+              )}
             </motion.div>
           )}
           {currentCard && (
@@ -275,14 +300,17 @@ const Learn = () => {
                   setStudyAgainSuggestion(false)
                   handleGotItSwipe()
                   setSuggestion(false)
+                  setIsWordRevealed(false)
                 } else if (info.offset.x < -100) {
                   setGotItSuggestion(false)
                   setStudyAgainSuggestion(false)
                   handleStudyAgainSwipe()
                   setSuggestion(false)
+                  setIsWordRevealed(false)
                 } else {
                   setGotItSuggestion(false)
                   setStudyAgainSuggestion(false)
+                  setIsWordRevealed(false)
                 }
               }}
             whileTap={{ scale: 0.98 }}
@@ -290,6 +318,91 @@ const Learn = () => {
             transition={{ duration: 0.3 }}
             // style={{ x, rotate}}
             >
+              {currentCard.flipped === true ? (
+                <>
+                  <div className={`absolute w-full h-full rounded-xl backface-hidden flex flex-col gap-3.5 items-center justify-center transition-transform duration-500 ${isFlipped ? 'rotate-y-180' : ''}`}>
+                    <div className="flex flex-row items-center justify-center gap-1 border-b-1 border-[#e2edf5] pb-3">
+                      <button
+                        onClick={(e) => {
+                        e.stopPropagation(),
+                        speak(currentCard.word)
+                        }}
+                        className="hover:bg-gray-100 p-1 rounded-full cursor-pointer"
+                        >
+                        <svg className="w-[20px] h-[20px] text-green-600" aria-hidden="true" focusable="false" data-prefix="far" data-icon="volume" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M191.9 201.9L304 102.3V409.7L191.9 310.1c-4.4-3.9-10.1-6.1-15.9-6.1H88c-4.4 0-8-3.6-8-8V216c0-4.4 3.6-8 8-8h88c5.9 0 11.6-2.2 15.9-6.1zM322.2 32c-7.3 0-14.3 2.7-19.8 7.5L166.9 160H88c-30.9 0-56 25.1-56 56v80c0 30.9 25.1 56 56 56h78.9L302.4 472.5c5.5 4.8 12.5 7.5 19.8 7.5c16.5 0 29.8-13.3 29.8-29.8V61.8C352 45.3 338.7 32 322.2 32zm182.9 75c-10.3-8.4-25.4-6.8-33.8 3.5s-6.8 25.4 3.5 33.8C507.3 170.7 528 210.9 528 256s-20.7 85.3-53.2 111.8c-10.3 8.4-11.8 23.5-3.5 33.8s23.5 11.8 33.8 3.5c43.2-35.2 70.9-88.9 70.9-149s-27.7-113.8-70.9-149zm-60.5 74.5c-10.3-8.4-25.4-6.8-33.8 3.5s-6.8 25.4 3.5 33.8C425.1 227.6 432 241 432 256s-6.9 28.4-17.7 37.3c-10.3 8.4-11.8 23.5-3.5 33.8s23.5 11.8 33.8 3.5C466.1 312.9 480 286.1 480 256s-13.9-56.9-35.4-74.5z"></path></svg>
+                      </button>
+                      <div className={`relative w-full h-[33px] transition-all duration-300 ${isWordRevealed ? 'bg-transparent' : 'bg-gradient-to-br from-white to-gray-300 rounded-lg cursor-pointer'}`} 
+                        onClick={(e) => {
+                        e.stopPropagation(), 
+                        setIsWordRevealed(true)}}>
+                        <svg className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[33px] h-[33px] ${isWordRevealed ? 'opacity-0' : 'opacity-100'}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M15.0007 12C15.0007 13.6569 13.6576 15 12.0007 15C10.3439 15 9.00073 13.6569 9.00073 12C9.00073 10.3431 10.3439 9 12.0007 9C13.6576 9 15.0007 10.3431 15.0007 12Z" stroke="#aeaeae" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path> <path d="M12.0012 5C7.52354 5 3.73326 7.94288 2.45898 12C3.73324 16.0571 7.52354 19 12.0012 19C16.4788 19 20.2691 16.0571 21.5434 12C20.2691 7.94291 16.4788 5 12.0012 5Z" stroke="#aeaeae" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path> </g></svg>
+                        <p className={`text-[22px] select-none ${isWordRevealed ? 'text-black' : 'text-transparent'}`}>{currentCard.word}</p>
+                      </div>
+                    </div>
+                    <p className="text-[13px] text-[#858585] text-center w-[200px] select-none">{currentCard.usage}</p>
+                  </div>
+
+                  <div onClick={handleBackClick} className={`absolute w-full h-full bg-white rounded-xl flex flex-col items-center justify-center text-xl font-semibold transition-transform duration-500 transform ${isFlipped ? '' : 'rotate-y-180'} backface-hidden`}>
+                  <div className={`absolute top-5 left-3 border-3 rotate-340 border-[#009900] rounded-xl px-[10px] py-[5px] transition-all duration-300 ${gotItSuggestion ? 'opacity-100' : 'opacity-0'}`}>
+                    <p className="text-[18px] text-[#009900] font-bold">Got it</p>
+                  </div>
+
+                  <div className={`absolute top-7 right-3 border-3 rotate-20 border-[#DD4444] rounded-xl px-[10px] py-[5px] transition-all duration-300 ${studyAgainSuggestion ? 'opacity-100' : 'opacity-0'}`}>
+                    <p className="text-[18px] text-[#DD4444] font-bold">Study again</p>
+                  </div>
+
+                  {suggestion && (
+                    <div className="absolute top-3 flex flex-row gap-0 sm:gap-40 justify-center items-center">
+                      <div className="flex flex-col items-center justify-center gap-1 w-[120px]">
+                        <svg className="w-[25px] h-[25px]" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" transform="rotate(270)"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 5V19M12 5L6 11M12 5L18 11" stroke="#e77c7c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path> </g></svg>
+                        <p className="text-[#e77c7c] text-[14px] text-center">If you didn't know <b>swipe left</b></p>
+                      </div>
+                      <div className="flex flex-col items-center justify-center gap-1 w-[120px]">
+                        <svg className="w-[25px] h-[25px]" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" transform="rotate(90)"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 5V19M12 5L6 11M12 5L18 11" stroke="#4cb74c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path> </g></svg>
+                        <p className="text-[#4cb74c] text-[14px] text-center">If you were right <b>swipe right</b></p>
+                      </div>
+                    </div>
+                  )}
+                  <img className="w-[120px] select-none pointer-events-none user-select-none" src={`http://localhost:3003/api/images/files/${currentCard.img}`} alt={currentCard.word} />
+                  <div className="flex flex-row items-center justify-center gap-1 mt-4">
+                      <button 
+                        onClick={(e) => {
+                        e.stopPropagation(),
+                        speak(currentCard.word)
+                        }}
+                        className="hover:bg-gray-100 p-1 rounded-full cursor-pointer"
+                        >
+                        <svg className="w-[20px] h-[20px] text-green-600" aria-hidden="true" focusable="false" data-prefix="far" data-icon="volume" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M191.9 201.9L304 102.3V409.7L191.9 310.1c-4.4-3.9-10.1-6.1-15.9-6.1H88c-4.4 0-8-3.6-8-8V216c0-4.4 3.6-8 8-8h88c5.9 0 11.6-2.2 15.9-6.1zM322.2 32c-7.3 0-14.3 2.7-19.8 7.5L166.9 160H88c-30.9 0-56 25.1-56 56v80c0 30.9 25.1 56 56 56h78.9L302.4 472.5c5.5 4.8 12.5 7.5 19.8 7.5c16.5 0 29.8-13.3 29.8-29.8V61.8C352 45.3 338.7 32 322.2 32zm182.9 75c-10.3-8.4-25.4-6.8-33.8 3.5s-6.8 25.4 3.5 33.8C507.3 170.7 528 210.9 528 256s-20.7 85.3-53.2 111.8c-10.3 8.4-11.8 23.5-3.5 33.8s23.5 11.8 33.8 3.5c43.2-35.2 70.9-88.9 70.9-149s-27.7-113.8-70.9-149zm-60.5 74.5c-10.3-8.4-25.4-6.8-33.8 3.5s-6.8 25.4 3.5 33.8C425.1 227.6 432 241 432 256s-6.9 28.4-17.7 37.3c-10.3 8.4-11.8 23.5-3.5 33.8s23.5 11.8 33.8 3.5C466.1 312.9 480 286.1 480 256s-13.9-56.9-35.4-74.5z"></path></svg>
+                      </button>
+                    <p className="text-[16px] text-[#707070] select-none">{currentCard.word}</p>
+                  </div>
+                  <div className="flex flex-row items-center justify-center gap-1 mt-3 border-b-1 border-[#e2edf5] pb-4">
+                    <p className="text-[20px] select-none">{currentCard.translation}</p>
+                  </div>
+                  <div className="flex flex-row items-center justify-center gap-1 mt-4">
+                      <button 
+                        onClick={(e) => {
+                        e.stopPropagation(),
+                        speak(currentCard.usage)
+                        }}
+                        className="hover:bg-gray-100 p-1 rounded-full cursor-pointer"
+                        >
+                        <svg className="w-[20px] h-[20px] text-green-600" aria-hidden="true" focusable="false" data-prefix="far" data-icon="volume" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M191.9 201.9L304 102.3V409.7L191.9 310.1c-4.4-3.9-10.1-6.1-15.9-6.1H88c-4.4 0-8-3.6-8-8V216c0-4.4 3.6-8 8-8h88c5.9 0 11.6-2.2 15.9-6.1zM322.2 32c-7.3 0-14.3 2.7-19.8 7.5L166.9 160H88c-30.9 0-56 25.1-56 56v80c0 30.9 25.1 56 56 56h78.9L302.4 472.5c5.5 4.8 12.5 7.5 19.8 7.5c16.5 0 29.8-13.3 29.8-29.8V61.8C352 45.3 338.7 32 322.2 32zm182.9 75c-10.3-8.4-25.4-6.8-33.8 3.5s-6.8 25.4 3.5 33.8C507.3 170.7 528 210.9 528 256s-20.7 85.3-53.2 111.8c-10.3 8.4-11.8 23.5-3.5 33.8s23.5 11.8 33.8 3.5c43.2-35.2 70.9-88.9 70.9-149s-27.7-113.8-70.9-149zm-60.5 74.5c-10.3-8.4-25.4-6.8-33.8 3.5s-6.8 25.4 3.5 33.8C425.1 227.6 432 241 432 256s-6.9 28.4-17.7 37.3c-10.3 8.4-11.8 23.5-3.5 33.8s23.5 11.8 33.8 3.5C466.1 312.9 480 286.1 480 256s-13.9-56.9-35.4-74.5z"></path></svg>
+                      </button>
+                    <p className="text-[13px] text-[#858585] text-start max-w-[200px] select-none">{currentCard.usage}</p>
+                  </div>
+                  <Link to={`/card/${currentCard.id}`}
+                      onClick={(e) => {
+                      e.stopPropagation()
+                      }}
+                      className="hover:bg-gray-100 p-1.5 mt-4 rounded-full cursor-pointer"
+                      >
+                    <svg className="w-[18px] h-[18px] text-green-600" aria-hidden="true" focusable="false" data-prefix="far" data-icon="pen-to-square" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M441 58.9L453.1 71c9.4 9.4 9.4 24.6 0 33.9L424 134.1 377.9 88 407 58.9c9.4-9.4 24.6-9.4 33.9 0zM209.8 256.2L344 121.9 390.1 168 255.8 302.2c-2.9 2.9-6.5 5-10.4 6.1l-58.5 16.7 16.7-58.5c1.1-3.9 3.2-7.5 6.1-10.4zM373.1 25L175.8 222.2c-8.7 8.7-15 19.4-18.3 31.1l-28.6 100c-2.4 8.4-.1 17.4 6.1 23.6s15.2 8.5 23.6 6.1l100-28.6c11.8-3.4 22.5-9.7 31.1-18.3L487 138.9c28.1-28.1 28.1-73.7 0-101.8L474.9 25C446.8-3.1 401.2-3.1 373.1 25zM88 64C39.4 64 0 103.4 0 152V424c0 48.6 39.4 88 88 88H360c48.6 0 88-39.4 88-88V312c0-13.3-10.7-24-24-24s-24 10.7-24 24V424c0 22.1-17.9 40-40 40H88c-22.1 0-40-17.9-40-40V152c0-22.1 17.9-40 40-40H200c13.3 0 24-10.7 24-24s-10.7-24-24-24H88z"></path></svg>
+                  </Link>
+                  </div>
+                </>
+              ) : (
+              <>
               <div className={`absolute w-full h-full rounded-xl backface-hidden flex flex-col items-center justify-center transition-transform duration-500 ${isFlipped ? 'rotate-y-180' : ''}`}>
                   <img className="w-[120px] select-none pointer-events-none user-select-none" src={`http://localhost:3003/api/images/files/${currentCard.img}`} alt={currentCard.word} />
                   <p className="text-[22px] mt-[12px] select-none">{currentCard.translation}</p>
@@ -329,6 +442,18 @@ const Learn = () => {
                     </button>
                     <p className="text-[20px] pb-1 select-none">{currentCard.word}</p>
                   </div>
+                  <div className="flex flex-row items-center justify-center gap-1 mt-4">
+                      <button 
+                        onClick={(e) => {
+                        e.stopPropagation(),
+                        speak(currentCard.usage)
+                        }}
+                        className="hover:bg-gray-100 p-1 rounded-full cursor-pointer"
+                        >
+                        <svg className="w-[20px] h-[20px] text-green-600" aria-hidden="true" focusable="false" data-prefix="far" data-icon="volume" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M191.9 201.9L304 102.3V409.7L191.9 310.1c-4.4-3.9-10.1-6.1-15.9-6.1H88c-4.4 0-8-3.6-8-8V216c0-4.4 3.6-8 8-8h88c5.9 0 11.6-2.2 15.9-6.1zM322.2 32c-7.3 0-14.3 2.7-19.8 7.5L166.9 160H88c-30.9 0-56 25.1-56 56v80c0 30.9 25.1 56 56 56h78.9L302.4 472.5c5.5 4.8 12.5 7.5 19.8 7.5c16.5 0 29.8-13.3 29.8-29.8V61.8C352 45.3 338.7 32 322.2 32zm182.9 75c-10.3-8.4-25.4-6.8-33.8 3.5s-6.8 25.4 3.5 33.8C507.3 170.7 528 210.9 528 256s-20.7 85.3-53.2 111.8c-10.3 8.4-11.8 23.5-3.5 33.8s23.5 11.8 33.8 3.5c43.2-35.2 70.9-88.9 70.9-149s-27.7-113.8-70.9-149zm-60.5 74.5c-10.3-8.4-25.4-6.8-33.8 3.5s-6.8 25.4 3.5 33.8C425.1 227.6 432 241 432 256s-6.9 28.4-17.7 37.3c-10.3 8.4-11.8 23.5-3.5 33.8s23.5 11.8 33.8 3.5C466.1 312.9 480 286.1 480 256s-13.9-56.9-35.4-74.5z"></path></svg>
+                      </button>
+                    <p className="text-[13px] text-[#858585] text-start max-w-[200px] select-none">{currentCard.usage}</p>
+                  </div>
                   <Link to={`/card/${currentCard.id}`}
                       onClick={(e) => {
                       e.stopPropagation()
@@ -338,6 +463,8 @@ const Learn = () => {
                     <svg className="w-[18px] h-[18px] text-green-600" aria-hidden="true" focusable="false" data-prefix="far" data-icon="pen-to-square" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M441 58.9L453.1 71c9.4 9.4 9.4 24.6 0 33.9L424 134.1 377.9 88 407 58.9c9.4-9.4 24.6-9.4 33.9 0zM209.8 256.2L344 121.9 390.1 168 255.8 302.2c-2.9 2.9-6.5 5-10.4 6.1l-58.5 16.7 16.7-58.5c1.1-3.9 3.2-7.5 6.1-10.4zM373.1 25L175.8 222.2c-8.7 8.7-15 19.4-18.3 31.1l-28.6 100c-2.4 8.4-.1 17.4 6.1 23.6s15.2 8.5 23.6 6.1l100-28.6c11.8-3.4 22.5-9.7 31.1-18.3L487 138.9c28.1-28.1 28.1-73.7 0-101.8L474.9 25C446.8-3.1 401.2-3.1 373.1 25zM88 64C39.4 64 0 103.4 0 152V424c0 48.6 39.4 88 88 88H360c48.6 0 88-39.4 88-88V312c0-13.3-10.7-24-24-24s-24 10.7-24 24V424c0 22.1-17.9 40-40 40H88c-22.1 0-40-17.9-40-40V152c0-22.1 17.9-40 40-40H200c13.3 0 24-10.7 24-24s-10.7-24-24-24H88z"></path></svg>
                   </Link>
               </div>
+              </>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
