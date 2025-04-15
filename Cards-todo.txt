@@ -6,3 +6,82 @@ Add language of app changing. Add one more line to backend to user { language: "
 Implement themes and statistics (statistics must be saved for user and be same for all decks. Must
 save the stats fom all decks in one stat. )
 Adjust backend for change the token expiration time.(Or make another aproach)
+
+cardSchema.pre('save', async function (next) {
+  if (!this.isNew && this.isModified('gotIt')) {
+    const now = new Date()
+    let nextReview = null
+
+    const jobId = this._id.toString()
+    const cancelExisting = () => {
+      const existingJob = schedule.scheduledJobs[jobId]
+      if (existingJob) existingJob.cancel()
+    }
+
+    cancelExisting()
+
+    if (this.gotIt >= 7) {
+      nextReview = new Date(now.setMonth(now.getMonth() + 1))
+      nextReview.setHours(9, 0, 0, 0) // Next month at 9 AM
+
+      this.toLearn = true
+      this.known = false
+      this.learned = false
+
+      schedule.scheduleJob(jobId, nextReview, async () => {
+        try {
+          const card = await mongoose.model('Card').findById(this._id)
+          if (card) {
+            card.toLearn = true
+            card.known = false
+            card.learned = false
+            await card.save()
+          }
+        } catch (error) {
+          console.error('Error updating card:', error)
+        }
+      })
+    } else if (!this.toLearn) {
+      switch(this.gotIt) {
+      case 1:
+        nextReview = new Date(now.getTime() + 2 * 60000) // 15 minutes
+        break
+      case 2:
+        nextReview = new Date(now.getTime() + 30 * 60000) // 30 minutes
+        break
+      case 3:
+        nextReview = new Date(now.getTime() + 45 * 60000) // 45 minutes
+        break
+      case 4:
+        nextReview = new Date(now.setDate(now.getDate() + 1))
+        nextReview.setHours(9, 0, 0, 0) // Next day at 9 AM
+        break
+      case 5:
+        nextReview = new Date(now.setDate(now.getDate() + 1))
+        nextReview.setHours(9, 30, 0, 0) // Next day at 9:30 AM
+        break
+      case 6:
+        nextReview = new Date(now.setDate(now.getDate() + 1))
+        nextReview.setHours(10, 0, 0, 0) // Next day at 10 AM
+        break
+      }
+
+      this.nextReviewDate = nextReview
+
+      schedule.scheduleJob(jobId, nextReview, async () => {
+        try {
+          const card = await mongoose.model('Card').findById(this._id)
+          if (card) {
+            card.toLearn = true
+            card.known = false
+            card.learned = false
+            await card.save()
+          }
+        } catch (error) {
+          console.error('Error updating card:', error)
+        }
+      })
+    }
+  }
+  next()
+})

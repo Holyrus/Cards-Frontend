@@ -8,6 +8,7 @@ import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-mo
 import Panda from '../assets/panda2.png'
 import cardsService from '../services/cards'
 import decksService from '../services/decks'
+import { DateTime } from 'luxon'
 
 const Learn = () => {
 
@@ -54,6 +55,8 @@ const Learn = () => {
 
   const currentCard = toLearnCards[currentIndex]
   const nextCard = toLearnCards[currentIndex + 1]
+
+  // console.log('Time remaining:', currentCard?.timeRemaining)
 
   useEffect(() => {
     if (currentCard) {
@@ -102,24 +105,57 @@ const Learn = () => {
   })
 
   const handleGotItSwipe = () => {
-    if (currentCard.gotIt >= 0 && currentCard.gotIt <= 4) {
+    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+    const now = DateTime.now().setZone(userTimezone)
+    let nextReview = null
+
+    // console.log(now.plus({ minutes: 10 }).toISO())
+
+    switch(currentCard.gotIt) {
+      case 0:
+        nextReview = now.plus({ minutes: 15 }).toUTC().toISO()
+        break
+      case 1:
+        nextReview = now.plus({ minutes: 30 }).toUTC().toISO()
+        break
+      case 2:
+        nextReview = now.plus({ days: 1 }).toUTC().toISO()
+        break
+      case 3:
+        nextReview = now.plus({ minutes: 30 }).toUTC().toISO()
+        break
+      case 4:
+        nextReview = now.plus({ days: 1 }).toUTC().toISO()
+        break
+      case 5:
+        nextReview = now.plus({ weeks: 1 }).toUTC().toISO()
+        break
+      default:
+          if (this.gotIt >= 6) {
+            nextReview = now.plus({ months: 1 }).toUTC().toISO()
+          }
+    }
+
+    if (currentCard.gotIt >= 0 && currentCard.gotIt <= 6) {
       const updatedCard = {
         ...currentCard,
-        toLearn: false,
-        known: true,
-        learned: false,
+        // toLearn: false,
+        // known: true,
+        // learned: false,
         gotIt: (currentCard.gotIt || 0) + 1,
         flipped: !currentCard.flipped,
+        nextReviewDate: nextReview,
       }
       updateCardMutation.mutate({...updatedCard, id: currentCard.id})
-    } else if (currentCard.gotIt > 4) {
+    } else if (currentCard.gotIt >= 7) {
       const updatedCard = {
         ...currentCard,
-        toLearn: false,
-        known: false,
-        learned: true,
+        // toLearn: false,
+        // known: false,
+        // learned: true,
         gotIt: (currentCard.gotIt || 0) + 1,
         flipped: !currentCard.flipped,
+        nextReviewDate: nextReview,
       }
       updateCardMutation.mutate({...updatedCard, id: currentCard.id})
     }
