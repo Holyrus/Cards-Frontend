@@ -56,8 +56,6 @@ const Learn = () => {
   const currentCard = toLearnCards[currentIndex]
   const nextCard = toLearnCards[currentIndex + 1]
 
-  // console.log('Time remaining:', currentCard?.timeRemaining)
-
   useEffect(() => {
     if (currentCard) {
       const timer = setTimeout(() => {
@@ -109,53 +107,54 @@ const Learn = () => {
     const now = DateTime.now().setZone(userTimezone)
     let nextReview = null
 
-    // console.log(now.plus({ minutes: 10 }).toISO())
-
     switch(currentCard.gotIt) {
       case 0:
-        nextReview = now.plus({ minutes: 15 }).toUTC().toISO()
+        nextReview = now.plus({ minutes: 15 })
         break
       case 1:
-        nextReview = now.plus({ minutes: 30 }).toUTC().toISO()
+        nextReview = now.plus({ minutes: 30 })
         break
       case 2:
-        nextReview = now.plus({ days: 1 }).toUTC().toISO()
+        nextReview = now.plus({ days: 1 })
         break
       case 3:
-        nextReview = now.plus({ minutes: 30 }).toUTC().toISO()
+        nextReview = now.plus({ minutes: 30 })
         break
       case 4:
-        nextReview = now.plus({ days: 1 }).toUTC().toISO()
+        nextReview = now.plus({ days: 1 })
         break
       case 5:
-        nextReview = now.plus({ weeks: 1 }).toUTC().toISO()
+        nextReview = now.plus({ weeks: 1 })
+        break
+      case 6:
+        nextReview = now.plus({ weeks: 1 })
         break
       default:
-          if (this.gotIt >= 6) {
-            nextReview = now.plus({ months: 1 }).toUTC().toISO()
+          if (currentCard.gotIt >= 7) {
+            nextReview = now.plus({ months: 1 })
           }
     }
 
     if (currentCard.gotIt >= 0 && currentCard.gotIt <= 6) {
       const updatedCard = {
         ...currentCard,
-        // toLearn: false,
-        // known: true,
-        // learned: false,
+        toLearn: false,
+        known: true,
+        learned: false,
         gotIt: (currentCard.gotIt || 0) + 1,
         flipped: !currentCard.flipped,
-        nextReviewDate: nextReview,
+        nextReviewDate: nextReview.toISO(),
       }
       updateCardMutation.mutate({...updatedCard, id: currentCard.id})
     } else if (currentCard.gotIt >= 7) {
       const updatedCard = {
         ...currentCard,
-        // toLearn: false,
-        // known: false,
-        // learned: true,
+        toLearn: false,
+        known: false,
+        learned: true,
         gotIt: (currentCard.gotIt || 0) + 1,
         flipped: !currentCard.flipped,
-        nextReviewDate: nextReview,
+        nextReviewDate: nextReview.toISO(),
       }
       updateCardMutation.mutate({...updatedCard, id: currentCard.id})
     }
@@ -252,8 +251,8 @@ const Learn = () => {
         </Link>
         <h1 className="w-[260px] sm:w-[410px] text-center"></h1>
         <div className="relative w-[40px] h-[30px]">
-          <img className="absolute bottom-1 left-2 ml-2 w-[20px]" src={`https://flagcdn.com/80x60/${currentDeck.secondFlag}.webp` || null} alt="Second flag" />
-          <img className="absolute bottom-3 right-4 ml-2 w-[20px]" src={`https://flagcdn.com/80x60/${currentDeck.firstFlag}.webp` || null} alt="First flag" />
+          <img className="absolute bottom-1 left-2 ml-2 w-[20px]" src={`https://flagcdn.com/80x60/${currentDeck.secondFlag}.webp` || null} alt="Second flag" draggable="false" />
+          <img className="absolute bottom-3 right-4 ml-2 w-[20px]" src={`https://flagcdn.com/80x60/${currentDeck.firstFlag}.webp` || null} alt="First flag" draggable="false" />
         </div>
       </div>
 
@@ -296,7 +295,7 @@ const Learn = () => {
               ) : (
                 <>
                   <div className={`absolute w-full h-full rounded-xl flex flex-col items-center justify-center transition-transform duration-500`}>
-                    <img className="w-[120px] select-none pointer-events-none user-select-none" src={`http://localhost:3003/api/images/files/${nextCard.img}`} alt={nextCard.word} />
+                    <img className="w-[120px] select-none pointer-events-none user-select-none" src={`http://localhost:3003/api/images/files/${nextCard.img}`} alt={nextCard.word} draggable="false" />
                     <p className="text-[22px] mt-[12px] select-none">{nextCard.translation}</p>
                   </div>
                 </>
@@ -399,7 +398,7 @@ const Learn = () => {
                       </div>
                     </div>
                   )}
-                  <img className="w-[120px] select-none pointer-events-none user-select-none" src={`http://localhost:3003/api/images/files/${currentCard.img}`} alt={currentCard.word} />
+                  <img className="w-[120px] select-none pointer-events-none user-select-none" src={`http://localhost:3003/api/images/files/${currentCard.img}`} alt={currentCard.word} draggable="false" />
                   <div className="flex flex-row items-center justify-center gap-1 mt-4">
                       <button 
                         onClick={(e) => {
@@ -440,7 +439,7 @@ const Learn = () => {
               ) : (
               <>
               <div className={`absolute w-full h-full rounded-xl backface-hidden flex flex-col items-center justify-center transition-transform duration-500 ${isFlipped ? 'rotate-y-180' : ''}`}>
-                  <img className="w-[120px] select-none pointer-events-none user-select-none" src={`http://localhost:3003/api/images/files/${currentCard.img}`} alt={currentCard.word} />
+                  <img className="w-[120px] select-none pointer-events-none user-select-none" src={`http://localhost:3003/api/images/files/${currentCard.img}`} alt={currentCard.word} draggable="false" />
                   <p className="text-[22px] mt-[12px] select-none">{currentCard.translation}</p>
               </div>
               <div onClick={handleBackClick} className={`absolute w-full h-full bg-white rounded-xl flex flex-col items-center justify-center text-xl font-semibold transition-transform duration-500 transform ${isFlipped ? '' : 'rotate-y-180'} backface-hidden`}>
@@ -464,7 +463,7 @@ const Learn = () => {
                       </div>
                     </div>
                   )}
-                  <img className="w-[120px] select-none pointer-events-none user-select-none" src={`http://localhost:3003/api/images/files/${currentCard.img}`} alt={currentCard.word} />
+                  <img className="w-[120px] select-none pointer-events-none user-select-none" src={`http://localhost:3003/api/images/files/${currentCard.img}`} alt={currentCard.word} draggable="false" />
                   <p className="text-[16px] mt-[12px] text-[#707070] select-none">{currentCard.translation}</p>
                   <div className="flex flex-row items-center justify-center gap-1 mt-3 border-b-1 border-[#e2edf5] pb-4">
                     <button 
@@ -510,7 +509,7 @@ const Learn = () => {
               <div className="pointer-events-none rounded-2xl w-[200px] h-[40px] bg-[#ffffffa4] border-1 border-[#dedede] flex items-center justify-center">
                 <p className="px-1 py-0.5 text-[13px] text-center text-[#2f2f2f]">Time to discover new words</p>
               </div>
-              <img className="w-[60px] mt-2" src={Panda} alt="Panda image" />
+              <img className="w-[60px] mt-2" src={Panda} alt="Panda image" draggable="false" />
             </div>
             <Link className="flex flex-row justify-center items-center rounded-full hover:bg-[#edeeee] p-2 drop-shadow filter shadow-black" to="/main">
               <svg className="w-[25px] text-black" stroke="#929599" strokeWidth='0.5px' fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="KeyboardArrowLeftRoundedIcon"><path d="M14.71 15.88 10.83 12l3.88-3.88c.39-.39.39-1.02 0-1.41a.9959.9959 0 0 0-1.41 0L8.71 11.3c-.39.39-.39 1.02 0 1.41l4.59 4.59c.39.39 1.02.39 1.41 0 .38-.39.39-1.03 0-1.42"></path></svg>

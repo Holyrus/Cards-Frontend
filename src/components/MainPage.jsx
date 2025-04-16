@@ -4,6 +4,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import decksService from '../services/decks'
 import ThreeDModel from "./Model.jsx"
 import cardsService from '../services/cards.js'
+import { parseISO, isPast } from 'date-fns'
+import { DateTime } from 'luxon'
 
 const MainPage = ({ decks, onDeckChange }) => {
 
@@ -301,6 +303,51 @@ const MainPage = ({ decks, onDeckChange }) => {
     })
   }
 
+    // Updating cards by time expiration
+
+    const updateCardMutation = useMutation({
+      mutationFn: (updatedCard) => cardsService.update(updatedCard.id, updatedCard),
+      onSuccess: () => {
+        queryClient.invalidateQueries({queryKey: ['cards'] })
+        queryClient.invalidateQueries({queryKey: ['decks'] })
+      }
+    })
+
+    useEffect(() => {
+      const checkExpiredCards = async () => {
+        if (!currentDeck || !currentDeck.cards) return
+
+        const expiredCards = currentDeck.cards.filter(card => {
+          if (!card.nextReviewDate) return false
+          const reviewDate = parseISO(card.nextReviewDate)
+          return isPast(reviewDate)
+        })
+
+        const updatePromises = expiredCards.map(card => {
+          const updatedCard = {
+            ...card,
+            toLearn: true,
+            known: false,
+            learned: false
+          }
+          return updateCardMutation.mutateAsync(updatedCard)
+        })
+
+        try {
+          await Promise.all(updatePromises)
+        } catch (error) {
+          console.error('Error updating expired cards:', error)
+        }
+      }
+
+      checkExpiredCards()
+    }, [currentDeck])
+
+    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+    const now = DateTime.now().setZone(userTimezone)
+
+  // ---------------------------------
+
   return (
     <div className="min-h-screen flex flex-col items-center relative">
       
@@ -554,8 +601,21 @@ const MainPage = ({ decks, onDeckChange }) => {
 
                   return 0
                 })
-                .map((card, index) => (
-                  <div className="min-h-[75px] w-full border-b-1 border-[#e2edf5] flex flex-row items-center justify-between px-4" key={card.id}>
+                .map((card, index) => {
+
+                let timeRemaining = ''
+
+                if (card.nextReviewDate) {
+                  const reviewDate = DateTime.fromISO(card.nextReviewDate).setZone(userTimezone)
+                  
+                  if (reviewDate > now) {
+                    timeRemaining = reviewDate.toRelative({ base: now })
+                  }
+
+                }
+
+                return (
+                  <div className="min-h-[90px] py-2 w-full border-b-1 border-[#e2edf5] flex flex-row items-center justify-between px-4" key={card.id}>
 
                     <div className="relative flex flex-row items-center">
                       { card.toLearn ? (
@@ -583,6 +643,12 @@ const MainPage = ({ decks, onDeckChange }) => {
                           </button>
                           <p className="text-[13.5px] text-[#afafaf]">{card.usage}</p>
                         </div>
+                        {timeRemaining && card.known && (
+                            <p className="text-[13.5px] text-[#1976d2] ml-[27px]">Returns back { timeRemaining }</p>
+                        )}
+                        {timeRemaining && card.learned && (
+                            <p className="text-[13.5px] text-[#f77e00] ml-[27px]">Returns back { timeRemaining }</p>
+                        )}
                       </div>
                     </div>
 
@@ -609,7 +675,7 @@ const MainPage = ({ decks, onDeckChange }) => {
 
                     </button>
                   </div>
-                ))}
+                )})}
             </div>
           }
 
