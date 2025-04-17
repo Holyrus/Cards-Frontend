@@ -303,7 +303,7 @@ const CreateFirstDeck = ({ createDeck }) => {
 
       {/* Learn modal menu */}
 
-      <div className={`z-[20] absolute flex flex-col justify-start items-start bg-white w-[290px] sm:w-[600px] h-[500px] my-4 opacity-0 ${isLearnSearchOpen ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}`}>
+      <div className={`z-[20] absolute flex flex-col justify-start items-start bg-white w-[290px] sm:w-[600px] h-[500px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 ${isLearnSearchOpen ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}`}>
 
         <div className="flex flex-row row-span-4 px-1 items-center justify-between h-[40px] w-full border-b-1 border-[#e2edf5]">
           <svg className="text-[#757575] w-[45px] p-2 rounded-full hover:bg-gray-100" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="SearchIcon"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg>
@@ -366,7 +366,7 @@ const CreateFirstDeck = ({ createDeck }) => {
 
       {/* Native modal menu */}
 
-      <div className={`z-[20] absolute flex flex-col justify-start items-start bg-white w-[290px] sm:w-[600px] h-[500px] my-4 opacity-0 ${isNatSearchOpen ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}`}>
+      <div className={`z-[20] absolute flex flex-col justify-start items-start bg-white w-[290px] sm:w-[600px] h-[500px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 ${isNatSearchOpen ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}`}>
 
         <div className="flex flex-row row-span-4 px-1 items-center justify-between h-[40px] w-full border-b-1 border-[#e2edf5]">
           <svg className="text-[#757575] w-[45px] p-2 rounded-full hover:bg-gray-100" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="SearchIcon"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg>

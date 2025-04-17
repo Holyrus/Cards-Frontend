@@ -28,6 +28,14 @@ const MainPage = ({ decks, onDeckChange }) => {
 
   const [searchValue, setSearchValue] = useState('')
 
+  const [theme, setTheme] = useState('Green')
+
+  const [toLearnModalOpen, setToLearnModalOpen] = useState(false)
+
+  const [knownModalOpen, setKnownModalOpen] = useState(false)
+
+  const [learnedModalOpen, setLearnedModalOpen] = useState(false)
+
   useEffect(() => {
     setSelectedValue('All')
   }, [currentDeck])
@@ -223,6 +231,12 @@ const MainPage = ({ decks, onDeckChange }) => {
     statCancelHandler()
   }
 
+  const modalDimOverlayHandler = () => {
+    toLearnModalCancelHandler()
+    knownModalCancelHandler()
+    learnedModalCancelHandler()
+  }
+
   const divClickHandler = () => {
     if (paletteOpen) {
       setPaletteOpen(false)
@@ -348,6 +362,42 @@ const MainPage = ({ decks, onDeckChange }) => {
 
   // ---------------------------------
 
+  // Set themes
+
+    const handleThemeChange = (theme) => {
+      setTheme(theme)
+    }
+
+  // ---------------------------------
+
+  // Modal windows (to learn, known, learned)
+
+  const toLearnModalClickHandler = () => {
+    setToLearnModalOpen(true)
+  }
+
+  const knownModalClickHandler = () => {
+    setKnownModalOpen(true)
+  }
+
+  const learnedModalClickHandler = () => {
+    setLearnedModalOpen(true)
+  }
+
+  const toLearnModalCancelHandler = () => {
+    setToLearnModalOpen(false)
+  }
+
+  const knownModalCancelHandler = () => {
+    setKnownModalOpen(false)
+  }
+
+  const learnedModalCancelHandler = () => {
+    setLearnedModalOpen(false)
+  }
+
+  // ---------------------------------
+
   return (
     <div className="min-h-screen flex flex-col items-center relative">
       
@@ -411,20 +461,26 @@ const MainPage = ({ decks, onDeckChange }) => {
 
       {/* Palette menu */}
 
-      <div className={`absolute z-30 flex flex-col justify-start items-start bg-white w-full h-[150px] transform duration-400 top-[-150px] ${paletteOpen ? 'absolute translate-y-[204px]' : 'absolute pointer-events-none translate-y-[-150px]'}`}>
-          <p>Palttetetetetetetetetetetet</p>
+      <div className={`absolute z-30 flex flex-col justify-center items-center gap-4 bg-white w-full h-[150px] transform duration-400 top-[-150px] ${paletteOpen ? 'absolute translate-y-[204px]' : 'absolute pointer-events-none translate-y-[-150px]'}`}>
+          <div className="flex flex-row gap-3">
+            <button onClick={() => handleThemeChange('Black')} className={`w-[40px] h-[40px] rounded-lg bg-gradient-to-br from-black via-[#363131] to-[#aeaeae] shadow-md cursor-pointer ${theme === 'Black' ? 'border-b-2 border-gray-400' : 'border-none'}`}></button>
+            <button onClick={() => handleThemeChange('Pink')} className={`w-[40px] h-[40px] rounded-lg bg-gradient-to-br from-[#f9649f] via-[#feadcd] to-white shadow-md cursor-pointer ${theme === 'Pink' ? 'border-b-2 border-gray-400' : 'border-none'}`}></button>
+            <button onClick={() => handleThemeChange('Brown')} className={`w-[40px] h-[40px] rounded-lg bg-gradient-to-br from-[#b98745] via-[#e7c190] to-white shadow-md cursor-pointer ${theme === 'Brown' ? 'border-b-2 border-gray-400' : 'border-none'}`}></button>
+            <button onClick={() => handleThemeChange('Green')} className={`w-[40px] h-[40px] rounded-lg bg-gradient-to-br from-[#008236] via-[#00d358] to-white shadow-md cursor-pointer ${theme === 'Green' ? 'border-b-2 border-gray-400' : 'border-none'}`}></button>
+          </div>
+          <p className="text-[12px] text-[#AAAAAA] font-semibold text-center">Use themes to customize the app</p>
       </div>
 
       {/* Stats menu */}
 
-      <div className={`absolute z-30 flex flex-col justify-start items-start bg-white w-full h-[300px] transform duration-400 top-[-300px] ${statOpen ? 'absolute translate-y-[354px]' : 'absolute pointer-events-none translate-y-[-300px]'}`}>
-         <p>Statataatatattaatatataaaat</p>
+      <div className={`absolute z-30 flex flex-col justify-center items-center bg-white w-full h-[300px] transform duration-400 top-[-300px] ${statOpen ? 'absolute translate-y-[354px]' : 'absolute pointer-events-none translate-y-[-300px]'}`}>
+         <p>Stats</p>
       </div>
 
       <div className="flex-1 z-20 mb-[55px] flex flex-col items-center w-full bg-[#f3fff2]">
         <div className="mt-[15px] mb-[5px] w-full h-[80px] flex flex-row justify-center items-center gap-1 sm:gap-6 px-5">
             
-            <div className="cursor-pointer rounded-sm w-[235px] h-[60px] border-1 border-[#e3e2e0] bg-white flex flex-col justify-center items-center">
+            <div onClick={toLearnModalClickHandler} className="cursor-pointer rounded-sm w-[235px] h-[60px] border-1 border-[#e3e2e0] bg-white flex flex-col justify-center items-center">
               <p className="text-[22px] font-semibold text-[#009900]">{currentDeck?.cards?.filter(card => card.toLearn === true)?.length || 0}</p>
               <div className="flex flex-row items-center justify-center gap-1">
                 <p className="text-[#009900] pb-[4px]">To learn</p>
@@ -432,7 +488,7 @@ const MainPage = ({ decks, onDeckChange }) => {
               </div>
             </div>
 
-            <div className="cursor-pointer rounded-sm w-[235px] h-[60px] border-1 border-[#e3e2e0] bg-white flex flex-col justify-center items-center">
+            <div onClick={knownModalClickHandler} className="cursor-pointer rounded-sm w-[235px] h-[60px] border-1 border-[#e3e2e0] bg-white flex flex-col justify-center items-center">
               <p className="text-[22px] font-semibold text-[#0099dd]">{currentDeck?.cards?.filter(card => card.known === true)?.length || 0}</p>
               <div className="flex flex-row items-center justify-center gap-1">
                 <p className="text-[#0099dd] pb-[4px]">Known</p>
@@ -440,7 +496,7 @@ const MainPage = ({ decks, onDeckChange }) => {
               </div>
             </div>
 
-            <div className="cursor-pointer rounded-sm w-[235px] h-[60px] border-1 border-[#e3e2e0] bg-white flex flex-col justify-center items-center">
+            <div onClick={learnedModalClickHandler} className="cursor-pointer rounded-sm w-[235px] h-[60px] border-1 border-[#e3e2e0] bg-white flex flex-col justify-center items-center">
               <p className="text-[22px] font-semibold text-[#d3b000]">{currentDeck?.cards?.filter(card => card.learned === true)?.length || 0}</p>
               <div className="flex flex-row items-center justify-center gap-1">
                 <p className="text-[#d3b000] pb-[4px]">Learned</p>
@@ -705,12 +761,42 @@ const MainPage = ({ decks, onDeckChange }) => {
         </Link>
       </div>
 
-      {/* Dim overlay */}
+      {/* Dim overlays */}
 
       <div 
         onClick={dimOverlayHandler}
         className={`fixed mt-[55px] h-[100vh] inset-0 bg-black opacity-0 z-25 transition-opacity ease-in-out duration-1000 ${paletteOpen || statOpen ? "opacity-35 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
       ></div>
+
+      <div 
+        onClick={modalDimOverlayHandler}
+        className={`fixed h-[100vh] inset-0 bg-black opacity-0 z-80 transition-opacity ease-in-out duration-1000 ${toLearnModalOpen || knownModalOpen || learnedModalOpen ? "opacity-35 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+      ></div>
+
+      {/* to learn modal window */}
+
+      <div className={`z-85 absolute flex flex-col justify-start items-center bg-white w-[290px] sm:w-[600px] h-[500px] rounded-lg opacity-0 transition-opacity duration-300 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 ${toLearnModalOpen ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}`}>
+          <div className="flex flex-row justify-between items-start mt-2 px-2 w-full">
+            <div className="w-[35px]"></div>
+            <p className="font-semibold text-[18px] mt-3">Cards to learn</p>
+            <button
+              onClick={modalDimOverlayHandler}
+              className="p-1 text-black hover:bg-gray-100 rounded-full"             
+            >
+            <svg className="text-[#acacac]" aria-hidden="true" viewBox="0 0 24 24" role="img" width="20px" height="20px" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18.973 5.027L5.028 18.972m0-13.945l13.944 13.945"></path>
+            </svg>
+          </button>
+          </div>
+          <p className="text-[16px] text-center px-8 mt-4">
+            This number means how many cards are
+            ready to be learnt based on our 
+            spaced-repetition algorithm.
+          </p>
+          <button className="text-[14px] text-[#008236] hover:bg-gray-50 font-semibold px-[26px] py-[8px] mt-4 rounded-2xl cursor-pointer">
+            SHOW CARDS TO LEARN
+          </button>
+      </div>
 
     </div>
   )
