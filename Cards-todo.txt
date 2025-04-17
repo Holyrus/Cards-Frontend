@@ -1,9 +1,11 @@
-Make learning system on START button
-Make timing system depending when word was created or learned.
 Fix flickering of elements when change deck.
 
 Make change password, username and name functionality
 Add language of app changing. Add one more line to backend to user { language: "gb" }
 Implement themes and statistics (statistics must be saved for user and be same for all decks. Must
-save the stats fom all decks in one stat. )
+save the stats for all decks in one stat. )
 Adjust backend for change the token expiration time.(Or make another aproach)
+
+Add more images.
+Add usage suggestions (3 example sentences with learn word), use AI or something else.
+Implement sign up with gmail
