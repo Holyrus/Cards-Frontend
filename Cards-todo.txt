@@ -11,6 +11,7 @@ Add usage suggestions (3 example sentences with learn word), use AI API KEY.
 Implement sign up with gmail.
 Make info modal windows when clicking on the number of to learn, known and learned cards.
 If card flipped make sound immidiatelly and after flipping again.
+Make Reset button functionality for each card in main menu
 
 Make a arrow keys controls for cards in learn section
 Save the mute boolean in learn section to DB.

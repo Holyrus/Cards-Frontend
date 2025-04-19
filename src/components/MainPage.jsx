@@ -6,6 +6,8 @@ import ThreeDModel from "./Model.jsx"
 import cardsService from '../services/cards.js'
 import { parseISO, isPast } from 'date-fns'
 import { DateTime } from 'luxon'
+import WiseUmka1 from '../assets/wiseUmka1.png'
+import WiseUmka2 from '../assets/wiseUmka2.png'
 
 const MainPage = ({ decks, onDeckChange }) => {
 
@@ -396,6 +398,52 @@ const MainPage = ({ decks, onDeckChange }) => {
     setLearnedModalOpen(false)
   }
 
+  const showCardToLearnButtonHandler = () => {
+    modalDimOverlayHandler()
+    if (!isCardsOpen) {
+      cardsButtonHandler()
+    }
+    if (!isSearchOpen) {
+      cardsSearchHandler()
+    }
+    setSelectedValue('To learn')
+  }
+
+  const showCardKnownButtonHandler = () => {
+    modalDimOverlayHandler()
+    if (!isCardsOpen) {
+      cardsButtonHandler()
+    }
+    if (!isSearchOpen) {
+      cardsSearchHandler()
+    }
+    setSelectedValue('Known')
+  }
+
+  const showCardLearnedButtonHandler = () => {
+    modalDimOverlayHandler()
+    if (!isCardsOpen) {
+      cardsButtonHandler()
+    }
+    if (!isSearchOpen) {
+      cardsSearchHandler()
+    }
+    setSelectedValue('Learned')
+  }
+
+  useEffect(() => {
+    if (toLearnModalOpen || knownModalOpen || learnedModalOpen) {
+      document.body.style.overflow = "hidden"; // Disable scrolling on the main page
+    } else {
+      document.body.style.overflow = "auto"; // Enable scrolling on the main page
+    }
+
+    // Cleanup function to ensure scrolling is restored if component unmounts
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [toLearnModalOpen, knownModalOpen, learnedModalOpen]);
+
   // ---------------------------------
 
   return (
@@ -775,13 +823,13 @@ const MainPage = ({ decks, onDeckChange }) => {
 
       {/* to learn modal window */}
 
-      <div className={`z-85 absolute flex flex-col justify-start items-center bg-white w-[290px] sm:w-[600px] h-[500px] rounded-lg opacity-0 transition-opacity duration-300 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 ${toLearnModalOpen ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}`}>
+      <div className={`z-85 absolute flex flex-col justify-start items-center bg-white w-[290px] sm:w-[600px] h-[520px] rounded-lg opacity-0 transition-opacity duration-300 left-1/2 top-[55px] -translate-x-1/2 overflow-y-auto ${toLearnModalOpen ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}`}>
           <div className="flex flex-row justify-between items-start mt-2 px-2 w-full">
             <div className="w-[35px]"></div>
             <p className="font-semibold text-[18px] mt-3">Cards to learn</p>
             <button
               onClick={modalDimOverlayHandler}
-              className="p-1 text-black hover:bg-gray-100 rounded-full"             
+              className="p-1 text-black hover:bg-gray-100 rounded-full"
             >
             <svg className="text-[#acacac]" aria-hidden="true" viewBox="0 0 24 24" role="img" width="20px" height="20px" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M18.973 5.027L5.028 18.972m0-13.945l13.944 13.945"></path>
@@ -793,9 +841,114 @@ const MainPage = ({ decks, onDeckChange }) => {
             ready to be learnt based on our 
             spaced-repetition algorithm.
           </p>
-          <button className="text-[14px] text-[#008236] hover:bg-gray-50 font-semibold px-[26px] py-[8px] mt-4 rounded-2xl cursor-pointer">
-            SHOW CARDS TO LEARN
+          { currentDeck?.cards?.length !== 0 && currentDeck ? (
+            <button onClick={showCardToLearnButtonHandler} className="text-[14px] select-none text-[#008236] hover:bg-gray-50 font-semibold px-[26px] py-[8px] mt-4 rounded-2xl cursor-pointer">
+              SHOW CARDS TO LEARN
+            </button>
+          ) : (
+            <button className="text-[14px] select-none text-[#cccccc] hover:bg-gray-50 font-semibold px-[26px] py-[8px] mt-4 rounded-2xl cursor-pointer">
+              SHOW CARDS TO LEARN
+            </button>
+          )}
+
+        <img className="w-[100px] mt-4" src={WiseUmka1} alt="Wise Umka" />
+
+          <p className="text-[17px] font-semibold text-center mt-4">Spaced-repetition algorithm</p>
+          <p className="text-[15px] text-center px-8 mt-4">
+             Umka tracks every single one of your cards
+             and knows when it is the right time to show
+             it to you again. He knows which cards you sent
+             to the right so he will show them to you again
+             after a longer period of time. If you sent a card
+             to the left, he will show it to you sooner.
+          </p>
+          
+          { currentDeck?.cards?.length !== 0 && currentDeck ? (
+            <Link to='/main/learn' state={{ currentDeck }} ><button className=" mb-6 text-[14px] font-semibold py-[8px] px-[26px] mt-6 rounded-full text-white border-1 border-green-700 shadow-md hover:shadow-lg bg-green-700 hover:bg-green-100 hover:text-green-700 transition-all duration-300 cursor-pointer select-none">START LEARNING</button></Link>
+          ) : (
+            <button className="mb-6 text-[14px] font-semibold py-[8px] px-[26px] mt-6 rounded-full text-white shadow-md bg-[#cccccc] select-none">START LEARNING</button>
+          )}
+      </div>
+
+      {/* Known modal window */}
+
+      <div className={`z-85 absolute flex flex-col justify-start items-center bg-white w-[290px] sm:w-[600px] h-[290px] sm:h-[250px] rounded-lg opacity-0 transition-opacity duration-300 left-1/2 top-[55px] -translate-x-1/2 overflow-y-auto ${knownModalOpen ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}`}>
+          <div className="flex flex-row justify-between items-start mt-2 px-2 w-full">
+            <div className="w-[35px]"></div>
+            <p className="font-semibold text-[18px] mt-3">Short-term memory</p>
+            <button
+              onClick={modalDimOverlayHandler}
+              className="p-1 text-black hover:bg-gray-100 rounded-full"
+            >
+            <svg className="text-[#acacac]" aria-hidden="true" viewBox="0 0 24 24" role="img" width="20px" height="20px" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18.973 5.027L5.028 18.972m0-13.945l13.944 13.945"></path>
+            </svg>
           </button>
+          </div>
+          <p className="text-[16px] text-center px-8 mt-4">
+            This number means how many words and 
+            phrases you have in your short-term memory.
+          </p>
+
+          <p className="text-[15px] text-center px-8 mt-4">
+            You won't find these cards in learning mode for a while, until they are brought back.
+          </p>
+
+          { currentDeck?.cards?.length !== 0 && currentDeck ? (
+            <button onClick={showCardKnownButtonHandler} className="text-[14px] select-none text-[#008236] hover:bg-gray-50 font-semibold px-[26px] py-[8px] mt-4 rounded-2xl cursor-pointer">
+              SHOW KNOWN CARDS
+            </button>
+          ) : (
+            <button className="text-[14px] select-none text-[#cccccc] hover:bg-gray-50 font-semibold px-[26px] py-[8px] mt-4 rounded-2xl cursor-pointer">
+              SHOW KNOWN CARDS
+            </button>
+          )}
+      </div>
+
+      {/* Learned modal window */}
+
+      <div className={`z-85 absolute flex flex-col justify-start items-center bg-white w-[290px] sm:w-[600px] h-[555px] sm:h-[445px] rounded-lg opacity-0 transition-opacity duration-300 left-1/2 top-[55px] -translate-x-1/2 overflow-y-auto ${learnedModalOpen ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}`}>
+          <div className="flex flex-row justify-between items-start mt-2 px-2 w-full">
+            <div className="w-[35px]"></div>
+            <p className="font-semibold text-[18px] mt-3">Long-term memory</p>
+            <button
+              onClick={modalDimOverlayHandler}
+              className="p-1 text-black hover:bg-gray-100 rounded-full"
+            >
+            <svg className="text-[#acacac]" aria-hidden="true" viewBox="0 0 24 24" role="img" width="20px" height="20px" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18.973 5.027L5.028 18.972m0-13.945l13.944 13.945"></path>
+            </svg>
+          </button>
+          </div>
+          <p className="text-[16px] text-center px-8 mt-4">
+            This number means how many words and 
+            phrases you have in your long-term memory.
+          </p>
+
+          <img className="w-[120px] mt-4" src={WiseUmka2} alt="Wise Umka2" />
+
+          <p className="text-[15px] text-center px-8 mt-4">
+            Umka knows which cards you already remember
+            well. He will show them to you again occasionally,
+            just to make sure you don't forget them ever.
+          </p>
+
+          <p className="text-[15px] text-center px-8 mt-4">
+            You can list through these learned cards 
+            and reset their progress if you want to
+            learn them again.
+          </p>
+
+          { currentDeck?.cards?.length !== 0 && currentDeck ? (
+            <button onClick={showCardLearnedButtonHandler} className="text-[14px] select-none text-[#008236] hover:bg-gray-50 font-semibold px-[26px] py-[8px] mt-4 rounded-2xl cursor-pointer">
+              SHOW LEARNED CARDS
+            </button>
+          ) : (
+            <button className="text-[14px] select-none text-[#cccccc] hover:bg-gray-50 font-semibold px-[26px] py-[8px] mt-4 rounded-2xl cursor-pointer">
+              SHOW LEARNED CARDS
+            </button>
+          )}
+          
       </div>
 
     </div>
