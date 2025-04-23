@@ -1,13 +1,17 @@
 import { Link } from "react-router-dom"
 import Panda from '../assets/panda2.png'
+import { useTheme } from "./ThemeProvider"
 
 const Profile = ({handleLogout, user, handleAccountDeleting}) => {
+  
+  const { theme } = useTheme()
+
   return (
     <div className="min-h-screen flex flex-col items-center">
 
       {/* <button className="font-medium border-2 rounded-full bg-red-500 px-3 py-1 hover:bg-red-800 hover:text-white hover:border-black" onClick={handleLogout}>Logout</button> */}
 
-      <div className="flex-1 flex flex-col items-center w-full bg-[#f3fff2]">
+      <div className={`flex-1 flex flex-col items-center w-full bg-[#f3fff2]`}>
 
         <div className="h-[43px] w-full bg-transparent">
 

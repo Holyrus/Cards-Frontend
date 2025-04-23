@@ -8,10 +8,14 @@ import { parseISO, isPast } from 'date-fns'
 import { DateTime } from 'luxon'
 import WiseUmka1 from '../assets/wiseUmka1.png'
 import WiseUmka2 from '../assets/wiseUmka2.png'
+import { useTheme } from "./ThemeProvider.jsx";
 
 const MainPage = ({ decks, onDeckChange }) => {
 
   const queryClient = useQueryClient()
+
+  const { theme, setTheme } = useTheme()
+
   const [currentDeck, setCurrentDeck] = useState('')
 
   const [isCardsOpen, setIsCardsOpen] = useState(false)
@@ -29,8 +33,6 @@ const MainPage = ({ decks, onDeckChange }) => {
   const [selectedValue, setSelectedValue] = useState('All')
 
   const [searchValue, setSearchValue] = useState('')
-
-  const [theme, setTheme] = useState('Green')
 
   const [toLearnModalOpen, setToLearnModalOpen] = useState(false)
 
@@ -377,14 +379,6 @@ const MainPage = ({ decks, onDeckChange }) => {
 
   // ---------------------------------
 
-  // Set themes
-
-    const handleThemeChange = (theme) => {
-      setTheme(theme)
-    }
-
-  // ---------------------------------
-
   // Modal windows (to learn, known, learned)
 
   const toLearnModalClickHandler = () => {
@@ -462,10 +456,10 @@ const MainPage = ({ decks, onDeckChange }) => {
   return (
     <div className="min-h-screen flex flex-col items-center relative">
       
-      <div onClick={divClickHandler} className="z-50 relative w-full flex-none flex flex-row gap-12 sm:gap-40 md:gap-60 lg:gap-72 items-center justify-center border-b-1 border-[#e1edf5] bg-white h-[55px]">
+      <div onClick={divClickHandler} className={`z-50 relative w-full flex-none flex flex-row gap-12 sm:gap-40 md:gap-60 lg:gap-72 items-center justify-center border-b-1 border-[#e1edf5] h-[55px] ${theme === 'Green' ? "bg-white" : theme === 'Black' ? 'bg-[#0d0d0d]' : theme === 'Pink' ? 'bg-white' : theme === 'Brown' ? 'bg-[#fffff8]' : 'bg-white' }`}>
 
-        <button onClick={paletteClickHandler} className="cursor-pointer w-[40px] rounded-full hover:bg-gray-200 p-2">
-          <svg className="text-[#aaaaaa]" fill="currentColor" aria-hidden="true" focusable="false" data-prefix="far" data-icon="palette" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M464 258.2c0 2.7-1 5.2-4.2 8c-3.8 3.1-10.1 5.8-17.8 5.8H344c-53 0-96 43-96 96c0 6.8 .7 13.4 2.1 19.8c3.3 15.7 10.2 31.1 14.4 40.6l0 0c.7 1.6 1.4 3 1.9 4.3c5 11.5 5.6 15.4 5.6 17.1c0 5.3-1.9 9.5-3.8 11.8c-.9 1.1-1.6 1.6-2 1.8c-.3 .2-.8 .3-1.6 .4c-2.9 .1-5.7 .2-8.6 .2C141.1 464 48 370.9 48 256S141.1 48 256 48s208 93.1 208 208c0 .7 0 1.4 0 2.2zm48 .5c0-.9 0-1.8 0-2.7C512 114.6 397.4 0 256 0S0 114.6 0 256S114.6 512 256 512c3.5 0 7.1-.1 10.6-.2c31.8-1.3 53.4-30.1 53.4-62c0-14.5-6.1-28.3-12.1-42c-4.3-9.8-8.7-19.7-10.8-29.9c-.7-3.2-1-6.5-1-9.9c0-26.5 21.5-48 48-48h97.9c36.5 0 69.7-24.8 70.1-61.3zM160 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zm0-64a32 32 0 1 0 0-64 32 32 0 1 0 0 64zm128-64a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zm64 64a32 32 0 1 0 0-64 32 32 0 1 0 0 64z"></path></svg>
+        <button onClick={paletteClickHandler} className="cursor-pointer w-[40px] rounded-full p-2">
+          <svg className={`${theme === 'Green' ? "text-[#aaaaaa]" : theme === 'Black' ? 'text-[#aaaaaa]' : theme === 'Pink' ? 'text-[#e252b7]' : theme === 'Brown' ? 'text-[#d19a51]' : 'text-[#aaaaaa]' }`} fill="currentColor" aria-hidden="true" focusable="false" data-prefix="far" data-icon="palette" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M464 258.2c0 2.7-1 5.2-4.2 8c-3.8 3.1-10.1 5.8-17.8 5.8H344c-53 0-96 43-96 96c0 6.8 .7 13.4 2.1 19.8c3.3 15.7 10.2 31.1 14.4 40.6l0 0c.7 1.6 1.4 3 1.9 4.3c5 11.5 5.6 15.4 5.6 17.1c0 5.3-1.9 9.5-3.8 11.8c-.9 1.1-1.6 1.6-2 1.8c-.3 .2-.8 .3-1.6 .4c-2.9 .1-5.7 .2-8.6 .2C141.1 464 48 370.9 48 256S141.1 48 256 48s208 93.1 208 208c0 .7 0 1.4 0 2.2zm48 .5c0-.9 0-1.8 0-2.7C512 114.6 397.4 0 256 0S0 114.6 0 256S114.6 512 256 512c3.5 0 7.1-.1 10.6-.2c31.8-1.3 53.4-30.1 53.4-62c0-14.5-6.1-28.3-12.1-42c-4.3-9.8-8.7-19.7-10.8-29.9c-.7-3.2-1-6.5-1-9.9c0-26.5 21.5-48 48-48h97.9c36.5 0 69.7-24.8 70.1-61.3zM160 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zm0-64a32 32 0 1 0 0-64 32 32 0 1 0 0 64zm128-64a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zm64 64a32 32 0 1 0 0-64 32 32 0 1 0 0 64z"></path></svg>
         </button>
 
         <div className='hover-trigger hover:text-[#707073ff] flex items-center justify-center w-[135px] cursor-pointer h-full' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
@@ -475,18 +469,18 @@ const MainPage = ({ decks, onDeckChange }) => {
               <img className="absolute bottom-3 right-4 ml-2 w-[18px]" src={`https://flagcdn.com/80x60/${currentDeck.firstFlag}.webp` || null} alt="First flag" />
             </div>
           ) : (
-            <p>Choose the deck</p>
+            <p className={`${theme === 'Black' ? 'text-white' : 'text-black'}`}>Choose the deck</p>
           )
           }
             
-          {currentDeck && <p className="mx-0.5">{currentDeck.learnLang}</p>}
+          {currentDeck && <p className={`mx-0.5 ${theme === 'Black' ? 'text-white' : 'text-black'}`}>{currentDeck.learnLang}</p>}
           <svg className="text-[#707073ff]" width="16" height="12" viewBox="0 0 24 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <polygon points="6,8 18,8 12,16" />
           </svg>
         </div>
 
-        <button onClick={statClickHandler} className="cursor-pointer w-[40px] rounded-full hover:bg-gray-200 p-2.5">
-          <svg className="text-[#aaaaaa]" aria-hidden="true" focusable="false" data-prefix="far" data-icon="chart-simple" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M240 80V432H208V80h32zM208 32c-26.5 0-48 21.5-48 48V432c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48H208zM80 272V432H48V272H80zM48 224c-26.5 0-48 21.5-48 48V432c0 26.5 21.5 48 48 48H80c26.5 0 48-21.5 48-48V272c0-26.5-21.5-48-48-48H48zm320-80h32V432H368V144zm-48 0V432c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V144c0-26.5-21.5-48-48-48H368c-26.5 0-48 21.5-48 48z"></path></svg>
+        <button onClick={statClickHandler} className="cursor-pointer w-[40px] rounded-full p-2.5">
+          <svg className={`${theme === 'Green' ? "text-[#aaaaaa]" : theme === 'Black' ? 'text-[#aaaaaa]' : theme === 'Pink' ? 'text-[#e252b7]' : theme === 'Brown' ? 'text-[#d19a51]' : 'text-[#aaaaaa]' }`} aria-hidden="true" focusable="false" data-prefix="far" data-icon="chart-simple" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M240 80V432H208V80h32zM208 32c-26.5 0-48 21.5-48 48V432c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48H208zM80 272V432H48V272H80zM48 224c-26.5 0-48 21.5-48 48V432c0 26.5 21.5 48 48 48H80c26.5 0 48-21.5 48-48V272c0-26.5-21.5-48-48-48H48zm320-80h32V432H368V144zm-48 0V432c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V144c0-26.5-21.5-48-48-48H368c-26.5 0-48 21.5-48 48z"></path></svg>
         </button>
 
         <div className={`bg-white text-black py-[8px] z-20 border-1 border-[#e3e2e1] w-[175px] top-0 rounded-lg mt-[54px] opacity-0 ${isOpen ? 'absolute opacity-100 translate-y-0 ' : 'absolute opacity-0 pointer-events-none translate-y-[-10px]'} transform duration-300`} onMouseEnter={displayDialog} onMouseLeave={removeDialog}>
@@ -524,10 +518,10 @@ const MainPage = ({ decks, onDeckChange }) => {
 
       <div className={`absolute z-30 flex flex-col justify-center items-center gap-4 bg-white w-full h-[150px] transform duration-400 top-[-150px] ${paletteOpen ? 'absolute translate-y-[204px]' : 'absolute pointer-events-none translate-y-[-150px]'}`}>
           <div className="flex flex-row gap-3">
-            <button onClick={() => handleThemeChange('Black')} className={`w-[40px] h-[40px] rounded-lg bg-gradient-to-br from-black via-[#363131] to-[#aeaeae] shadow-md cursor-pointer ${theme === 'Black' ? 'border-b-2 border-gray-400' : 'border-none'}`}></button>
-            <button onClick={() => handleThemeChange('Pink')} className={`w-[40px] h-[40px] rounded-lg bg-gradient-to-br from-[#f9649f] via-[#feadcd] to-white shadow-md cursor-pointer ${theme === 'Pink' ? 'border-b-2 border-gray-400' : 'border-none'}`}></button>
-            <button onClick={() => handleThemeChange('Brown')} className={`w-[40px] h-[40px] rounded-lg bg-gradient-to-br from-[#b98745] via-[#e7c190] to-white shadow-md cursor-pointer ${theme === 'Brown' ? 'border-b-2 border-gray-400' : 'border-none'}`}></button>
-            <button onClick={() => handleThemeChange('Green')} className={`w-[40px] h-[40px] rounded-lg bg-gradient-to-br from-[#008236] via-[#00d358] to-white shadow-md cursor-pointer ${theme === 'Green' ? 'border-b-2 border-gray-400' : 'border-none'}`}></button>
+            <button onClick={() => setTheme('Black')} className={`w-[40px] h-[40px] rounded-lg bg-gradient-to-br from-black via-[#363131] to-[#aeaeae] shadow-md cursor-pointer ${theme === 'Black' ? 'border-b-2 border-gray-400' : 'border-none'}`}></button>
+            <button onClick={() => setTheme('Pink')} className={`w-[40px] h-[40px] rounded-lg bg-gradient-to-br from-[#f9649f] via-[#feadcd] to-white shadow-md cursor-pointer ${theme === 'Pink' ? 'border-b-2 border-gray-400' : 'border-none'}`}></button>
+            <button onClick={() => setTheme('Brown')} className={`w-[40px] h-[40px] rounded-lg bg-gradient-to-br from-[#b98745] via-[#e7c190] to-white shadow-md cursor-pointer ${theme === 'Brown' ? 'border-b-2 border-gray-400' : 'border-none'}`}></button>
+            <button onClick={() => setTheme('Green')} className={`w-[40px] h-[40px] rounded-lg bg-gradient-to-br from-[#008236] via-[#00d358] to-white shadow-md cursor-pointer ${theme === 'Green' ? 'border-b-2 border-gray-400' : 'border-none'}`}></button>
           </div>
           <p className="text-[12px] text-[#AAAAAA] font-semibold text-center">Use themes to customize the app</p>
       </div>

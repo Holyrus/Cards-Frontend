@@ -3,6 +3,9 @@ Fix flickering of elements when change deck.
 Make change password, username and name functionality
 Add language of app changing. Add one more line to backend to user { language: "gb" }
 Implement themes
+Save chosing theme to db and check it when user open app
+Make the system preference choosing the theme  
+
 Implement statistics (statistics must be saved for user and be same for all decks. Must
 save the stats for all decks in one stat. )
 Adjust backend for change the token expiration time.(Or make another aproach)
