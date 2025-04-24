@@ -456,7 +456,7 @@ const MainPage = ({ decks, onDeckChange }) => {
   return (
     <div className="min-h-screen flex flex-col items-center relative">
       
-      <div onClick={divClickHandler} className={`z-50 relative w-full flex-none flex flex-row gap-12 sm:gap-40 md:gap-60 lg:gap-72 items-center justify-center border-b-1 border-[#e1edf5] h-[55px] ${theme === 'Green' ? "bg-white" : theme === 'Black' ? 'bg-[#0d0d0d]' : theme === 'Pink' ? 'bg-white' : theme === 'Brown' ? 'bg-[#fffff8]' : 'bg-white' }`}>
+      <div onClick={divClickHandler} className={`z-50 relative w-full flex-none flex flex-row gap-12 sm:gap-40 md:gap-60 lg:gap-72 items-center justify-center border-b-1 h-[55px] ${theme === 'Green' ? "bg-white border-[#e1edf5]" : theme === 'Black' ? 'bg-[#0d0d0d] border-[#313131]' : theme === 'Pink' ? 'bg-white border-[#e1edf5]' : theme === 'Brown' ? 'bg-[#fffff8] border-[#e1edf5]' : '' }`}>
 
         <button onClick={paletteClickHandler} className="cursor-pointer w-[40px] rounded-full p-2">
           <svg className={`${theme === 'Green' ? "text-[#aaaaaa]" : theme === 'Black' ? 'text-[#aaaaaa]' : theme === 'Pink' ? 'text-[#e252b7]' : theme === 'Brown' ? 'text-[#d19a51]' : 'text-[#aaaaaa]' }`} fill="currentColor" aria-hidden="true" focusable="false" data-prefix="far" data-icon="palette" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M464 258.2c0 2.7-1 5.2-4.2 8c-3.8 3.1-10.1 5.8-17.8 5.8H344c-53 0-96 43-96 96c0 6.8 .7 13.4 2.1 19.8c3.3 15.7 10.2 31.1 14.4 40.6l0 0c.7 1.6 1.4 3 1.9 4.3c5 11.5 5.6 15.4 5.6 17.1c0 5.3-1.9 9.5-3.8 11.8c-.9 1.1-1.6 1.6-2 1.8c-.3 .2-.8 .3-1.6 .4c-2.9 .1-5.7 .2-8.6 .2C141.1 464 48 370.9 48 256S141.1 48 256 48s208 93.1 208 208c0 .7 0 1.4 0 2.2zm48 .5c0-.9 0-1.8 0-2.7C512 114.6 397.4 0 256 0S0 114.6 0 256S114.6 512 256 512c3.5 0 7.1-.1 10.6-.2c31.8-1.3 53.4-30.1 53.4-62c0-14.5-6.1-28.3-12.1-42c-4.3-9.8-8.7-19.7-10.8-29.9c-.7-3.2-1-6.5-1-9.9c0-26.5 21.5-48 48-48h97.9c36.5 0 69.7-24.8 70.1-61.3zM160 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zm0-64a32 32 0 1 0 0-64 32 32 0 1 0 0 64zm128-64a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zm64 64a32 32 0 1 0 0-64 32 32 0 1 0 0 64z"></path></svg>
@@ -488,27 +488,31 @@ const MainPage = ({ decks, onDeckChange }) => {
             {decks.length !== 0 &&
               [...decks]
                 .map((deck, index) => 
-                  <div onClick={() => mainDeckSetter(deck)} key={index} className={`h-[50px] w-full hover:bg-[#e5eaec] flex flex-row justify-center gap-3 items-center cursor-pointer px-1 ${currentDeck.learnLang === deck.learnLang ? 'bg-[#ebf7fc]' : 'bg-white'}`}>
+                  <div onClick={() => mainDeckSetter(deck)} key={index} className={`h-[50px] w-full flex flex-row justify-center gap-3 items-center cursor-pointer px-1 
+                    ${currentDeck.learnLang === deck.learnLang && theme === 'Green' ? 'bg-[#ebf7fc] hover:bg-[#e5eaec]' : currentDeck.learnLang === deck.learnLang && theme === 'Black' ? 'bg-[#121c22] hover:bg-[#141f25]' : currentDeck.learnLang === deck.learnLang && theme === 'Brown' ? 'bg-[#fff6e7] hover:bg-[#f5ecdc]' : currentDeck.learnLang === deck.learnLang && theme === 'Pink' ? 'bg-[#fff1f9] hover:bg-[#f8e7f0]' : ''} 
+                    ${theme === 'Green' ? "hover:bg-[#e5eaec]" : theme === 'Black' ? 'hover:bg-[#141f25]' : theme === 'Pink' ? 'hover:bg-[#f8e7f0]' : theme === 'Brown' ? 'hover:bg-[#faf4ea]' : 'hover:bg-[#e5eaec]' }`}
+                  >
                     
-                    <div className="relative w-[40px] h-[30px]">
-                      <img className="absolute bottom-1 left-2 ml-2 w-[20px]" src={`https://flagcdn.com/80x60/${deck.secondFlag}.webp` || null} alt="Second flag" />
-                      <img className="absolute bottom-3 right-4 ml-2 w-[20px]" src={`https://flagcdn.com/80x60/${deck.firstFlag}.webp` || null} alt="First flag" />
-                    </div>
-
-                    <div className="flex flex-col">
-                      <p className="text-[15px]">{deck.learnLang}</p>
-                      <p className="text-[13px] text-[#009900]">{deck.cards.filter(card => card.toLearn === true)?.length || 0} To learn</p>
-                    </div>
-
-                    <Link to={`/deck/${deck.id}`}>
-                      <svg className="text-[#abb4b8] w-[35px] cursor-pointer p-2 rounded-full hover:bg-[#d5effb]" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="EditIcon"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75z"></path></svg>
-                    </Link>    
+                  <div className="relative w-[40px] h-[30px]">
+                    <img className="absolute bottom-1 left-2 ml-2 w-[20px]" src={`https://flagcdn.com/80x60/${deck.secondFlag}.webp` || null} alt="Second flag" />
+                    <img className="absolute bottom-3 right-4 ml-2 w-[20px]" src={`https://flagcdn.com/80x60/${deck.firstFlag}.webp` || null} alt="First flag" />
                   </div>
+
+                  <div className="flex flex-col">
+                    <p className={`text-[15px] ${theme === 'Black' ? 'text-white' : 'text-black'}`}>{deck.learnLang}</p>
+                    <p className={`text-[13px] ${deck.cards.filter(card => card.toLearn === true)?.length === 0 ? 'text-[#bdbdbd]' : theme === 'Brown' ? 'text-[#91b26d]' : theme === 'Pink' ? 'text-[#5e7cff]' : 'text-[#009900]' }`}>{deck.cards.filter(card => card.toLearn === true)?.length || 0} To learn</p>
+                  </div>
+
+                  <Link to={`/deck/${deck.id}`}>
+                    <svg className={`text-[#abb4b8] w-[35px] cursor-pointer p-2 rounded-full
+                      ${theme === 'Green' ? 'hover:bg-[#d5effb]' : theme === 'Black' ? 'hover:bg-[#2c3336]' : theme === 'Brown' ? 'hover:bg-[#e9e6d0]' : theme === 'Pink' ? 'hover:bg-[#e9d0e8]' : ''}`} fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="EditIcon"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75z"></path></svg>
+                  </Link>
+                </div>
                 )
               }
           
-            <Link to="/newdeck" className="text-[#009900] flex flex-row items-center justify-center w-full gap-1 h-[36px] hover:bg-[#f5f5f5] cursor-pointer">
-              <svg className="text-[#009900] w-[24px]" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="AddIcon"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"></path></svg>
+            <Link to="/newdeck" className={`${theme === 'Pink' ? 'text-[#5e7cff] hover:bg-[#f8e7f0]' : theme === 'Black' ? 'text-[#009900] hover:bg-[#141f25]' : theme === 'Brown' ? 'text-[#009900] hover:bg-[#faf4ea]' : 'text-[#009900] hover:bg-[#e5eaec]'} flex flex-row items-center justify-center w-full gap-1 h-[36px] cursor-pointer`}>
+              <svg className={`w-[24px]`} fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="AddIcon"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"></path></svg>
               <p>Create new deck</p>
             </Link>
         </div>
@@ -516,7 +520,8 @@ const MainPage = ({ decks, onDeckChange }) => {
 
       {/* Palette menu */}
 
-      <div className={`absolute z-30 flex flex-col justify-center items-center gap-4 bg-white w-full h-[150px] transform duration-400 top-[-150px] ${paletteOpen ? 'absolute translate-y-[204px]' : 'absolute pointer-events-none translate-y-[-150px]'}`}>
+      <div className={`absolute z-30 flex flex-col justify-center items-center gap-4 w-full h-[150px] transition-transform duration-400 top-[-150px] ${paletteOpen ? 'absolute translate-y-[204px]' : 'absolute pointer-events-none translate-y-[-150px]'}
+        ${theme === 'Black' ? 'bg-[#0d0d0d]' : theme === 'Pink' ? 'bg-white' : theme === 'Brown' ? 'bg-[#fffff8]' : 'bg-white'}`}>
           <div className="flex flex-row gap-3">
             <button onClick={() => setTheme('Black')} className={`w-[40px] h-[40px] rounded-lg bg-gradient-to-br from-black via-[#363131] to-[#aeaeae] shadow-md cursor-pointer ${theme === 'Black' ? 'border-b-2 border-gray-400' : 'border-none'}`}></button>
             <button onClick={() => setTheme('Pink')} className={`w-[40px] h-[40px] rounded-lg bg-gradient-to-br from-[#f9649f] via-[#feadcd] to-white shadow-md cursor-pointer ${theme === 'Pink' ? 'border-b-2 border-gray-400' : 'border-none'}`}></button>
@@ -528,11 +533,13 @@ const MainPage = ({ decks, onDeckChange }) => {
 
       {/* Stats menu */}
 
-      <div className={`absolute z-30 flex flex-col justify-center items-center bg-white w-full h-[300px] transform duration-400 top-[-300px] ${statOpen ? 'absolute translate-y-[354px]' : 'absolute pointer-events-none translate-y-[-300px]'}`}>
+      <div className={`absolute z-30 flex flex-col justify-center items-center w-full h-[300px] transition-transform duration-400 top-[-300px] ${statOpen ? 'absolute translate-y-[354px]' : 'absolute pointer-events-none translate-y-[-300px]'}
+      ${theme === 'Black' ? 'bg-[#0d0d0d]' : theme === 'Pink' ? 'bg-white' : theme === 'Brown' ? 'bg-[#fffff8]' : 'bg-white'}`}>
          <p>Stats</p>
       </div>
 
-      <div className="flex-1 z-20 mb-[55px] flex flex-col items-center w-full bg-[#f3fff2]">
+      <div className={`flex-1 z-20 mb-[55px] flex flex-col items-center w-full
+        ${theme === 'Black' ? '' : 'bg-[#f3fff2]'}`}>
         <div className="mt-[15px] mb-[5px] w-full h-[80px] flex flex-row justify-center items-center gap-1 sm:gap-6 px-5">
             
             <div onClick={toLearnModalClickHandler} className="cursor-pointer rounded-sm w-[235px] h-[60px] border-1 border-[#e3e2e0] bg-white flex flex-col justify-center items-center">
