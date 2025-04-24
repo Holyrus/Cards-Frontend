@@ -483,7 +483,7 @@ const MainPage = ({ decks, onDeckChange }) => {
           <svg className={`${theme === 'Green' ? "text-[#aaaaaa]" : theme === 'Black' ? 'text-[#aaaaaa]' : theme === 'Pink' ? 'text-[#e252b7]' : theme === 'Brown' ? 'text-[#d19a51]' : 'text-[#aaaaaa]' }`} aria-hidden="true" focusable="false" data-prefix="far" data-icon="chart-simple" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M240 80V432H208V80h32zM208 32c-26.5 0-48 21.5-48 48V432c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48H208zM80 272V432H48V272H80zM48 224c-26.5 0-48 21.5-48 48V432c0 26.5 21.5 48 48 48H80c26.5 0 48-21.5 48-48V272c0-26.5-21.5-48-48-48H48zm320-80h32V432H368V144zm-48 0V432c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V144c0-26.5-21.5-48-48-48H368c-26.5 0-48 21.5-48 48z"></path></svg>
         </button>
 
-        <div className={`bg-white text-black py-[8px] z-20 border-1 border-[#e3e2e1] w-[175px] top-0 rounded-lg mt-[54px] opacity-0 ${isOpen ? 'absolute opacity-100 translate-y-0 ' : 'absolute opacity-0 pointer-events-none translate-y-[-10px]'} transform duration-300`} onMouseEnter={displayDialog} onMouseLeave={removeDialog}>
+        <div className={`${theme === 'Green' ? "bg-white text-black" : theme === 'Black' ? 'bg-[#0d0d0d]' : theme === 'Pink' ? 'bg-white' : theme === 'Brown' ? 'bg-[#fffff8]' : 'bg-white' } py-[8px] z-20 border-1 border-[#e3e2e1] w-[175px] top-0 rounded-lg mt-[54px] opacity-0 ${isOpen ? 'absolute opacity-100 translate-y-0 ' : 'absolute opacity-0 pointer-events-none translate-y-[-10px]'} transform duration-300`} onMouseEnter={displayDialog} onMouseLeave={removeDialog}>
 
             {decks.length !== 0 &&
               [...decks]
