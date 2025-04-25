@@ -18,3 +18,7 @@ If card flipped make sound immidiatelly and after flipping again.
 
 Make a arrow keys controls for cards in learn section
 Save the mute boolean in learn section to DB.
+
+Make black scrollbars
+Make padding bottom 55px instead of margin
+542 546 555 564 575 580 599 602 638 649 658 664 668 684 686

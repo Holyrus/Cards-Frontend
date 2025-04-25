@@ -483,7 +483,7 @@ const MainPage = ({ decks, onDeckChange }) => {
           <svg className={`${theme === 'Green' ? "text-[#aaaaaa]" : theme === 'Black' ? 'text-[#aaaaaa]' : theme === 'Pink' ? 'text-[#e252b7]' : theme === 'Brown' ? 'text-[#d19a51]' : 'text-[#aaaaaa]' }`} aria-hidden="true" focusable="false" data-prefix="far" data-icon="chart-simple" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M240 80V432H208V80h32zM208 32c-26.5 0-48 21.5-48 48V432c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48H208zM80 272V432H48V272H80zM48 224c-26.5 0-48 21.5-48 48V432c0 26.5 21.5 48 48 48H80c26.5 0 48-21.5 48-48V272c0-26.5-21.5-48-48-48H48zm320-80h32V432H368V144zm-48 0V432c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V144c0-26.5-21.5-48-48-48H368c-26.5 0-48 21.5-48 48z"></path></svg>
         </button>
 
-        <div className={`${theme === 'Green' ? "bg-white text-black" : theme === 'Black' ? 'bg-[#0d0d0d]' : theme === 'Pink' ? 'bg-white' : theme === 'Brown' ? 'bg-[#fffff8]' : 'bg-white' } py-[8px] z-20 border-1 border-[#e3e2e1] w-[175px] top-0 rounded-lg mt-[54px] opacity-0 ${isOpen ? 'absolute opacity-100 translate-y-0 ' : 'absolute opacity-0 pointer-events-none translate-y-[-10px]'} transform duration-300`} onMouseEnter={displayDialog} onMouseLeave={removeDialog}>
+        <div className={`${theme === 'Green' ? "bg-white text-black border-1 border-[#e3e2e1]" : theme === 'Black' ? 'bg-[#0d0d0d] shadow-[0px_-3px_3px_rgba(0,0,0,0.02),0px_3px_3px_rgba(0,0,0,0.02),-3px_0px_3px_rgba(0,0,0,0.02),3px_0px_3px_rgba(0,0,0,0.02)] shadow-[#272725]' : theme === 'Pink' ? 'bg-white border-1 border-[#e3e2e1]' : theme === 'Brown' ? 'bg-[#fffff8] border-1 border-[#e3e2e1]' : '' } py-[8px] z-20 w-[175px] top-0 rounded-lg mt-[54px] opacity-0 ${isOpen ? 'absolute opacity-100 translate-y-0 ' : 'absolute opacity-0 pointer-events-none translate-y-[-10px]'} transform duration-300`} onMouseEnter={displayDialog} onMouseLeave={removeDialog}>
 
             {decks.length !== 0 &&
               [...decks]
@@ -539,10 +539,11 @@ const MainPage = ({ decks, onDeckChange }) => {
       </div>
 
       <div className={`flex-1 z-20 mb-[55px] flex flex-col items-center w-full
-        ${theme === 'Black' ? '' : 'bg-[#f3fff2]'}`}>
+        ${theme === 'Black' ? 'bg-[#0f1418]' : 'bg-[#f3fff2]'}`}>
         <div className="mt-[15px] mb-[5px] w-full h-[80px] flex flex-row justify-center items-center gap-1 sm:gap-6 px-5">
             
-            <div onClick={toLearnModalClickHandler} className="cursor-pointer rounded-sm w-[235px] h-[60px] border-1 border-[#e3e2e0] bg-white flex flex-col justify-center items-center">
+            <div onClick={toLearnModalClickHandler} className={`cursor-pointer rounded-sm w-[235px] h-[60px] flex flex-col justify-center items-center
+                ${theme === 'Black' ? 'bg-[#0d0d0d] shadow-[0px_-3px_3px_rgba(0,0,0,0.02),0px_3px_3px_rgba(0,0,0,0.02),-3px_0px_3px_rgba(0,0,0,0.02),3px_0px_3px_rgba(0,0,0,0.02)] shadow-[#272725]' : 'bg-white  border-1 border-[#e3e2e0]'}`}>
               <p className="text-[22px] font-semibold text-[#009900]">{currentDeck?.cards?.filter(card => card.toLearn === true)?.length || 0}</p>
               <div className="flex flex-row items-center justify-center gap-1">
                 <p className="text-[#009900] pb-[4px]">To learn</p>
@@ -550,7 +551,8 @@ const MainPage = ({ decks, onDeckChange }) => {
               </div>
             </div>
 
-            <div onClick={knownModalClickHandler} className="cursor-pointer rounded-sm w-[235px] h-[60px] border-1 border-[#e3e2e0] bg-white flex flex-col justify-center items-center">
+            <div onClick={knownModalClickHandler} className={`cursor-pointer rounded-sm w-[235px] h-[60px] flex flex-col justify-center items-center
+                ${theme === 'Black' ? 'bg-[#0d0d0d] shadow-[0px_-3px_3px_rgba(0,0,0,0.02),0px_3px_3px_rgba(0,0,0,0.02),-3px_0px_3px_rgba(0,0,0,0.02),3px_0px_3px_rgba(0,0,0,0.02)] shadow-[#272725]' : 'bg-white  border-1 border-[#e3e2e0]'}`}>
               <p className="text-[22px] font-semibold text-[#0099dd]">{currentDeck?.cards?.filter(card => card.known === true)?.length || 0}</p>
               <div className="flex flex-row items-center justify-center gap-1">
                 <p className="text-[#0099dd] pb-[4px]">Known</p>
@@ -558,7 +560,8 @@ const MainPage = ({ decks, onDeckChange }) => {
               </div>
             </div>
 
-            <div onClick={learnedModalClickHandler} className="cursor-pointer rounded-sm w-[235px] h-[60px] border-1 border-[#e3e2e0] bg-white flex flex-col justify-center items-center">
+            <div onClick={learnedModalClickHandler} className={`cursor-pointer rounded-sm w-[235px] h-[60px] flex flex-col justify-center items-center
+                ${theme === 'Black' ? 'bg-[#0d0d0d] shadow-[0px_-3px_3px_rgba(0,0,0,0.02),0px_3px_3px_rgba(0,0,0,0.02),-3px_0px_3px_rgba(0,0,0,0.02),3px_0px_3px_rgba(0,0,0,0.02)] shadow-[#272725]' : 'bg-white  border-1 border-[#e3e2e0]'}`}>
               <p className="text-[22px] font-semibold text-[#d3b000]">{currentDeck?.cards?.filter(card => card.learned === true)?.length || 0}</p>
               <div className="flex flex-row items-center justify-center gap-1">
                 <p className="text-[#d3b000] pb-[4px]">Learned</p>
@@ -568,21 +571,23 @@ const MainPage = ({ decks, onDeckChange }) => {
 
         </div>
         <ThreeDModel />
-        { currentDeck?.cards?.length !== 0 && currentDeck && <Link to='/main/learn' state={{ currentDeck }} ><button className='rounded-full text-white border-1 border-green-700 font-semibold py-2 px-5 w-[290px] sm:w-[400px] md:w-[450px] md:py-3 shadow-md hover:shadow-lg bg-green-700 hover:bg-green-100 hover:text-green-700 transition-all duration-300 select-none'>START</button></Link> }
+        { currentDeck?.cards?.length !== 0 && currentDeck && <Link to='/main/learn' state={{ currentDeck }} ><button className={`rounded-full font-semibold py-2 px-5 w-[290px] sm:w-[400px] md:w-[450px] md:py-3 shadow-md hover:shadow-lg transition-all duration-300 select-none
+          ${theme === 'Black' ? 'text-black bg-green-700 hover:bg-green-600' : 'text-white border-1 border-green-700 bg-green-700 hover:bg-green-100 hover:text-green-700'}`}>START</button></Link> }
           <div className="mt-5 flex flex-row justify-center items-center gap-3">
 
         { currentDeck?.cards?.length !== 0 && currentDeck && 
-            <div onClick={cardsButtonHandler} className="flex flex-row justify-between items-center pl-3 pr-2 mb-4 h-[56px] w-[220px] sm:w-[350px] md:w-[618px] bg-white border-1 border-[#e3e2e0]">
+            <div onClick={cardsButtonHandler} className={`flex flex-row justify-between items-center pl-3 pr-2 mb-4 h-[56px] w-[220px] sm:w-[350px] md:w-[618px]
+              ${theme === 'Black' ? 'bg-[#0d0d0d] shadow-[0px_-3px_3px_rgba(0,0,0,0.02),0px_3px_3px_rgba(0,0,0,0.02),-3px_0px_3px_rgba(0,0,0,0.02),3px_0px_3px_rgba(0,0,0,0.02)] shadow-[#272725]' : 'bg-white border-1 border-[#e3e2e0]'}`}>
               
               <div className="flex flex-row gap-1">
 
               { !isCardsOpen ? (
-                <svg className="w-[25px]" focusable="false" aria-hidden="true" viewBox="0 0 24 24"><path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z"></path></svg>
+                <svg className={`w-[25px] ${theme === 'Black' ? 'text-white' : 'text-black'}`} fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24"><path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z"></path></svg>
               ) : (
-                <svg className="w-[25px]" focusable="false" aria-hidden="true" viewBox="0 0 24 24"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg>
+                <svg className={`w-[25px] ${theme === 'Black' ? 'text-white' : 'text-black'}`} fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg>
               )}
 
-                <p className="cursor-default select-none">Cards</p>
+                <p className={`cursor-default select-none ${theme === 'Black' ? 'text-white' : 'text-black'}`}>Cards</p>
 
               </div>
               <div className="flex flex-row gap-2">
@@ -591,10 +596,10 @@ const MainPage = ({ decks, onDeckChange }) => {
                     e.stopPropagation()
                     handleVoicesEnter()
                   }}
-                  className="p-1.5 pl-2 border-l-1 hover:bg-gray-100 border-l-[#eeeeee] relative">
+                  className={`p-1.5 pl-2 relative ${theme === 'Black' ? 'border-l-1 hover:bg-[#1e1e1e] border-l-[#646464]' : 'border-l-1 hover:bg-gray-100 border-l-[#eeeeee]'}`}>
                   <svg className="w-[25px] text-[#8a8a8a]" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="RecordVoiceOverIcon"><circle cx="9" cy="9" r="4"></circle><path d="M9 15c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4m7.76-9.64-1.68 1.69c.84 1.18.84 2.71 0 3.89l1.68 1.69c2.02-2.02 2.02-5.07 0-7.27M20.07 2l-1.63 1.63c2.77 3.02 2.77 7.56 0 10.74L20.07 16c3.9-3.89 3.91-9.95 0-14"></path></svg>
                 
-                  <div className={`bg-white w-auto px-2 py-2 h-[180px] overflow-y-scroll overflow-x-hidden flex flex-col rounded-lg shadow-[0px_-4px_4px_rgba(0,0,0,0.02),0px_4px_4px_rgba(0,0,0,0.02),-4px_0px_4px_rgba(0,0,0,0.02),4px_0px_4px_rgba(0,0,0,0.02)] bottom-0 right-[-100px] sm:right-0 transition-all duration-200 ${ voicesWindowOpen ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}`} onMouseEnter={() => handleVoicesEnter} onMouseLeave={handleVoicesLeave}>
+                  <div className={`${theme === 'Black' ? 'C text-white shadow-[0px_-4px_4px_rgba(0,0,0,0.02),0px_4px_4px_rgba(0,0,0,0.02),-4px_0px_4px_rgba(0,0,0,0.02),4px_0px_4px_rgba(0,0,0,0.02)] shadow-[#272725]' : 'bg-white'} w-auto px-2 py-2 h-[180px] overflow-y-scroll overflow-x-hidden flex flex-col rounded-lg bottom-0 right-[-100px] sm:right-0 transition-all duration-200 ${ voicesWindowOpen ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}`} onMouseEnter={() => handleVoicesEnter} onMouseLeave={handleVoicesLeave}>
                       {currentVoices
                         .map((voice, index) => {
                           const voiceName = voice.name.split(" ")[1] || voice.name
@@ -630,7 +635,7 @@ const MainPage = ({ decks, onDeckChange }) => {
                       e.stopPropagation();
                       cardsSearchHandler();
                   }}
-                  className="p-1.5 hover:bg-gray-100 border-l-1 border-l-[#eeeeee]">
+                  className={`p-1.5 ${theme === 'Black' ? 'border-l-1 hover:bg-[#1e1e1e] border-l-[#646464]' : 'border-l-1 hover:bg-gray-100 border-l-[#eeeeee]'}`}>
                   <svg className="w-[25px] text-[#bababa]" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg>
                 </div>
               </div>
@@ -640,7 +645,8 @@ const MainPage = ({ decks, onDeckChange }) => {
           { currentDeck &&
             <Link to="/main/newcard"
                   state={{ currentDeck }}
-                  className="p-2.5 mb-4 bg-green-700 text-white hover:text-green-700 rounded-full border-1 border-green-700 shadow-md hover:bg-green-100 transition-all duration-300">
+                  className={`p-2.5 mb-4 rounded-full transition-all duration-300
+                    ${theme === 'Black' ? 'bg-green-700 text-black hover:bg-green-600' : 'bg-green-700 text-white hover:text-green-700 border-1 border-green-700 hover:bg-green-100'}`}>
               <svg className="w-[34px]" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="AddIcon"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"></path></svg>
             </Link>
           }
@@ -648,16 +654,18 @@ const MainPage = ({ decks, onDeckChange }) => {
 
           { isSearchOpen && 
               <div className="flex flex-row gap-3 mb-5">
-                <div className="relative flex w-[130px] sm:w-[200px] md:w-[300px] h-[49px] bg-white rounded-t-sm">
+                <div className={`relative flex w-[130px] sm:w-[200px] md:w-[300px] h-[49px] rounded-t-sm
+                    ${theme === 'Black' ? 'bg-[#0d0d0d]' : 'bg-white'}`}>
                   <select
                     id="dropdown"
                     value={selectedValue}
                     onChange={(e) => setSelectedValue(e.target.value)}
-                    className="z-10 peer w-full border-0 border-b-1 border-gray-400 focus:border-green-500 focus:outline-none focus:ring-0 bg-transparent p-2 pt-4 text-gray-900 appearance-none"
+                    className={`z-10 peer w-full border-0 border-b-1 border-gray-400 focus:border-green-500 focus:outline-none focus:ring-0 bg-transparent p-2 pt-4 appearance-none
+                    ${theme === 'Black' ? 'text-gray-400' : 'text-gray-900'}`}
                   >
                     <option value="" disabled hidden></option>
                     {dropdownOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
+                      <option className={`${theme === 'Black' ? 'text-white bg-[#0d0d0d]' : ''}`} key={option.value} value={option.value}>
                         {option.label}
                       </option>
                     ))}
@@ -672,8 +680,10 @@ const MainPage = ({ decks, onDeckChange }) => {
                   </div>
                 </div>
 
-                <div className='relative flex w-[130px] sm:w-[200px] md:w-[300px] bg-white rounded-t-sm'>
-                  <input value={searchValue} onChange={(event) => setSearchValue(event.target.value)} type="text" placeholder='' autoComplete="off" className='z-10 peer w-full border-0 border-b-1 border-gray-400 focus:border-green-500 focus:outline-none focus:ring-0 bg-transparent p-2 pt-4 text-gray-900' />
+                <div className={`relative flex w-[130px] sm:w-[200px] md:w-[300px] rounded-t-sm
+                  ${theme === 'Black' ? 'bg-[#0d0d0d]' : 'bg-white'}`}>
+                  <input value={searchValue} onChange={(event) => setSearchValue(event.target.value)} type="text" placeholder='' autoComplete="off" className={`z-10 peer w-full border-0 border-b-1 border-gray-400 focus:border-green-500 focus:outline-none focus:ring-0 bg-transparent p-2 pt-4
+                    ${theme === 'Black' ? 'text-gray-300' : 'text-gray-900'}`} />
                   <label className='z-5 absolute left-2 text-gray-500 text-[12px] peer-placeholder-shown:bottom-3 peer-placeholder-shown:text-[16px] peer-placeholder-shown:text-gray-400 peer-focus:top-0 peer-focus:text-green-500 peer-focus:text-[12px] transition-all'>Search</label>
                 </div>
               </div> 
