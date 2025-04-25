@@ -11,6 +11,8 @@ Implement statistics (statistics must be saved for user and be same for all deck
 save the stats for all decks in one stat. )
 Adjust backend for change the token expiration time.(Or make another aproach)
 
+If cards on main menu a lot make them load partitially when scroll. (For optimization)
+
 Add more images.
 Add usage suggestions (3 example sentences with learn word), use AI API KEY.
 Implement sign up with gmail.
@@ -21,4 +23,3 @@ Save the mute boolean in learn section to DB.
 
 Make black scrollbars
 Make padding bottom 55px instead of margin
-542 546 555 564 575 580 599 602 638 649 658 664 668 684 686
