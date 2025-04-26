@@ -9,6 +9,8 @@ import { DateTime } from 'luxon'
 import WiseUmka1 from '../assets/wiseUmka1.png'
 import WiseUmka2 from '../assets/wiseUmka2.png'
 import { useTheme } from "./ThemeProvider.jsx";
+import '../scrollbar.css';
+
 
 const MainPage = ({ decks, onDeckChange }) => {
 
@@ -439,7 +441,7 @@ const MainPage = ({ decks, onDeckChange }) => {
   }
 
   useEffect(() => {
-    if (toLearnModalOpen || knownModalOpen || learnedModalOpen) {
+    if (toLearnModalOpen || knownModalOpen || learnedModalOpen || paletteOpen || statOpen) {
       document.body.style.overflow = "hidden"; // Disable scrolling on the main page
     } else {
       document.body.style.overflow = "auto"; // Enable scrolling on the main page
@@ -449,12 +451,12 @@ const MainPage = ({ decks, onDeckChange }) => {
     return () => {
       document.body.style.overflow = "auto";
     };
-  }, [toLearnModalOpen, knownModalOpen, learnedModalOpen]);
+  }, [toLearnModalOpen, knownModalOpen, learnedModalOpen, paletteOpen, statOpen]);
 
   // ---------------------------------
 
   return (
-    <div className="min-h-screen flex flex-col items-center relative">
+    <div className={`min-h-screen flex flex-col items-center relative ${theme === 'Black' ? 'dark-scrollbar' : ''}`}>
       
       <div onClick={divClickHandler} className={`z-50 relative w-full flex-none flex flex-row gap-12 sm:gap-40 md:gap-60 lg:gap-72 items-center justify-center border-b-1 h-[55px] ${theme === 'Green' ? "bg-white border-[#e1edf5]" : theme === 'Black' ? 'bg-[#0d0d0d] border-[#313131]' : theme === 'Pink' ? 'bg-white border-[#e1edf5]' : theme === 'Brown' ? 'bg-[#fffff8] border-[#e1edf5]' : '' }`}>
 
@@ -538,7 +540,7 @@ const MainPage = ({ decks, onDeckChange }) => {
          <p>Stats</p>
       </div>
 
-      <div className={`flex-1 z-20 mb-[55px] flex flex-col items-center w-full
+      <div className={`flex-1 z-20 pb-[54px] flex flex-col items-center w-full
         ${theme === 'Black' ? 'bg-[#0f1418]' : 'bg-[#f3fff2]'}`}>
         <div className="mt-[15px] mb-[5px] w-full h-[80px] flex flex-row justify-center items-center gap-1 sm:gap-6 px-5">
             
@@ -599,7 +601,7 @@ const MainPage = ({ decks, onDeckChange }) => {
                   className={`p-1.5 pl-2 relative ${theme === 'Black' ? 'border-l-1 hover:bg-[#1e1e1e] border-l-[#646464]' : 'border-l-1 hover:bg-gray-100 border-l-[#eeeeee]'}`}>
                   <svg className="w-[25px] text-[#8a8a8a]" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="RecordVoiceOverIcon"><circle cx="9" cy="9" r="4"></circle><path d="M9 15c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4m7.76-9.64-1.68 1.69c.84 1.18.84 2.71 0 3.89l1.68 1.69c2.02-2.02 2.02-5.07 0-7.27M20.07 2l-1.63 1.63c2.77 3.02 2.77 7.56 0 10.74L20.07 16c3.9-3.89 3.91-9.95 0-14"></path></svg>
                 
-                  <div className={`${theme === 'Black' ? 'bg-[#0d0d0d] text-white shadow-[0px_-4px_4px_rgba(0,0,0,0.02),0px_4px_4px_rgba(0,0,0,0.02),-4px_0px_4px_rgba(0,0,0,0.02),4px_0px_4px_rgba(0,0,0,0.02)] shadow-[#272725]' : 'bg-white'} w-auto px-2 py-2 h-[180px] overflow-y-scroll overflow-x-hidden flex flex-col rounded-lg bottom-0 right-[-100px] sm:right-0 transition-all duration-200 ${ voicesWindowOpen ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}`} onMouseEnter={() => handleVoicesEnter} onMouseLeave={handleVoicesLeave}>
+                  <div className={`${theme === 'Black' ? 'bg-[#0d0d0d] dark-scrollbar text-white shadow-[0px_-4px_4px_rgba(0,0,0,0.02),0px_4px_4px_rgba(0,0,0,0.02),-4px_0px_4px_rgba(0,0,0,0.02),4px_0px_4px_rgba(0,0,0,0.02)] shadow-[#272725]' : 'bg-white'} w-auto px-2 py-2 h-[180px] overflow-y-scroll overflow-x-hidden flex flex-col rounded-lg bottom-0 right-[-100px] sm:right-0 transition-all duration-200 ${ voicesWindowOpen ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}`} onMouseEnter={() => handleVoicesEnter} onMouseLeave={handleVoicesLeave}>
                       {currentVoices
                         .map((voice, index) => {
                           const voiceName = voice.name.split(" ")[1] || voice.name
@@ -761,14 +763,14 @@ const MainPage = ({ decks, onDeckChange }) => {
                       <img className="w-[50px] h-[50px]" src={`http://localhost:3003/api/images/files/${card.img}`} alt="Card Images"/>
                       <div className="flex flex-col ml-0.5 items-start">
                         <div className="flex flex-row gap-1">
-                          <button onClick={() => speak(card.word)} className="hover:bg-gray-100 p-1 rounded-full cursor-pointer">
+                          <button onClick={() => speak(card.word)} className={`p-1 rounded-full cursor-pointer ${theme === 'Black' ? 'hover:bg-[#141f25]' : 'hover:bg-gray-100'}`}>
                             <svg className="w-[15px] text-green-600" aria-hidden="true" focusable="false" data-prefix="far" data-icon="volume" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M191.9 201.9L304 102.3V409.7L191.9 310.1c-4.4-3.9-10.1-6.1-15.9-6.1H88c-4.4 0-8-3.6-8-8V216c0-4.4 3.6-8 8-8h88c5.9 0 11.6-2.2 15.9-6.1zM322.2 32c-7.3 0-14.3 2.7-19.8 7.5L166.9 160H88c-30.9 0-56 25.1-56 56v80c0 30.9 25.1 56 56 56h78.9L302.4 472.5c5.5 4.8 12.5 7.5 19.8 7.5c16.5 0 29.8-13.3 29.8-29.8V61.8C352 45.3 338.7 32 322.2 32zm182.9 75c-10.3-8.4-25.4-6.8-33.8 3.5s-6.8 25.4 3.5 33.8C507.3 170.7 528 210.9 528 256s-20.7 85.3-53.2 111.8c-10.3 8.4-11.8 23.5-3.5 33.8s23.5 11.8 33.8 3.5c43.2-35.2 70.9-88.9 70.9-149s-27.7-113.8-70.9-149zm-60.5 74.5c-10.3-8.4-25.4-6.8-33.8 3.5s-6.8 25.4 3.5 33.8C425.1 227.6 432 241 432 256s-6.9 28.4-17.7 37.3c-10.3 8.4-11.8 23.5-3.5 33.8s23.5 11.8 33.8 3.5C466.1 312.9 480 286.1 480 256s-13.9-56.9-35.4-74.5z"></path></svg>
                           </button>
                           <p className="font-semibold text-[14px]">{card.word}</p>
                         </div>
                         <p className="text-[13.5px] ml-[27px]">{card.translation}</p>
                         <div className="flex flex-row gap-1">
-                          <button onClick={() => speak(card.usage)} className="hover:bg-gray-100 p-1 rounded-full cursor-pointer">
+                          <button onClick={() => speak(card.usage)} className={`p-1 rounded-full cursor-pointer ${theme === 'Black' ? 'hover:bg-[#141f25]' : 'hover:bg-gray-100'}`}>
                             <svg className="w-[15px] text-green-600" aria-hidden="true" focusable="false" data-prefix="far" data-icon="volume" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M191.9 201.9L304 102.3V409.7L191.9 310.1c-4.4-3.9-10.1-6.1-15.9-6.1H88c-4.4 0-8-3.6-8-8V216c0-4.4 3.6-8 8-8h88c5.9 0 11.6-2.2 15.9-6.1zM322.2 32c-7.3 0-14.3 2.7-19.8 7.5L166.9 160H88c-30.9 0-56 25.1-56 56v80c0 30.9 25.1 56 56 56h78.9L302.4 472.5c5.5 4.8 12.5 7.5 19.8 7.5c16.5 0 29.8-13.3 29.8-29.8V61.8C352 45.3 338.7 32 322.2 32zm182.9 75c-10.3-8.4-25.4-6.8-33.8 3.5s-6.8 25.4 3.5 33.8C507.3 170.7 528 210.9 528 256s-20.7 85.3-53.2 111.8c-10.3 8.4-11.8 23.5-3.5 33.8s23.5 11.8 33.8 3.5c43.2-35.2 70.9-88.9 70.9-149s-27.7-113.8-70.9-149zm-60.5 74.5c-10.3-8.4-25.4-6.8-33.8 3.5s-6.8 25.4 3.5 33.8C425.1 227.6 432 241 432 256s-6.9 28.4-17.7 37.3c-10.3 8.4-11.8 23.5-3.5 33.8s23.5 11.8 33.8 3.5C466.1 312.9 480 286.1 480 256s-13.9-56.9-35.4-74.5z"></path></svg>
                           </button>
                           <p className="text-[13.5px] text-[#afafaf]">{card.usage}</p>
@@ -787,7 +789,7 @@ const MainPage = ({ decks, onDeckChange }) => {
 
                       <div className={`w-[118px] py-2 z-15 h-[160px] flex flex-col rounded-lg shadow-[0px_-4px_4px_rgba(0,0,0,0.02),0px_4px_4px_rgba(0,0,0,0.02),-4px_0px_4px_rgba(0,0,0,0.02),4px_0px_4px_rgba(0,0,0,0.02)] bottom-0 right-0 lg:left-0 transition-all duration-200 ${activeSettingsId === card.id ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}
                         ${theme === 'Black' ? 'text-white bg-[#0d0d0d] shadow-[#272725]' : 'text-black bg-white'}`} onMouseEnter={() => handleSettingsEnter(card.id)} onMouseLeave={handleSettingsLeave}>
-                        <Link to={`/card/${card.id}`} className={`flex flex-row items-center justify-start w-full h-[36px] p-2 pl-4 gap-3
+                        <Link to={`/card/${card.id}`} className={`flex flex-row items-center justify-start w-full h-[36px] p-2 pl-4 gap-3 cursor-default
                           ${theme === 'Black' ? 'hover:bg-[#1e1e1e]' : 'hover:bg-[#f5f5f5]'}`}>
                           <svg className="w-[18px]" aria-hidden="true" focusable="false" data-prefix="far" data-icon="pen-to-square" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M441 58.9L453.1 71c9.4 9.4 9.4 24.6 0 33.9L424 134.1 377.9 88 407 58.9c9.4-9.4 24.6-9.4 33.9 0zM209.8 256.2L344 121.9 390.1 168 255.8 302.2c-2.9 2.9-6.5 5-10.4 6.1l-58.5 16.7 16.7-58.5c1.1-3.9 3.2-7.5 6.1-10.4zM373.1 25L175.8 222.2c-8.7 8.7-15 19.4-18.3 31.1l-28.6 100c-2.4 8.4-.1 17.4 6.1 23.6s15.2 8.5 23.6 6.1l100-28.6c11.8-3.4 22.5-9.7 31.1-18.3L487 138.9c28.1-28.1 28.1-73.7 0-101.8L474.9 25C446.8-3.1 401.2-3.1 373.1 25zM88 64C39.4 64 0 103.4 0 152V424c0 48.6 39.4 88 88 88H360c48.6 0 88-39.4 88-88V312c0-13.3-10.7-24-24-24s-24 10.7-24 24V424c0 22.1-17.9 40-40 40H88c-22.1 0-40-17.9-40-40V152c0-22.1 17.9-40 40-40H200c13.3 0 24-10.7 24-24s-10.7-24-24-24H88z"></path></svg>
                           <p>Edit</p>
@@ -827,17 +829,17 @@ const MainPage = ({ decks, onDeckChange }) => {
               <rect x="30" y="30" width="90" height="140" rx="10" ry="10" fill="green"/>
             </g>
           </svg>
-          <p className="text-[10px] font-semibold select-none">LEARNING</p>
+          <p className={`text-[10px] font-semibold select-none ${theme === 'Black' ? 'text-[#d8d8d8]' : 'text-black'}`}>LEARNING</p>
         </Link>
 
         <Link to="/profile" className="flex flex-col items-center justify-start px-[60px] hover:cursor-pointer active:bg-gray-300 transition-all duration-75" draggable="false">
           <svg width="35" height="35" aria-hidden="true" focusable="false" data-prefix="far" data-icon="user-vneck" className="svg-inline--fa fa-user-vneck" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 -100 448 650">
-            <circle className="text-gray-500" cx="120" cy="35" r="40" fill="white" stroke="currentColor" strokeWidth="40"/>
-            <circle className="text-gray-500" cx="328" cy="35" r="40" fill="white" stroke="currentColor" strokeWidth="40"/>
+            <circle className="text-gray-500" cx="120" cy="35" r="40" fill={`${theme === 'Black' ? 'black' : 'white'}`} stroke="currentColor" strokeWidth="40"/>
+            <circle className="text-gray-500" cx="328" cy="35" r="40" fill={`${theme === 'Black' ? 'black' : 'white'}`} stroke="currentColor" strokeWidth="40"/>
       
             <path className="text-gray-500" fill="currentColor" d="M224 208a80 80 0 1 0 0-160 80 80 0 1 0 0 160zm128-80A128 128 0 1 1 96 128a128 128 0 1 1 256 0zM48.3 464H399.7c-3.1-47.3-33.7-87.3-76-103.8L274 422.4c-25.6 32-74.3 32-100 0l-49.7-62.2C82 376.7 51.4 416.7 48.3 464zm85-156.4c5.6-1.2 11.3 1.1 14.9 5.6l63.4 79.2c6.4 8 18.6 8 25 0l63.4-79.2c3.6-4.5 9.3-6.7 14.9-5.6C390.9 323.6 448 391.1 448 472v8c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32v-8c0-80.9 57.1-148.4 133.3-164.4z"></path>
           </svg>
-          <p className="text-[10px] font-semibold select-none">ACCOUNT</p>
+          <p className={`text-[10px] font-semibold select-none ${theme === 'Black' ? 'text-[#d8d8d8]' : 'text-black'}`}>ACCOUNT</p>
         </Link>
       </div>
 
@@ -855,38 +857,41 @@ const MainPage = ({ decks, onDeckChange }) => {
 
       {/* to learn modal window */}
 
-      <div className={`z-85 absolute flex flex-col justify-start items-center bg-white w-[290px] sm:w-[600px] h-[520px] rounded-lg opacity-0 transition-opacity duration-300 left-1/2 top-[20px] -translate-x-1/2 overflow-y-auto ${toLearnModalOpen ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}`}>
+      <div className={`z-85 absolute flex flex-col justify-start items-center w-[290px] sm:w-[600px] h-[520px] rounded-lg opacity-0 transition-opacity duration-300 left-1/2 top-[20px] -translate-x-1/2 overflow-y-auto ${toLearnModalOpen ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}
+      ${theme === 'Black' ? 'bg-[#0d0d0d] shadow-[0px_-3px_3px_rgba(0,0,0,0.02),0px_3px_3px_rgba(0,0,0,0.02),-3px_0px_3px_rgba(0,0,0,0.02),3px_0px_3px_rgba(0,0,0,0.02)] shadow-[#272725]' : 'bg-white'}`}>
           <div className="flex flex-row justify-between items-start mt-2 px-2 w-full">
             <div className="w-[35px]"></div>
-            <p className="font-semibold text-[18px] mt-3">Cards to learn</p>
+            <p className={`font-semibold text-[18px] mt-3 ${theme === 'Black' ? 'text-white' : 'text-black'}`}>Cards to learn</p>
             <button
               onClick={modalDimOverlayHandler}
-              className="p-1 text-black hover:bg-gray-100 rounded-full"
+              className={`p-1 text-black rounded-full cursor-pointer ${theme === 'Black' ? 'hover:bg-[#141f25]' : 'hover:bg-gray-100'}`}
             >
             <svg className="text-[#acacac]" aria-hidden="true" viewBox="0 0 24 24" role="img" width="20px" height="20px" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M18.973 5.027L5.028 18.972m0-13.945l13.944 13.945"></path>
             </svg>
           </button>
           </div>
-          <p className="text-[16px] text-center px-8 mt-4">
+          <p className={`text-[16px] text-center px-8 mt-4 ${theme === 'Black' ? 'text-white' : 'text-black'}`}>
             This number means how many cards are
             ready to be learnt based on our 
             spaced-repetition algorithm.
           </p>
           { currentDeck?.cards?.length !== 0 && currentDeck ? (
-            <button onClick={showCardToLearnButtonHandler} className="text-[14px] select-none text-[#008236] hover:bg-gray-50 font-semibold px-[26px] py-[8px] mt-4 rounded-2xl cursor-pointer">
+            <button onClick={showCardToLearnButtonHandler} className={`text-[14px] select-none text-[#008236] font-semibold px-[26px] py-[8px] mt-4 rounded-2xl cursor-pointer
+            ${theme === 'Black' ? 'hover:bg-[#171717]' : 'hover:bg-gray-50'}`}>
               SHOW CARDS TO LEARN
             </button>
           ) : (
-            <button className="text-[14px] select-none text-[#cccccc] hover:bg-gray-50 font-semibold px-[26px] py-[8px] mt-4 rounded-2xl cursor-pointer">
+            <button className={`text-[14px] select-none  font-semibold px-[26px] py-[8px] mt-4 rounded-2xl
+            ${theme === 'Black' ? 'text-[#484848] hover:bg-[#171717]' : 'text-[#cccccc] hover:bg-gray-50'}`}>
               SHOW CARDS TO LEARN
             </button>
           )}
 
         <img className="w-[100px] mt-4" src={WiseUmka1} alt="Wise Umka" />
 
-          <p className="text-[17px] font-semibold text-center mt-4">Spaced-repetition algorithm</p>
-          <p className="text-[15px] text-center px-8 mt-4">
+          <p className={`text-[17px] font-semibold text-center mt-4 ${theme === 'Black' ? 'text-white' : 'text-black'}`}>Spaced-repetition algorithm</p>
+          <p className={`text-[15px] text-center px-8 mt-4 ${theme === 'Black' ? 'text-white' : 'text-black'}`}>
              Umka tracks every single one of your cards
              and knows when it is the right time to show
              it to you again. He knows which cards you sent
@@ -896,42 +901,47 @@ const MainPage = ({ decks, onDeckChange }) => {
           </p>
           
           { currentDeck?.cards?.length !== 0 && currentDeck ? (
-            <Link to='/main/learn' state={{ currentDeck }} ><button className=" mb-6 text-[14px] font-semibold py-[8px] px-[26px] mt-6 rounded-full text-white border-1 border-green-700 shadow-md hover:shadow-lg bg-green-700 hover:bg-green-100 hover:text-green-700 transition-all duration-300 cursor-pointer select-none">START LEARNING</button></Link>
+            <Link to='/main/learn' state={{ currentDeck }} ><button className={`mb-6 text-[14px] font-semibold py-[8px] px-[26px] mt-6 rounded-full border-1 border-green-700 shadow-md hover:shadow-lg bg-green-700 transition-all duration-300 cursor-pointer select-none
+              ${theme === 'Black' ? 'text-black hover:bg-green-600' : 'text-white hover:bg-green-100 hover:text-green-700'}`}>START LEARNING</button></Link>
           ) : (
-            <button className="mb-6 text-[14px] font-semibold py-[8px] px-[26px] mt-6 rounded-full text-white shadow-md bg-[#cccccc] select-none">START LEARNING</button>
+            <button className={`mb-6 text-[14px] font-semibold py-[8px] px-[26px] mt-6 rounded-full shadow-md select-none
+              ${theme === 'Black' ? 'text-[#484848] hover:bg-[#171717]' : 'text-white bg-[#cccccc]'}`}>START LEARNING</button>
           )}
       </div>
 
       {/* Known modal window */}
 
-      <div className={`z-85 absolute flex flex-col justify-start items-center bg-white w-[290px] sm:w-[600px] h-[290px] sm:h-[250px] rounded-lg opacity-0 transition-opacity duration-300 left-1/2 top-[55px] -translate-x-1/2 overflow-y-auto ${knownModalOpen ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}`}>
+      <div className={`z-85 absolute flex flex-col justify-start items-center w-[290px] sm:w-[600px] h-[290px] sm:h-[250px] rounded-lg opacity-0 transition-opacity duration-300 left-1/2 top-[55px] -translate-x-1/2 overflow-y-auto ${knownModalOpen ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}
+        ${theme === 'Black' ? 'bg-[#0d0d0d] shadow-[0px_-3px_3px_rgba(0,0,0,0.02),0px_3px_3px_rgba(0,0,0,0.02),-3px_0px_3px_rgba(0,0,0,0.02),3px_0px_3px_rgba(0,0,0,0.02)] shadow-[#272725]' : 'bg-white'}`}>
           <div className="flex flex-row justify-between items-start mt-2 px-2 w-full">
             <div className="w-[35px]"></div>
-            <p className="font-semibold text-[18px] mt-3">Short-term memory</p>
+            <p className={`font-semibold text-[18px] mt-3 ${theme === 'Black' ? 'text-white' : 'text-black'}`}>Short-term memory</p>
             <button
               onClick={modalDimOverlayHandler}
-              className="p-1 text-black hover:bg-gray-100 rounded-full"
+              className={`p-1 text-black rounded-full cursor-pointer ${theme === 'Black' ? 'hover:bg-[#141f25]' : 'hover:bg-gray-100'}`}
             >
             <svg className="text-[#acacac]" aria-hidden="true" viewBox="0 0 24 24" role="img" width="20px" height="20px" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M18.973 5.027L5.028 18.972m0-13.945l13.944 13.945"></path>
             </svg>
           </button>
           </div>
-          <p className="text-[16px] text-center px-8 mt-4">
+          <p className={`text-[16px] text-center px-8 mt-4 ${theme === 'Black' ? 'text-white' : 'text-black'}`}>
             This number means how many words and 
             phrases you have in your short-term memory.
           </p>
 
-          <p className="text-[15px] text-center px-8 mt-4">
+          <p className={`text-[15px] text-center px-8 mt-4 ${theme === 'Black' ? 'text-white' : 'text-black'}`}>
             You won't find these cards in learning mode for a while, until they are brought back.
           </p>
 
           { currentDeck?.cards?.length !== 0 && currentDeck ? (
-            <button onClick={showCardKnownButtonHandler} className="text-[14px] select-none text-[#008236] hover:bg-gray-50 font-semibold px-[26px] py-[8px] mt-4 rounded-2xl cursor-pointer">
+            <button onClick={showCardKnownButtonHandler} className={`text-[14px] select-none text-[#008236] font-semibold px-[26px] py-[8px] mt-4 rounded-2xl cursor-pointer
+             ${theme === 'Black' ? 'hover:bg-[#171717]' : 'hover:bg-gray-50'}`}>
               SHOW KNOWN CARDS
             </button>
           ) : (
-            <button className="text-[14px] select-none text-[#cccccc] hover:bg-gray-50 font-semibold px-[26px] py-[8px] mt-4 rounded-2xl cursor-pointer">
+            <button className={`text-[14px] select-none font-semibold px-[26px] py-[8px] mt-4 rounded-2xl
+            ${theme === 'Black' ? 'text-[#484848] hover:bg-[#171717]' : 'text-[#cccccc] hover:bg-gray-50'}`}>
               SHOW KNOWN CARDS
             </button>
           )}
@@ -939,44 +949,47 @@ const MainPage = ({ decks, onDeckChange }) => {
 
       {/* Learned modal window */}
 
-      <div className={`z-85 absolute flex flex-col justify-start items-center bg-white w-[290px] sm:w-[600px] h-[555px] sm:h-[445px] rounded-lg opacity-0 transition-opacity duration-300 left-1/2 top-[55px] -translate-x-1/2 overflow-y-auto ${learnedModalOpen ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}`}>
+      <div className={`z-85 absolute flex flex-col justify-start items-center w-[290px] sm:w-[600px] h-[555px] sm:h-[445px] rounded-lg opacity-0 transition-opacity duration-300 left-1/2 top-[55px] -translate-x-1/2 overflow-y-auto ${learnedModalOpen ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}
+        ${theme === 'Black' ? 'bg-[#0d0d0d] shadow-[0px_-3px_3px_rgba(0,0,0,0.02),0px_3px_3px_rgba(0,0,0,0.02),-3px_0px_3px_rgba(0,0,0,0.02),3px_0px_3px_rgba(0,0,0,0.02)] shadow-[#272725]' : 'bg-white'}`}>
           <div className="flex flex-row justify-between items-start mt-2 px-2 w-full">
             <div className="w-[35px]"></div>
-            <p className="font-semibold text-[18px] mt-3">Long-term memory</p>
+            <p className={`font-semibold text-[18px] mt-3 ${theme === 'Black' ? 'text-white' : 'text-black'}`}>Long-term memory</p>
             <button
               onClick={modalDimOverlayHandler}
-              className="p-1 text-black hover:bg-gray-100 rounded-full"
+              className={`p-1 text-black rounded-full cursor-pointer ${theme === 'Black' ? 'hover:bg-[#141f25]' : 'hover:bg-gray-100'}`}
             >
             <svg className="text-[#acacac]" aria-hidden="true" viewBox="0 0 24 24" role="img" width="20px" height="20px" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M18.973 5.027L5.028 18.972m0-13.945l13.944 13.945"></path>
             </svg>
           </button>
           </div>
-          <p className="text-[16px] text-center px-8 mt-4">
+          <p className={`text-[16px] text-center px-8 mt-4 ${theme === 'Black' ? 'text-white' : 'text-black'}`}>
             This number means how many words and 
             phrases you have in your long-term memory.
           </p>
 
           <img className="w-[120px] mt-4" src={WiseUmka2} alt="Wise Umka2" />
 
-          <p className="text-[15px] text-center px-8 mt-4">
+          <p className={`text-[15px] text-center px-8 mt-4 ${theme === 'Black' ? 'text-white' : 'text-black'}`}>
             Umka knows which cards you already remember
             well. He will show them to you again occasionally,
             just to make sure you don't forget them ever.
           </p>
 
-          <p className="text-[15px] text-center px-8 mt-4">
+          <p className={`text-[15px] text-center px-8 mt-4 ${theme === 'Black' ? 'text-white' : 'text-black'}`}>
             You can list through these learned cards 
             and reset their progress if you want to
             learn them again.
           </p>
 
           { currentDeck?.cards?.length !== 0 && currentDeck ? (
-            <button onClick={showCardLearnedButtonHandler} className="text-[14px] select-none text-[#008236] hover:bg-gray-50 font-semibold px-[26px] py-[8px] mt-4 rounded-2xl cursor-pointer">
+            <button onClick={showCardLearnedButtonHandler} className={`text-[14px] select-none text-[#008236] font-semibold px-[26px] py-[8px] mt-4 rounded-2xl cursor-pointer
+            ${theme === 'Black' ? 'hover:bg-[#171717]' : 'hover:bg-gray-50'}`}>
               SHOW LEARNED CARDS
             </button>
           ) : (
-            <button className="text-[14px] select-none text-[#cccccc] hover:bg-gray-50 font-semibold px-[26px] py-[8px] mt-4 rounded-2xl cursor-pointer">
+            <button className={`text-[14px] select-none font-semibold px-[26px] py-[8px] mt-4 rounded-2xl
+            ${theme === 'Black' ? 'text-[#484848] hover:bg-[#171717]' : 'text-[#cccccc] hover:bg-gray-50'}`}>
               SHOW LEARNED CARDS
             </button>
           )}

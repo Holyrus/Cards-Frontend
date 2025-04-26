@@ -1,0 +1,20 @@
+
+.dark-scrollbar::-webkit-scrollbar-track {
+  background: #111;
+}
+
+.dark-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #555;
+  border-radius: 6px;
+  border: 3px solid #111;
+}
+
+.dark-scrollbar::-webkit-scrollbar-button {
+  background-color: #777;
+}
+
+/* Firefox support */
+.dark-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #555 #111;
+}
