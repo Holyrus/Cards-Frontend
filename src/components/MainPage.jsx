@@ -832,7 +832,8 @@ const MainPage = ({ decks, onDeckChange }) => {
           <p className={`text-[10px] font-semibold select-none ${theme === 'Black' ? 'text-[#d8d8d8]' : 'text-black'}`}>LEARNING</p>
         </Link>
 
-        <Link to="/profile" className="flex flex-col items-center justify-start px-[60px] hover:cursor-pointer active:bg-gray-300 transition-all duration-75" draggable="false">
+        <Link to="/profile" className={`flex flex-col items-center justify-start px-[60px] hover:cursor-pointer transition-all duration-75
+          ${theme === 'Black' ? 'active:bg-[#1e1e1e]' : 'active:bg-gray-300'}`} draggable="false">
           <svg width="35" height="35" aria-hidden="true" focusable="false" data-prefix="far" data-icon="user-vneck" className="svg-inline--fa fa-user-vneck" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 -100 448 650">
             <circle className="text-gray-500" cx="120" cy="35" r="40" fill={`${theme === 'Black' ? 'black' : 'white'}`} stroke="currentColor" strokeWidth="40"/>
             <circle className="text-gray-500" cx="328" cy="35" r="40" fill={`${theme === 'Black' ? 'black' : 'white'}`} stroke="currentColor" strokeWidth="40"/>
