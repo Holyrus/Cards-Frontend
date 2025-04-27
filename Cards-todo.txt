@@ -15,10 +15,15 @@ If cards on main menu a lot make them load partitially when scroll. (For optimiz
 
 Add more images.
 Add usage suggestions (3 example sentences with learn word), use AI API KEY.
+Make AI generated Grammar
 Implement sign up with gmail.
 If card with eye appears make sound immidiatelly.
 
 Make a arrow keys controls for cards in learn section
 Save the mute boolean in learn section to DB.
 
+There is no voices if open in Chrome (check other browsers)
+
 Proceed to add dark mode, later add another two.
+
+Add translation handling to CardSettings.jsx (forgot)
