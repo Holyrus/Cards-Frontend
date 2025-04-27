@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { MAIN_LANGUAGES, OTHER_LANGUAGES } from "../constants/languages"
 import { useErrorNotificationDispatch } from './ErrorNotificationContext'
+import { useTheme } from "./ThemeProvider.jsx";
+import '../scrollbar.css';
 
 const CreateFirstDeck = ({ createDeck }) => {
 
@@ -22,6 +24,8 @@ const CreateFirstDeck = ({ createDeck }) => {
     const [voicesMenu, setVoicesMenu] = useState(false)
   
     const errorNotificationDispatch = useErrorNotificationDispatch()
+
+    const { theme } = useTheme()
 
     useEffect(() => {
       const loadVoices = () => {
@@ -205,23 +209,30 @@ const CreateFirstDeck = ({ createDeck }) => {
       setChosenVoice(voice)
     }
 
+    // #0d0d0d
+
+    // #0f1418
+
   return (
-    <div className="min-h-screen flex flex-col items-center w-full">
+    <div className={`min-h-screen flex flex-col items-center w-full ${theme === 'Black' ? 'dark-scrollbar' : ''}`}>
       
-      <div className="w-full flex-none flex flex-row items-center justify-center border-b-1 border-[#e1edf5] h-[55px]">
+      <div className={`w-full flex-none flex flex-row items-center justify-center border-b-1 h-[55px]
+        ${theme === 'Black' ? 'bg-[#0d0d0d] border-gray-600' : 'bg-white border-[#e1edf5]'}`}>
         <div className="w-[40px]"></div>
-        <h1 className="w-[260px] sm:w-[410px] text-center">Create new deck</h1>
+        <h1 className={`w-[260px] sm:w-[410px] text-center ${theme === 'Black' ? 'text-white' : 'text-black'}`}>Create new deck</h1>
         <div className="w-[40px]"></div>
       </div>
 
-      <div className="flex-1 flex py-[45px] flex-col items-center justify-start w-full bg-[#f3fff2]">
+      <div className={`flex-1 flex py-[45px] flex-col items-center justify-start w-full
+        ${theme === 'Black' ? 'bg-[#0f1418]' : 'bg-[#f3fff2]'}`}>
         
         <div className="flex flex-col items-center sm:items-start justify-start w-[320px] sm:w-[450px] px-4 sm:px-0">
-          <h1 className="font-semibold text-[17px]">Language you want to learn</h1>
+          <h1 className={`font-semibold text-[17px] ${theme === 'Black' ? 'text-white' : 'text-black'}`}>Language you want to learn</h1>
           <div className="w-full flex flex-row items-center justify-start gap-3">
-            <button onClick={searchLearnClickHandler} className="mt-3 w-[290px] sm:w-full rounded-full border-1 border-green-700 bg-white py-4 pl-7 pr-5 flex flex-row items-center justify-between cursor-default">
+            <button onClick={searchLearnClickHandler} className={`mt-3 w-[290px] sm:w-full rounded-full border-1 border-green-700 py-4 pl-7 pr-5 flex flex-row items-center justify-between cursor-default
+              ${theme === 'Black' ? 'bg-[#0d0d0d]' : 'bg-white'}`}>
 
-              <p className={`flex flex-row items-center justify-start gap-2 ${learnLanguage === ' 🏳️ Select a language ' ? 'text-gray-500' : 'text-black'}`}>
+              <p className={`flex flex-row items-center justify-start gap-2 ${learnLanguage === ' 🏳️ Select a language ' && theme === 'Black' ? 'text-[#acacac]' : learnLanguage === ' 🏳️ Select a language ' && theme !== 'Black' ? 'text-gray-500' : learnLanguage !== ' 🏳️ Select a language ' && theme === 'Black' ? 'text-white' : learnLanguage !== ' 🏳️ Select a language ' && theme !== 'Black' ? 'text-black' : 'text-black'}`}>
                 {learnFlag !== '' ? (
                   <img className="w-[20px]" src={`https://flagcdn.com/80x60/${learnFlag}.webp` || null} alt="Learn flag" />
                 ) : (
@@ -230,14 +241,17 @@ const CreateFirstDeck = ({ createDeck }) => {
                 {learnLanguage}
               </p>
 
-              <svg className="w-[24px]" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ExpandMoreIcon"><path d="M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z"></path></svg>
+              <svg className={`w-[24px] ${theme === 'Black' ? 'text-white' : 'bg-black'}`} fill='currentColor' focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ExpandMoreIcon"><path d="M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z"></path></svg>
 
               </button>
 
-              <div onClick={handleVoicesOpen} className="group relative p-3 mt-3 rounded-full bg-green-700 hover:bg-green-100 border-1 border-green-700 transition-all duration-300">
-                <svg className="w-[25px] text-white group-hover:text-green-700 transition-all duration-300" fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="RecordVoiceOverIcon"><circle cx="9" cy="9" r="4"></circle><path d="M9 15c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4m7.76-9.64-1.68 1.69c.84 1.18.84 2.71 0 3.89l1.68 1.69c2.02-2.02 2.02-5.07 0-7.27M20.07 2l-1.63 1.63c2.77 3.02 2.77 7.56 0 10.74L20.07 16c3.9-3.89 3.91-9.95 0-14"></path></svg>
+              <div onClick={handleVoicesOpen} className={`group relative p-3 mt-3 rounded-full bg-green-700 transition-all duration-300
+                ${theme === 'Black' ? 'hover:bg-green-600' : 'hover:bg-green-100 border-1 border-green-700'}`}>
+                <svg className={`w-[25px] transition-all duration-300
+                  ${theme === 'Black' ? 'text-black' : 'text-white group-hover:text-green-700'}`} fill="currentColor" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="RecordVoiceOverIcon"><circle cx="9" cy="9" r="4"></circle><path d="M9 15c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4m7.76-9.64-1.68 1.69c.84 1.18.84 2.71 0 3.89l1.68 1.69c2.02-2.02 2.02-5.07 0-7.27M20.07 2l-1.63 1.63c2.77 3.02 2.77 7.56 0 10.74L20.07 16c3.9-3.89 3.91-9.95 0-14"></path></svg>
                 
-                <div className={`bg-white w-auto px-2 py-2 h-[180px] flex flex-col rounded-lg overflow-y-scroll overflow-x-hidden shadow-[0px_-4px_4px_rgba(0,0,0,0.02),0px_4px_4px_rgba(0,0,0,0.02),-4px_0px_4px_rgba(0,0,0,0.02),4px_0px_4px_rgba(0,0,0,0.02)] top-0 right-0 transition-all duration-200 ${ voicesMenu ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}`} onMouseEnter={() => handleVoicesOpen} onMouseLeave={handleVoicesClose}>
+                <div className={`w-auto px-2 py-2 h-[180px] flex flex-col rounded-lg overflow-y-scroll overflow-x-hidden shadow-[0px_-4px_4px_rgba(0,0,0,0.02),0px_4px_4px_rgba(0,0,0,0.02),-4px_0px_4px_rgba(0,0,0,0.02),4px_0px_4px_rgba(0,0,0,0.02)] top-0 right-0 transition-all duration-200 ${ voicesMenu ? 'absolute opacity-100' : 'absolute opacity-0 pointer-events-none'}
+                  ${theme === 'Black' ? 'bg-[#0d0d0d] dark-scrollbar text-white shadow-[0px_-4px_4px_rgba(0,0,0,0.02),0px_4px_4px_rgba(0,0,0,0.02),-4px_0px_4px_rgba(0,0,0,0.02),4px_0px_4px_rgba(0,0,0,0.02)] shadow-[#272725]' : 'bg-white'}`} onMouseEnter={() => handleVoicesOpen} onMouseLeave={handleVoicesClose}>
                       {currentVoices.length !== 0 ?
                       currentVoices
                         .map((voice, index) => {
