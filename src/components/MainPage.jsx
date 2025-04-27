@@ -684,7 +684,7 @@ const MainPage = ({ decks, onDeckChange }) => {
 
                 <div className={`relative flex w-[130px] sm:w-[200px] md:w-[300px] rounded-t-sm
                   ${theme === 'Black' ? 'bg-[#0d0d0d]' : 'bg-white'}`}>
-                  <input value={searchValue} onChange={(event) => setSearchValue(event.target.value)} type="text" placeholder='' autoComplete="off" className={`z-10 peer w-full border-0 border-b-1 border-gray-400 focus:border-green-500 focus:outline-none focus:ring-0 bg-transparent p-2 pt-4
+                  <input spellCheck={false} value={searchValue} onChange={(event) => setSearchValue(event.target.value)} type="text" placeholder='' autoComplete="off" className={`z-10 peer w-full border-0 border-b-1 border-gray-400 focus:border-green-500 focus:outline-none focus:ring-0 bg-transparent p-2 pt-4
                     ${theme === 'Black' ? 'text-gray-300' : 'text-gray-900'}`} />
                   <label className='z-5 absolute left-2 text-gray-500 text-[12px] peer-placeholder-shown:bottom-3 peer-placeholder-shown:text-[16px] peer-placeholder-shown:text-gray-400 peer-focus:top-0 peer-focus:text-green-500 peer-focus:text-[12px] transition-all'>Search</label>
                 </div>

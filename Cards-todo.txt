@@ -26,4 +26,6 @@ There is no voices if open in Chrome (check other browsers)
 
 Proceed to add dark mode, later add another two.
 
+Make everywhere spellCheck={false}
+
 Add translation handling to CardSettings.jsx (forgot)
