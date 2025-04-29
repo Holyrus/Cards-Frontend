@@ -209,10 +209,6 @@ const CreateFirstDeck = ({ createDeck }) => {
       setChosenVoice(voice)
     }
 
-    // #0d0d0d
-
-    // #0f1418
-
   return (
     <div className={`min-h-screen flex flex-col items-center w-full ${theme === 'Black' ? 'dark-scrollbar' : ''}`}>
       
@@ -228,7 +224,7 @@ const CreateFirstDeck = ({ createDeck }) => {
         
         <div className="flex flex-col items-center sm:items-start justify-start w-[320px] sm:w-[450px] px-4 sm:px-0">
           <h1 className={`font-semibold text-[17px] ${theme === 'Black' ? 'text-white' : 'text-black'}`}>Language you want to learn</h1>
-          <div className="w-full flex flex-row items-center justify-start gap-1 sm:gap-3">
+          <div className="w-full flex flex-row items-center justify-start gap-1.5 sm:gap-3">
             <button onClick={searchLearnClickHandler} className={`mt-3 w-[290px] sm:w-full rounded-full border-1 border-green-700 py-4 pl-7 pr-5 flex flex-row items-center justify-between cursor-default
               ${theme === 'Black' ? 'bg-[#0d0d0d]' : 'bg-white'}`}>
 
@@ -354,7 +350,7 @@ const CreateFirstDeck = ({ createDeck }) => {
             onClick={dimOverlayHandler}
             aria-label="Clear Search"
             className={`p-2 text-black rounded-full
-              ${theme === 'Black' ? 'hover:bg-[#141f25]' : 'hover:bg-gray-100'}`}          
+              ${theme === 'Black' ? 'hover:bg-[#141f25]' : 'hover:bg-gray-100'}`}
           >
             <svg className="text-[#acacac]" aria-hidden="true" viewBox="0 0 24 24" role="img" width="23px" height="23px" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M18.973 5.027L5.028 18.972m0-13.945l13.944 13.945"></path>
