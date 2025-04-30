@@ -97,27 +97,50 @@ const App = () => {
   })
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedCardsAppUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      userDispatch({ type: "SET_USER", payload: user })
-      decksService.setToken(user.token)
-      cardsService.setToken(user.token)
+    async function getUserDataAndInit() {
+      const loggedUserJSON = window.localStorage.getItem('loggedCardsAppUser')
+
+      if (loggedUserJSON) {
+        const user = JSON.parse(loggedUserJSON)
+
+        const userData = await loginService.checkUser(user.id);
+        
+        if (userData) {
+          userDispatch({ type: "SET_USER", payload: user })
+          decksService.setToken(user.token)
+          cardsService.setToken(user.token)
+        } else {
+          console.log('Unauthorized error detected, logging out...')
+          window.localStorage.removeItem('loggedCardsAppUser')
+          userDispatch({ type: "REMOVE_USER" })
+          navigate('/')
+          notificationDispatch({ 
+            type: "SET", 
+            payload: 'Session expired. Please login again.'
+          })
+          setTimeout(() => {
+            notificationDispatch({ type: "CLEAR" })
+          }, 6000)
+        }
+        
+
+        if (decksResult?.error?.response?.status === 401 || decksResult?.error?.response?.status === 500) {
+          console.log('Unauthorized error detected, logging out...')
+          window.localStorage.removeItem('loggedCardsAppUser')
+          userDispatch({ type: "REMOVE_USER" })
+          navigate('/')
+          notificationDispatch({ 
+            type: "SET", 
+            payload: 'Session expired. Please login again.'
+          })
+          setTimeout(() => {
+            notificationDispatch({ type: "CLEAR" })
+          }, 6000)
+        }
+      }
     }
 
-    if (decksResult?.error?.response?.status === 401 || decksResult?.error?.response?.status === 500) {
-      console.log('Unauthorized error detected, logging out...')
-      window.localStorage.removeItem('loggedCardsAppUser')
-      userDispatch({ type: "REMOVE_USER" })
-      navigate('/')
-      notificationDispatch({ 
-        type: "SET", 
-        payload: 'Session expired. Please login again.'
-      })
-      setTimeout(() => {
-        notificationDispatch({ type: "CLEAR" })
-      }, 6000)
-    }
+    getUserDataAndInit()
   }, [decksResult?.error])
 
   const decks = decksResult.data || []
