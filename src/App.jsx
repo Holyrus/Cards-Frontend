@@ -28,6 +28,8 @@ import CardSettings from './components/CardSettings.jsx'
 import sadPanda from './assets/sadPanda.jpg'
 import Learn from './components/Learn.jsx'
 
+import { useTheme } from "../src/components/ThemeProvider.jsx";
+
 const userReducer = (state, action) => {
   switch (action.type) {
     case "SET_USER":
@@ -58,6 +60,8 @@ const App = () => {
   const notificationDispatch = useNotificationDispatch()
 
   const [globalCurrentDeck, setGlobalCurrentDeck] = useState('')
+
+  const { theme } = useTheme()
 
   const handleCurrentDeckChange = (deck) => {
     setGlobalCurrentDeck(deck)
@@ -178,7 +182,8 @@ const App = () => {
 
   if (decksResult.isLoading) {
     return (
-      <div className='flex flex-col justify-center items-center w-full h-[100vh]'>
+      <div className={`flex flex-col justify-center items-center w-full h-[100vh]
+      ${theme === 'Black' ? 'bg-[#0f1418]' : 'bg-white'}`}>
         <h1 className='text-[40px] font-bold bg-gradient-to-r from-green-700 to-yellow-300 text-transparent bg-clip-text'>UmCards</h1>
       </div>
     )

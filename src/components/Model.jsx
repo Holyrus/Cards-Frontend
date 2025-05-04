@@ -2,8 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
+import { useTheme } from "./ThemeProvider.jsx";
 
 const Model = () => {
+
   const { scene } = useGLTF("/src/assets/3DModel/bamboo_shield.glb");
   const modelRef = useRef();
 
@@ -31,6 +33,8 @@ const Model = () => {
 };
 
 const ThreeDModel = () => {
+
+  const { theme } = useTheme()
 
   const [randomPhrase, setRandomPhrase] = useState('')
 
@@ -61,8 +65,11 @@ const ThreeDModel = () => {
         <Model />
         <OrbitControls enableZoom={false} enableDamping={true} enablePan={false} />
       </Canvas>
-      <div className="absolute pointer-events-none bottom-10 rounded-xl w-[180px] h-[45px] bg-[#ffffffa4] border-1 border-[#dedede] flex items-center justify-center">
-        <p className="px-1 py-0.5 text-[13px] text-center text-[#2f2f2f]">{randomPhrase}</p>
+      <div className={`absolute pointer-events-none bottom-10 rounded-xl w-[180px] h-[45px] border-1 flex items-center justify-center
+        ${theme === 'Black' ? 'bg-[#0f1418c1] border-[#2b2b2b]' : 'bg-[#ffffffa4] border-[#dedede]'}`}>
+        <p className={`px-1 py-0.5 text-[13px] text-center
+          ${theme === 'Black' ? 'text-[#b2b2b2]' : 'text-[#2f2f2f]'}`}
+        >{randomPhrase}</p>
       </div>
     </div>
   );

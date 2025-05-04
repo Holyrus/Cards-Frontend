@@ -39,7 +39,7 @@ const Learn = () => {
 
   const handleFlip = () => {
     if (!isFlipped) setIsFlipped(true)
-    if (isFlipped === false && sound === true) {
+    if (isFlipped === false && sound === true && currentCard.flipped !== true) {
       speak(currentCard.word)
     }
   }
@@ -64,6 +64,12 @@ const Learn = () => {
       return () => clearTimeout(timer)
     } else {
       setShowNextCard(false)
+    }
+  }, [currentCard])
+
+  useEffect(() => {
+    if (currentCard?.flipped === true && sound === true) {
+      speak(currentCard.word)
     }
   }, [currentCard])
 

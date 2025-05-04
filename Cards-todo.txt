@@ -1,26 +1,34 @@
 Fix flickering of elements when change deck.
 
 Make change password, username and name functionality
+
 Add language of app changing. Add one more line to backend to user { language: "gb" }
 
 Implement themes
+
 Save chosing theme to db and check it when user open app
+
 Make the system preference choosing the theme  
 
 Implement statistics (statistics must be saved for user and be same for all decks. Must
 save the stats for all decks in one stat. )
+
 Adjust backend for change the token expiration time.(Or make another aproach)
 
 If cards on main menu a lot make them load partitially when scroll. (For optimization)
 
 Add more images.
+
 Add usage suggestions (3 example sentences with learn word), use AI API KEY.
+
 Make AI generated Grammar
+
 Implement sign up with gmail.
-If card with eye appears make sound immidiatelly.
 
 Make a arrow keys controls for cards in learn section
+
 Check if word is too long offset on card when 320px width in learn section
+
 Save the mute boolean in learn section to DB.
 
 There is no voices if open in Chrome (check other browsers)
