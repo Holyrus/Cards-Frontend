@@ -10,6 +10,7 @@ import WiseUmka1 from '../assets/wiseUmka1.png'
 import WiseUmka2 from '../assets/wiseUmka2.png'
 import { useTheme } from "./ThemeProvider.jsx";
 import '../scrollbar.css';
+import { FixedSizeList as List } from 'react-window'
 
 
 const MainPage = ({ decks, onDeckChange }) => {
@@ -489,8 +490,8 @@ const MainPage = ({ decks, onDeckChange }) => {
 
             {decks.length !== 0 &&
               [...decks]
-                .map((deck, index) => 
-                  <div onClick={() => mainDeckSetter(deck)} key={index} className={`h-[50px] w-full flex flex-row justify-center gap-3 items-center cursor-pointer px-1 
+                .map((deck, index) =>
+                  <div onClick={() => mainDeckSetter(deck)} key={index} className={`h-[50px] w-full flex flex-row justify-center gap-2 items-center cursor-pointer px-1 
                     ${currentDeck.learnLang === deck.learnLang && theme === 'Green' ? 'bg-[#ebf7fc] hover:bg-[#e5eaec]' : currentDeck.learnLang === deck.learnLang && theme === 'Black' ? 'bg-[#121c22] hover:bg-[#141f25]' : currentDeck.learnLang === deck.learnLang && theme === 'Brown' ? 'bg-[#fff6e7] hover:bg-[#f5ecdc]' : currentDeck.learnLang === deck.learnLang && theme === 'Pink' ? 'bg-[#fff1f9] hover:bg-[#f8e7f0]' : ''} 
                     ${theme === 'Green' ? "hover:bg-[#e5eaec]" : theme === 'Black' ? 'hover:bg-[#141f25]' : theme === 'Pink' ? 'hover:bg-[#f8e7f0]' : theme === 'Brown' ? 'hover:bg-[#faf4ea]' : 'hover:bg-[#e5eaec]' }`}
                   >
@@ -500,9 +501,9 @@ const MainPage = ({ decks, onDeckChange }) => {
                     <img className="absolute bottom-3 right-4 ml-2 w-[20px]" src={`https://flagcdn.com/80x60/${deck.firstFlag}.webp` || null} alt="First flag" />
                   </div>
 
-                  <div className="flex flex-col">
+                  <div className="flex flex-col w-[70px]">
                     <p className={`text-[15px] ${theme === 'Black' ? 'text-white' : 'text-black'}`}>{deck.learnLang}</p>
-                    <p className={`text-[13px] ${deck.cards.filter(card => card.toLearn === true)?.length === 0 ? 'text-[#bdbdbd]' : theme === 'Brown' ? 'text-[#91b26d]' : theme === 'Pink' ? 'text-[#5e7cff]' : 'text-[#009900]' }`}>{deck.cards.filter(card => card.toLearn === true)?.length || 0} To learn</p>
+                    <p className={`text-[13px] whitespace-nowrap overflow-hidden text-ellipsis ${deck.cards.filter(card => card.toLearn === true)?.length === 0 ? 'text-[#bdbdbd]' : theme === 'Brown' ? 'text-[#91b26d]' : theme === 'Pink' ? 'text-[#5e7cff]' : 'text-[#009900]' }`}>{deck.cards.filter(card => card.toLearn === true)?.length || 0} To learn</p>
                   </div>
 
                   <Link to={`/deck/${deck.id}`}>

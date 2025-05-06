@@ -25,8 +25,6 @@ Make AI generated Grammar
 
 Implement sign up with gmail.
 
-Make a arrow keys controls for cards in learn section
-
 Check if word is too long offset on card when 320px width in learn section
 
 Save the mute boolean in learn section to DB.
@@ -38,3 +36,77 @@ Proceed to add dark mode, later add another two.
 Make everywhere spellCheck={false}
 
 Add translation handling to CardSettings.jsx (forgot)
+
+
+
+
+
+
+Replace your .map rendering with react-window's FixedSizeList:
+
+import { FixedSizeList as List } from 'react-window'
+// ...existing code...
+
+{ currentDeck?.cards?.length !== 0 && currentDeck && isCardsOpen && 
+  <div className={`w-[270px] sm:w-[500px] md:w-[700px] lg:[800px] flex flex-col
+    ${theme === 'Black' ? 'bg-[#0d0d0d]' : 'bg-white'}`}>
+    <List
+      height={600} // or any height you want for the dropdown
+      itemCount={filteredCards.length}
+      itemSize={110} // height of each card row in px
+      width={'100%'}
+      itemData={filteredCards}
+    >
+      {({ index, style, data }) => {
+        const card = data[index];
+        // ...your card rendering code, but wrap the root div with style={style} ...
+        return (
+          <div style={style} key={card.id}>
+            {/* ...card content here... */}
+          </div>
+        );
+      }}
+    </List>
+  </div>
+}
+
+// Helper to filter cards as before
+const filteredCards = currentDeck.cards
+  .filter(card => {
+    const textMatch =
+      card.word.toLowerCase().includes(searchValue.toLowerCase()) ||
+      card.translation.toLowerCase().includes(searchValue.toLowerCase()) ||
+      card.usage.toLowerCase().includes(searchValue.toLowerCase());
+    let stateMatch = true;
+    switch (selectedValue) {
+      case 'To learn':
+        stateMatch = card.toLearn === true;
+        break;
+      case 'Known':
+        stateMatch = card.known === true;
+        break;
+      case 'Learned':
+        stateMatch = card.learned === true;
+        break;
+      case 'All':
+        stateMatch = true;
+        break;
+      default:
+        stateMatch = true;
+    }
+    return textMatch && stateMatch;
+  })
+  .sort((a, b) => {
+    // ...your sorting logic...
+    return 0;
+  });
+
+
+
+  Key points:
+
+Only visible cards are rendered, so performance is great even with thousands of cards.
+Adjust height and itemSize as needed for your UI.
+Place your card rendering code inside the List's child function, using style={style} on the root element.
+Result:
+Now, when you open the cards dropdown, only a small subset of cards is rendered at any time, making the UI fast and responsive even with thousands of cards.

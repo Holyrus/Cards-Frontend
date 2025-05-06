@@ -17,9 +17,13 @@ const Learn = () => {
   const location = useLocation()
   const currentDeck = location.state?.currentDeck
 
-  // console.log(currentDeck.cards)
-
   const [toLearnCards, setToLearnCards] = useState([])
+
+  const [voices, setVoices] = useState([])
+  
+  const [currentVoices, setCurrentVoices] = useState([])
+  
+  const [chosenVoice, setChosenVoice] = useState('')
 
   const queryClient = useQueryClient()
 
@@ -39,15 +43,12 @@ const Learn = () => {
 
   const handleFlip = () => {
     if (!isFlipped) setIsFlipped(true)
-    if (isFlipped === false && sound === true && currentCard.flipped !== true) {
-      speak(currentCard.word)
-    }
   }
 
   const handleBackClick = () => {
     if (!suggestionClicked) {
       setSuggestion(true)
-    setSuggestionClicked(true)
+      setSuggestionClicked(true)
     }
   }
 
@@ -68,10 +69,45 @@ const Learn = () => {
   }, [currentCard])
 
   useEffect(() => {
-    if (currentCard?.flipped === true && sound === true) {
+    if (currentCard?.flipped === true && sound === true && chosenVoice && !isFlipped) {
       speak(currentCard.word)
     }
-  }, [currentCard])
+  }, [currentCard, chosenVoice, isFlipped, sound])
+
+  useEffect(() => {
+    if (isFlipped === true && sound === true && currentCard?.flipped !== true && chosenVoice) {
+      speak(currentCard?.word)
+    } else if (isFlipped === true && sound === true && currentCard?.flipped === true && chosenVoice) {
+
+    }
+  }, [isFlipped, currentCard, sound, chosenVoice])
+
+  // Handle arrow keys control 
+
+  useEffect(() => {
+      const handleKeyDown = (event) => {
+        if (!isFlipped) {
+          if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+            handleFlip()
+          }
+        } else {
+          if (event.key === 'ArrowLeft') {
+            handleStudyAgainSwipe()
+          } else if (event.key === 'ArrowRight') {
+            handleGotItSwipe()
+          }
+        }
+      }
+  
+      window.addEventListener('keydown', handleKeyDown)
+
+      return () => {
+        window.removeEventListener("keydown", handleKeyDown);
+      }
+
+  }, [currentCard, isFlipped])
+
+  // -----------------------------
 
   // console.log(toLearnCards)
   // console.log(currentCard)
@@ -168,12 +204,6 @@ const Learn = () => {
 
   // Speaking handlers
 
-  const [voices, setVoices] = useState([])
-  
-  const [currentVoices, setCurrentVoices] = useState([])
-  
-  const [chosenVoice, setChosenVoice] = useState('')
-
   useEffect(() => {
       const loadVoices = () => {
         const availableVoices = speechSynthesis.getVoices()
@@ -195,7 +225,7 @@ const Learn = () => {
 
   const speak = (word) => {
 
-    if (!voices.length) return
+    if (!voices.length || !chosenVoice) return
 
     speechSynthesis.cancel()
 
