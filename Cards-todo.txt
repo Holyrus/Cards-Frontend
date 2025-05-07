@@ -37,6 +37,10 @@ Make everywhere spellCheck={false}
 
 Add translation handling to CardSettings.jsx (forgot)
 
+Make impossible to push the arrow buttons infinitely. Just once.
+
+Make optimization when a lot of cards in decks to operate deck changes.
+
 
 
 
